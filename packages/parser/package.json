@@ -1,0 +1,14 @@
+{
+  "name": "@graphql-modular/parser",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  "dependencies": {
+    "@graphql-modular/language": "0.0.0"
+  },
+  "devDependencies": {
+    "graphql": "^16.5.0"
+  }
+}

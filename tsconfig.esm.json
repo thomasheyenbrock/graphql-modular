@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext"
+  },
+  "extends": "./tsconfig.json",
+  "references": [
+    { "path": "./packages/language/tsconfig.esm.json" },
+    { "path": "./packages/parser/tsconfig.esm.json" }
+  ]
+}
