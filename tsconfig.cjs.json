@@ -6,6 +6,7 @@
   "extends": "./tsconfig.json",
   "references": [
     { "path": "./packages/language/tsconfig.cjs.json" },
-    { "path": "./packages/parse/tsconfig.cjs.json" }
+    { "path": "./packages/parse/tsconfig.cjs.json" },
+    { "path": "./packages/traverse/tsconfig.cjs.json" }
   ]
 }

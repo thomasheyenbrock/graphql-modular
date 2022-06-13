@@ -1,0 +1,12 @@
+{
+  "name": "@graphql-modular/traverse",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  "devDependencies": {
+    "@graphql-modular/language": "0.0.0",
+    "@graphql-modular/parse": "0.0.0"
+  }
+}

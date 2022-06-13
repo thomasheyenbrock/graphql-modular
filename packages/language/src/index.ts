@@ -23,6 +23,53 @@ export const TYPE_SYSTEM_DIRECTIVE_LOCATION = [
   "INPUT_FIELD_DEFINITION",
 ] as const;
 
+export type AstNodes = {
+  Document: DocumentNode;
+  OperationDefinition: OperationDefinitionNode;
+  FragmentDefinition: FragmentDefinitionNode;
+  Field: FieldNode;
+  FragmentSpread: FragmentSpreadNode;
+  InlineFragment: InlineFragmentNode;
+  SchemaDefinition: SchemaDefinitionNode;
+  OperationTypeDefinition: OperationTypeDefinitionNode;
+  SchemaExtension: SchemaExtensionNode;
+  ScalarTypeDefinition: ScalarTypeDefinitionNode;
+  ScalarTypeExtension: ScalarTypeExtensionNode;
+  ObjectTypeDefinition: ObjectTypeDefinitionNode;
+  ObjectTypeExtension: ObjectTypeExtensionNode;
+  InterfaceTypeDefinition: InterfaceTypeDefinitionNode;
+  InterfaceTypeExtension: InterfaceTypeExtensionNode;
+  UnionTypeDefinition: UnionTypeDefinitionNode;
+  UnionTypeExtension: UnionTypeExtensionNode;
+  EnumTypeDefinition: EnumTypeDefinitionNode;
+  EnumTypeExtension: EnumTypeExtensionNode;
+  EnumValueDefinition: EnumValueDefinitionNode;
+  InputObjectTypeDefinition: InputObjectTypeDefinitionNode;
+  InputObjectTypeExtension: InputObjectTypeExtensionNode;
+  DirectiveDefinition: DirectiveDefinitionNode;
+  VariableDefinition: VariableDefinitionNode;
+  Directive: DirectiveNode | DirectiveConstNode;
+  Argument: ArgumentNode | ArgumentConstNode;
+  FieldDefinition: FieldDefinitionNode;
+  InputValueDefinition: InputValueDefinitionNode;
+  NamedType: NamedTypeNode;
+  ListType: ListTypeNode;
+  NonNullType: NonNullTypeNode;
+  IntValue: IntValueNode;
+  FloatValue: FloatValueNode;
+  StringValue: StringValueNode;
+  BooleanValue: BooleanValueNode;
+  NullValue: NullValueNode;
+  EnumValue: EnumValueNode;
+  ListValue: ListValueNode | ListValueConstNode;
+  ObjectValue: ObjectValueNode | ObjectValueConstNode;
+  ObjectField: ObjectFieldNode | ObjectFieldConstNode;
+  Variable: VariableNode;
+  Name: NameNode;
+};
+
+export type AstNode = AstNodes[keyof AstNodes];
+
 export type DocumentNode = {
   kind: "Document";
   definitions: DefinitionNode[];
