@@ -85,7 +85,7 @@ function displaySource(source: string) {
 }
 
 const STRING_SEMANTICS = [
-  /* variable width unicode characters */
+  /** variable width unicode characters */
   {
     r: /\\u{[0-9a-fA-F]+}/g,
     f: (match: string) => {
@@ -95,7 +95,7 @@ const STRING_SEMANTICS = [
       return String.fromCharCode(charCode);
     },
   },
-  /* supplementary characters */
+  /** supplementary characters */
   {
     r: /\\u[0-9a-fA-F]{4}\\u[0-9a-fA-F]{4}/g,
     f: (match: string) => {
@@ -114,7 +114,7 @@ const STRING_SEMANTICS = [
       return match;
     },
   },
-  /* fixed width unicode characters */
+  /** fixed width unicode characters */
   {
     r: /\\u[0-9a-fA-F]{4}/g,
     f: (match: string) => {
@@ -124,7 +124,7 @@ const STRING_SEMANTICS = [
       return String.fromCharCode(charCode);
     },
   },
-  /* escaped characters */
+  /** escaped characters */
   {
     r: /\\["\\\/bfnrt]/g,
     f: (match: string) => {
