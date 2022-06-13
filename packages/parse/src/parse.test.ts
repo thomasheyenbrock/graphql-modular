@@ -2,7 +2,7 @@ import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
 import path from "path";
 import { expect, it } from "vitest";
-import { parse } from "./parser";
+import { parse } from "./parse";
 
 const KITCHEN_SINK = fs.readFileSync(
   path.join(__dirname, "example.gql"),

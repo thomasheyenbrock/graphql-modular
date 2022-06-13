@@ -1,5 +1,5 @@
 {
-  "name": "@graphql-modular/parser",
+  "name": "@graphql-modular/parse",
   "version": "0.0.0",
   "license": "MIT",
   "main": "cjs/index.js",

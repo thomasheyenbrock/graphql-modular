@@ -39,7 +39,7 @@ import {
   VariableDefinitionNode,
   VariableNode,
 } from "@graphql-modular/language";
-import { Token, tokenize } from "./lexer";
+import { Token, tokenize } from "./tokenize";
 
 import type {
   DefinitionNode,

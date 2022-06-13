@@ -6,6 +6,6 @@
   "extends": "./tsconfig.json",
   "references": [
     { "path": "./packages/language/tsconfig.esm.json" },
-    { "path": "./packages/parser/tsconfig.esm.json" }
+    { "path": "./packages/parse/tsconfig.esm.json" }
   ]
 }
