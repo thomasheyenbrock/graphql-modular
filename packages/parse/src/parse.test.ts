@@ -4,22 +4,31 @@ import path from "path";
 import { expect, it } from "vitest";
 import { parse } from "./parse";
 
-const KITCHEN_SINK = fs.readFileSync(
-  path.join(__dirname, "example.gql"),
+const LANGUAGE = fs.readFileSync(
+  path.join(__dirname, "..", "..", "..", "utils", "language.gql"),
   "utf8"
 );
 
-it("kitchen sink", () => {
+const KITCHEN_SINK = fs.readFileSync(
+  path.join(__dirname, "..", "..", "..", "utils", "kitchenSink.gql"),
+  "utf8"
+);
+
+it("parses the kitchen sink query", () => {
   expect(parse(KITCHEN_SINK)).toEqual(parseGql(KITCHEN_SINK));
+});
+
+it("parses all language features", () => {
+  expect(parse(LANGUAGE)).toEqual(parseGql(LANGUAGE));
 });
 
 it.skip("timing", () => {
   let start = Date.now();
-  for (let i = 0; i < 10; i++) parse(KITCHEN_SINK);
+  for (let i = 0; i < 10; i++) parse(LANGUAGE);
   const time = Date.now() - start;
 
   start = Date.now();
-  for (let i = 0; i < 10; i++) _parseGql(KITCHEN_SINK, { noLocation: true });
+  for (let i = 0; i < 10; i++) _parseGql(LANGUAGE, { noLocation: true });
   const compare = Date.now() - start;
 
   expect(time).toBeLessThan(compare);
