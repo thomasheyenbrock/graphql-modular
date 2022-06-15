@@ -51,18 +51,18 @@ export function parse(source: string): DocumentNode {
   const tokens = new TokenStream(source);
 
   function assertToken(expected: Token["type"], expectedValue?: string) {
-    const next = tokens.peek().token;
+    const { token, comments } = tokens.peek();
     if (
-      !next ||
-      next.type !== expected ||
-      (typeof expectedValue === "string" && next.value !== expectedValue)
+      !token ||
+      token.type !== expected ||
+      (typeof expectedValue === "string" && token.value !== expectedValue)
     )
       throw new Error(
-        `Unexpected ${next ? `token: ${next.value}` : "EOF"}${
+        `Unexpected ${token ? `token: ${token.value}` : "EOF"}${
           expectedValue ? ` (expected ${expectedValue})` : ""
         }`
       );
-    return next;
+    return { token, comments };
   }
 
   function isNext(type: Token["type"], value?: string) {
@@ -97,11 +97,11 @@ export function parse(source: string): DocumentNode {
   }
 
   function isNextPunctuator(punctuator: string, take?: boolean) {
-    const next = tokens.peek().token;
+    const { token } = tokens.peek();
     const result =
-      (next &&
-        next.type === "PUNCTUATOR" &&
-        (punctuator === undefined || next.value === punctuator)) ||
+      (token &&
+        token.type === "PUNCTUATOR" &&
+        (punctuator === undefined || token.value === punctuator)) ||
       false;
     if (take && result) tokens.take();
     return result;
@@ -161,23 +161,25 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseDescription(): StringValueNode | null {
-    const next = tokens.peek().token;
+    const { token } = tokens.peek();
     if (
-      next &&
-      (next.type === "STRING_VALUE" || next.type === "BLOCK_STRING_VALUE")
+      token &&
+      (token.type === "STRING_VALUE" || token.type === "BLOCK_STRING_VALUE")
     ) {
       tokens.take();
       return {
         kind: "StringValue",
-        value: next.value,
-        block: next.type === "BLOCK_STRING_VALUE",
+        value: token.value,
+        block: token.type === "BLOCK_STRING_VALUE",
       };
     }
     return null;
   }
 
   function parseName(bad?: string): NameNode {
-    const value = takeToken("NAME").value;
+    const {
+      token: { value },
+    } = takeToken("NAME");
     if (bad && value === bad) throw new Error(`Unexpected token "${bad}"`);
     return { kind: "Name", value };
   }
@@ -250,22 +252,22 @@ export function parse(source: string): DocumentNode {
     }
     if (isNext("PUNCTUATOR")) throw new Error(`Unexpected token`);
 
-    const next = tokens.peek().token;
-    if (!next) throw new Error("Unexpected EOF");
+    const { token } = tokens.peek();
+    if (!token) throw new Error("Unexpected EOF");
 
     tokens.take();
-    if (next.type === "INT_VALUE")
-      return { kind: "IntValue", value: next.value };
-    if (next.type === "FLOAT_VALUE")
-      return { kind: "FloatValue", value: next.value };
-    if (next.type === "STRING_VALUE")
-      return { kind: "StringValue", value: next.value, block: false };
-    if (next.type === "BLOCK_STRING_VALUE")
-      return { kind: "StringValue", value: next.value, block: true };
-    if (next.value === "true" || next.value === "false")
-      return { kind: "BooleanValue", value: next.value === "true" };
-    if (next.value === "null") return { kind: "NullValue" };
-    return { kind: "EnumValue", value: next.value };
+    if (token.type === "INT_VALUE")
+      return { kind: "IntValue", value: token.value };
+    if (token.type === "FLOAT_VALUE")
+      return { kind: "FloatValue", value: token.value };
+    if (token.type === "STRING_VALUE")
+      return { kind: "StringValue", value: token.value, block: false };
+    if (token.type === "BLOCK_STRING_VALUE")
+      return { kind: "StringValue", value: token.value, block: true };
+    if (token.value === "true" || token.value === "false")
+      return { kind: "BooleanValue", value: token.value === "true" };
+    if (token.value === "null") return { kind: "NullValue" };
+    return { kind: "EnumValue", value: token.value };
   }
 
   function parseArgs(isConst: false): ArgumentNode[];
@@ -316,8 +318,8 @@ export function parse(source: string): DocumentNode {
   function parseSelectionSet(isOptional: boolean): SelectionNode[] {
     return takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
       if (isNextPunctuator("...", true)) {
-        const next = tokens.peek().token;
-        if (next && next.type === "NAME" && next.value !== "on") {
+        const { token } = tokens.peek();
+        if (token && token.type === "NAME" && token.value !== "on") {
           return {
             kind: "FragmentSpread",
             name: parseName(),
@@ -352,14 +354,12 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseOperationType(): OperationType {
-    const name = takeToken("NAME");
-    if (
-      name.value !== "query" &&
-      name.value !== "mutation" &&
-      name.value !== "subscription"
-    )
-      throw new Error(`Unexpected token "${name.value}"`);
-    return name.value;
+    const {
+      token: { value },
+    } = takeToken("NAME");
+    if (value !== "query" && value !== "mutation" && value !== "subscription")
+      throw new Error(`Unexpected token "${value}"`);
+    return value;
   }
 
   function parseInterfaces(): NamedTypeNode[] {
@@ -650,8 +650,10 @@ export function parse(source: string): DocumentNode {
   function parseTypeSystemExtension(): TypeSystemExtensionNode {
     takeToken("NAME", "extend");
 
-    const next = assertToken("NAME");
-    switch (next.value) {
+    const {
+      token: { value },
+    } = assertToken("NAME");
+    switch (value) {
       case "schema":
         return parseSchemaDefinition(true);
       case "scalar":
@@ -667,7 +669,7 @@ export function parse(source: string): DocumentNode {
       case "input":
         return parseInputObjectTypeDefinition(true);
       default:
-        throw new Error(`Unexpected token "${next.value}"`);
+        throw new Error(`Unexpected token "${value}"`);
     }
   }
 
@@ -685,8 +687,10 @@ export function parse(source: string): DocumentNode {
 
     const description = parseDescription();
 
-    const next = assertToken("NAME");
-    switch (next.value) {
+    const {
+      token: { value },
+    } = assertToken("NAME");
+    switch (value) {
       case "query":
       case "mutation":
       case "subscription":
@@ -747,7 +751,7 @@ export function parse(source: string): DocumentNode {
             "|",
             { type: "NAME", value: "on" },
             () => {
-              const value = takeToken("NAME").value as any;
+              const value = takeToken("NAME").token.value as any;
               if (
                 !EXECUTABLE_DIRECTIVE_LOCATION.includes(value) &&
                 !TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value)
@@ -761,7 +765,7 @@ export function parse(source: string): DocumentNode {
         if (description !== null) throw new Error("Unexpected token");
         return parseTypeSystemExtension();
       default:
-        throw new Error(`Unexpected token "${next.value}"`);
+        throw new Error(`Unexpected token "${value}"`);
     }
   }
 
