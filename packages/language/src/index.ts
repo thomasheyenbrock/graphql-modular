@@ -277,18 +277,22 @@ export type DirectiveDefinitionNode = {
   name: NameNode;
   args: InputValueDefinitionNode[];
   repeatable: boolean;
-  locations: DirectiveLocation[];
+  locations: DirectiveLocationNode[];
 };
 
-export type DirectiveLocation =
-  | ExecutableDirectiveLocation
-  | TypeSystemDirectiveLocation;
+export type DirectiveLocationNode =
+  | ExecutableDirectiveLocationNode
+  | TypeSystemDirectiveLocationNode;
 
-export type ExecutableDirectiveLocation =
-  typeof EXECUTABLE_DIRECTIVE_LOCATION[number];
+export type ExecutableDirectiveLocationNode = {
+  kind: "ExecutableDirectiveLocation";
+  value: typeof EXECUTABLE_DIRECTIVE_LOCATION[number];
+};
 
-export type TypeSystemDirectiveLocation =
-  typeof TYPE_SYSTEM_DIRECTIVE_LOCATION[number];
+export type TypeSystemDirectiveLocationNode = {
+  kind: "TypeSystemDirectiveLocation";
+  value: typeof TYPE_SYSTEM_DIRECTIVE_LOCATION[number];
+};
 
 export type VariableDefinitionNode = {
   kind: "VariableDefinition";

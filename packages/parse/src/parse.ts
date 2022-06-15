@@ -2,7 +2,7 @@ import {
   ArgumentConstNode,
   ArgumentNode,
   DirectiveConstNode,
-  DirectiveLocation,
+  DirectiveLocationNode,
   DirectiveNode,
   EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
@@ -752,17 +752,16 @@ export function parse(source: string): DocumentNode {
           repeatable: isNext("NAME", "repeatable")
             ? (tokens.take(), true)
             : false,
-          locations: takeDelimitedList<DirectiveLocation>(
+          locations: takeDelimitedList<DirectiveLocationNode>(
             "|",
             { type: "NAME", value: "on" },
             () => {
               const value = takeToken("NAME").token.value as any;
-              if (
-                !EXECUTABLE_DIRECTIVE_LOCATION.includes(value) &&
-                !TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value)
-              )
-                throw new Error(`Unexpected token "${value}"`);
-              return value;
+              if (EXECUTABLE_DIRECTIVE_LOCATION.includes(value))
+                return { kind: "ExecutableDirectiveLocation", value };
+              if (TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value))
+                return { kind: "TypeSystemDirectiveLocation", value };
+              throw new Error(`Unexpected token "${value}"`);
             }
           ),
         };

@@ -1,3 +1,4 @@
+import { EXECUTABLE_DIRECTIVE_LOCATION } from "@graphql-modular/language";
 import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
 import path from "path";
@@ -39,7 +40,7 @@ function parseGql(source: string): DocumentNode {
   return visit(ast, {
     Directive: {
       leave({ arguments: args, ...restNode }) {
-        // we always use "args" as key instead of "arguments"
+        /** we always use "args" as key instead of "arguments" */
         return { args, ...restNode };
       },
     },
@@ -47,12 +48,20 @@ function parseGql(source: string): DocumentNode {
       leave({ arguments: args, description, locations, ...restNode }) {
         return {
           ...restNode,
-          // we always use "args" as key instead of "arguments"
+          /** we always use "args" as key instead of "arguments" */
           args,
-          // null instead of undefined
+          /** null instead of undefined */
           description: description ?? null,
-          // we use a string union type instead of generic names
-          locations: locations.map((location) => location.value),
+          /**
+           * we use a separate node with strongly typed values instead of the
+           * generic NameNode
+           */
+          locations: locations.map((location) => ({
+            kind: EXECUTABLE_DIRECTIVE_LOCATION.includes(location.value as any)
+              ? "ExecutableDirectiveLocation"
+              : "TypeSystemDirectiveLocation",
+            value: location.value,
+          })),
         };
       },
     },
@@ -60,7 +69,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -69,9 +78,9 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
-          // name uses kind EnumValue
+          /** name uses kind EnumValue */
           name: { ...node.name, kind: "EnumValue" },
         };
       },
@@ -80,11 +89,11 @@ function parseGql(source: string): DocumentNode {
       leave({ alias, arguments: args, selectionSet, ...restNode }) {
         return {
           ...restNode,
-          // null instead of undefined
+          /** null instead of undefined */
           alias: alias ?? null,
-          // we always use "args" as key instead of "arguments"
+          /** we always use "args" as key instead of "arguments" */
           args,
-          // Empty selection set is empty array
+          /** Empty selection set is empty array */
           selectionSet: selectionSet ?? [],
         };
       },
@@ -93,9 +102,9 @@ function parseGql(source: string): DocumentNode {
       leave({ arguments: args, description, ...restNode }) {
         return {
           ...restNode,
-          // null instead of undefined
+          /** null instead of undefined */
           description: description ?? null,
-          // we always use "args" as key instead of "arguments"
+          /** we always use "args" as key instead of "arguments" */
           args,
         };
       },
@@ -104,7 +113,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           typeCondition: node.typeCondition ?? null,
         };
       },
@@ -113,7 +122,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -122,9 +131,9 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           defaultValue: node.defaultValue ?? null,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -133,7 +142,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -142,7 +151,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -151,7 +160,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           name: node.name ?? null,
         };
       },
@@ -160,7 +169,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -169,12 +178,12 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
     },
-    // No selection set but just a list of selections
+    /** No selection set but just a list of selections */
     SelectionSet: {
       leave(node) {
         return node.selections;
@@ -184,7 +193,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           description: node.description ?? null,
         };
       },
@@ -193,7 +202,7 @@ function parseGql(source: string): DocumentNode {
       leave(node) {
         return {
           ...node,
-          // null instead of undefined
+          /** null instead of undefined */
           defaultValue: node.defaultValue ?? null,
         };
       },
