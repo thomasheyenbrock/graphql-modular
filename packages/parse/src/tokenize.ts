@@ -1,11 +1,30 @@
 export type Token = {
-  type: typeof LEXICAL_TOKENS[number]["t"];
+  type: typeof LEXICAL_TOKENS[number]["t"] | typeof COMMENTS[number]["t"];
   value: string;
 };
 
-export function* tokenize(source: string): IterableIterator<Token> {
+export function* tokenize(_source: string): IterableIterator<Token> {
+  /**
+   * We prepend the source string with a line feed so that full-line comments
+   * at the beginning of the source string are picked up by the regular
+   * expression correctly. This does not affect the output in any other way as
+   * the line feed character is an ignored token on its own.
+   */
+  let source = "\n" + _source;
+
   let match: RegExpMatchArray | null = null;
   nextToken: while (source !== "") {
+    /**
+     * IMPORTANT: Check comments before ignored tokens, because full-line
+     * comments assert for a line break at the beginning of the current
+     * source.
+     */
+    for (const { r, t, v } of COMMENTS) {
+      if ((match = source.match(r))) {
+        source = source.substring(match[0].length);
+        yield { type: t, value: v(match[0]) };
+      }
+    }
     for (const regex of IGNORED_TOKENS)
       if ((match = source.match(regex))) {
         source = source.substring(match[0].length);
@@ -21,6 +40,53 @@ export function* tokenize(source: string): IterableIterator<Token> {
   }
 }
 
+/**
+ * Comments also are ignored tokens according to the spec. But compared to all
+ * other ignored tokens, comments can carry information. That's why we treat
+ * them differently. In particular this enabled persisting comments when
+ * printing an AST.
+ *
+ * Comments usually refer to different items depending on their position:
+ * - If a comment is the only non-ignored token in the whole line, then it
+ *   usually refers to the token _after_ it.
+ * - If there are other non-ignored tokens in the same line as the comment,
+ *   then it usually refers to the token _before_ it.
+ *
+ * Example source:
+ *
+ * query Example {
+ *   id # This comment tells something about the id field.
+ *   name
+ *   # This comment tells something about the email field.
+ *   # It can also span accross multiple lines
+ *   email
+ * }
+ */
+const COMMENTS = [
+  /** Full-line */
+  {
+    r: /^((\n|\r(?!\n)|\r\n)[\t ]*#.*)+/,
+    t: "COMMENT",
+    v: (input: string) => {
+      let value = "";
+
+      const lines = input.split(/\n|\r(?!\n)|\r\n/g);
+      for (let i = 1; i < lines.length; i++) {
+        if (i > 1) value += "\n";
+        value += lines[i].replace(/^[\t ]*#[\t ]*/, "").replace(/[\t ]*$/, "");
+      }
+
+      return value;
+    },
+  },
+  /** Inline */
+  {
+    r: /^#.*/,
+    t: "INLINE_COMMENT",
+    v: (input: string) => input.replace(/^#[\t ]*/, "").replace(/[\t ]*$/, ""),
+  },
+] as const;
+
 const IGNORED_TOKENS = [
   /** Unicode BOM */
   /^\ufeff/,
@@ -28,26 +94,24 @@ const IGNORED_TOKENS = [
   /^[\t ]+/,
   /** Line Terminators */
   /^\n|\r(?!\n)|\r\n/,
-  /** Comments */
-  /^#.*/,
   /** Insignificant Commas */
   /^,+/,
 ] as const;
 
-const v = (input: string) => input;
+const noop = (input: string) => input;
 
 const LEXICAL_TOKENS = [
   /** Punctuators */
-  { r: /^([!$&():=@\[\]{\|}]|\.\.\.)/, t: "PUNCTUATOR", v },
+  { r: /^([!$&():=@\[\]{\|}]|\.\.\.)/, t: "PUNCTUATOR", v: noop },
   /** Name */
-  { r: /^[_a-zA-Z][_a-zA-Z0-9]*/, t: "NAME", v },
+  { r: /^[_a-zA-Z][_a-zA-Z0-9]*/, t: "NAME", v: noop },
   /** IntValue */
-  { r: /^-?(0|[1-9])[0-9]*(?![\._a-zA-Z0-9])/, t: "INT_VALUE", v },
+  { r: /^-?(0|[1-9])[0-9]*(?![\._a-zA-Z0-9])/, t: "INT_VALUE", v: noop },
   /** FloatValue */
   {
     r: /^-?(0|[1-9][0-9]*)(\.[0-9]+[eE][+-]?[0-9]+|\.[0-9]+|[eE][+-]?[0-9]+)(?![\._a-zA-Z0-9])/,
     t: "FLOAT_VALUE",
-    v,
+    v: noop,
   },
   /**
    * StringValue (block string)

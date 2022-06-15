@@ -781,7 +781,13 @@ class TokenStream {
   }
   peek() {
     if (this.next) return this.next;
-    this.next = this.iterator.next().value;
+    /** For now we just skip over comment tokens. */
+    do {
+      this.next = this.iterator.next().value;
+    } while (
+      this.next &&
+      (this.next.type === "COMMENT" || this.next.type === "INLINE_COMMENT")
+    );
     return this.next;
   }
   take() {
