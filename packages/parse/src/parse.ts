@@ -92,15 +92,20 @@ export function parse(source: string): DocumentNode {
     return takeToken("PUNCTUATOR", punctuator);
   }
 
-  function isNextPunctuator(punctuator: string, take?: boolean) {
+  function isNextPunctuator(punctuator: string) {
     const { token } = tokens.peek();
-    const result =
+    return (
       (token &&
         token.type === "PUNCTUATOR" &&
         (punctuator === undefined || token.value === punctuator)) ||
-      false;
-    if (take && result) tokens.take();
-    return result;
+      false
+    );
+  }
+
+  function takeIfNextPunctuator(punctuator: string) {
+    return isNextPunctuator(punctuator)
+      ? tokens.take()
+      : { token: undefined, comments: [] };
   }
 
   function takeList<T>(haultCondition: () => boolean, callback: () => T) {
@@ -126,7 +131,7 @@ export function parse(source: string): DocumentNode {
       throw err;
     }
     const items = takeList(
-      () => !isNextPunctuator(endPunctuator, true),
+      () => !takeIfNextPunctuator(endPunctuator).token,
       callback
     );
     return items;
@@ -151,7 +156,7 @@ export function parse(source: string): DocumentNode {
 
     types.push(callback());
 
-    while (isNextPunctuator(delimiter, true)) {
+    while (takeIfNextPunctuator(delimiter).token) {
       types.push(callback());
     }
 
@@ -187,13 +192,13 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseType(): TypeNode {
-    if (isNextPunctuator("[", true)) {
+    if (takeIfNextPunctuator("[").token) {
       const type = parseType();
       takePunctuator("]");
 
       const listType: ListTypeNode = { kind: "ListType", type };
 
-      if (isNextPunctuator("!", true)) {
+      if (takeIfNextPunctuator("!").token) {
         return { kind: "NonNullType", type: listType };
       }
 
@@ -202,7 +207,7 @@ export function parse(source: string): DocumentNode {
 
     const name = parseNamedType();
 
-    if (isNextPunctuator("!", true)) {
+    if (takeIfNextPunctuator("!").token) {
       return { kind: "NonNullType", type: name };
     }
 
@@ -290,7 +295,7 @@ export function parse(source: string): DocumentNode {
     isConst: boolean
   ): DirectiveNode[] | DirectiveConstNode[] {
     return takeList<DirectiveNode | DirectiveConstNode>(
-      () => isNextPunctuator("@", true),
+      () => !!takeIfNextPunctuator("@").token,
       () => {
         return {
           kind: "Directive",
@@ -315,7 +320,7 @@ export function parse(source: string): DocumentNode {
 
   function parseSelectionSet(isOptional: boolean): SelectionNode[] {
     return takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
-      if (isNextPunctuator("...", true)) {
+      if (takeIfNextPunctuator("...").token) {
         const { token } = tokens.peek();
         if (token && token.type === "NAME" && token.value !== "on") {
           return {
@@ -335,7 +340,7 @@ export function parse(source: string): DocumentNode {
       let alias: NameNode | null = null;
       let name = parseName();
 
-      if (isNextPunctuator(":", true)) {
+      if (takeIfNextPunctuator(":").token) {
         alias = name;
         name = parseName();
       }
