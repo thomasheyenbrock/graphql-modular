@@ -51,7 +51,7 @@ export function parse(source: string): DocumentNode {
   const tokens = new TokenStream(source);
 
   function assertToken(expected: Token["type"], expectedValue?: string) {
-    const next = tokens.peek();
+    const next = tokens.peek().token;
     if (
       !next ||
       next.type !== expected ||
@@ -97,7 +97,7 @@ export function parse(source: string): DocumentNode {
   }
 
   function isNextPunctuator(punctuator: string, take?: boolean) {
-    const next = tokens.peek();
+    const next = tokens.peek().token;
     const result =
       (next &&
         next.type === "PUNCTUATOR" &&
@@ -161,7 +161,7 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseDescription(): StringValueNode | null {
-    const next = tokens.peek();
+    const next = tokens.peek().token;
     if (
       next &&
       (next.type === "STRING_VALUE" || next.type === "BLOCK_STRING_VALUE")
@@ -250,7 +250,7 @@ export function parse(source: string): DocumentNode {
     }
     if (isNext("PUNCTUATOR")) throw new Error(`Unexpected token`);
 
-    const next = tokens.peek();
+    const next = tokens.peek().token;
     if (!next) throw new Error("Unexpected EOF");
 
     tokens.take();
@@ -316,7 +316,7 @@ export function parse(source: string): DocumentNode {
   function parseSelectionSet(isOptional: boolean): SelectionNode[] {
     return takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
       if (isNextPunctuator("...", true)) {
-        const next = tokens.peek();
+        const next = tokens.peek().token;
         if (next && next.type === "NAME" && next.value !== "on") {
           return {
             kind: "FragmentSpread",
@@ -766,7 +766,7 @@ export function parse(source: string): DocumentNode {
   }
 
   const definitions: DefinitionNode[] = [];
-  while (tokens.peek()) {
+  while (tokens.peek().token) {
     definitions.push(parseDefinition());
   }
 
@@ -775,24 +775,58 @@ export function parse(source: string): DocumentNode {
 
 class TokenStream {
   private iterator: IterableIterator<Token>;
-  private next: Token | undefined = undefined;
+  private next: Token | undefined;
+  private nextNext: Token | undefined;
+  private peekCache:
+    | { token: Token | undefined; comments: Token[] }
+    | undefined;
+
   constructor(source: string) {
     this.iterator = tokenize(source);
+
+    /**
+     * When the `peekCache` is empty, the `peek()` method requires the
+     * following:
+     * - `this.next` is set to the next token that is not consumed yet (this
+     *   can be any token except for an inline-comment which would have already
+     *   been consumed in the prevoius peek)
+     * - `this.nextNext` is `undefined`
+     *
+     * When calling `take()` (which effectively empties the `peekCache`) we
+     * restore this state by assigning the value of `this.nextNext` to
+     * `this.next`.
+     */
+    this.next = this.iterator.next().value;
+    this.nextNext = undefined;
+    this.peekCache = undefined;
   }
+
   peek() {
-    if (this.next) return this.next;
-    /** For now we just skip over comment tokens. */
-    do {
-      this.next = this.iterator.next().value;
-    } while (
-      this.next &&
-      (this.next.type === "COMMENT" || this.next.type === "INLINE_COMMENT")
-    );
-    return this.next;
+    if (!this.peekCache) {
+      this.peekCache = { token: undefined, comments: [] };
+
+      let nextToken: Token | undefined = this.next;
+      while (nextToken && nextToken.type === "COMMENT") {
+        this.peekCache.comments.push(nextToken);
+        nextToken = this.iterator.next().value;
+      }
+
+      this.peekCache.token = nextToken;
+
+      this.nextNext = this.iterator.next().value;
+      while (this.nextNext && this.nextNext.type === "INLINE_COMMENT") {
+        this.peekCache.comments.push(this.nextNext);
+        this.nextNext = this.iterator.next().value;
+      }
+    }
+    return this.peekCache;
   }
+
   take() {
     const next = this.peek();
-    this.next = undefined;
+    this.next = this.nextNext;
+    this.nextNext = undefined;
+    this.peekCache = undefined;
     return next;
   }
 }
