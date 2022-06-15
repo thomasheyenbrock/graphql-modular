@@ -2,7 +2,6 @@
 # Ignored tokens
 ################################################################
 
-# prettier-ignore
 query,IgnoredTokens,{myField, ,,(myArg: 	 ,
 "myVal")#       some	comment
 	}
@@ -71,19 +70,13 @@ query,IgnoredTokens,{myField, ,,(myArg: 	 ,
     floatArg: -42.43
     stringArg: ""
     stringArg: "stringValue"
-    # prettier-ignore
     stringArg: "string\u1234value"
     stringArg: "stringሴvalue"
-    # prettier-ignore
     stringArg: "string\"\\\/\b\f\n\r\tvalue"
     stringArg: "string	value"
-    # prettier-ignore
     stringArg: """"""
-    # prettier-ignore
     stringArg: """\""""""
-    # prettier-ignore
     stringArg: """string"value"""
-    # prettier-ignore
     stringArg: """string\"""value"""
     stringArg: """
     string
@@ -705,7 +698,6 @@ schema {
   subscription: Subscription
 }
 
-# prettier-ignore
 "My description"
 schema {
   query: Query
@@ -725,7 +717,6 @@ schema @myDirective @myOtherDirective {
   subscription: Subscription
 }
 
-# prettier-ignore
 "My description"
 schema @myDirective {
   query: Query
@@ -733,7 +724,6 @@ schema @myDirective {
   subscription: Subscription
 }
 
-# prettier-ignore
 "My description"
 schema @myDirective @myOtherDirective {
   query: Query
@@ -753,7 +743,6 @@ schema @myDirective(myDirectiveArg: "myDirectiveArgValue") @myOtherDirective {
   subscription: Subscription
 }
 
-# prettier-ignore
 "My description"
 schema @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   query: Query
@@ -761,7 +750,6 @@ schema @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   subscription: Subscription
 }
 
-# prettier-ignore
 "My description"
 schema @myDirective(myDirectiveArg: "myDirectiveArgValue") @myOtherDirective {
   query: Query
@@ -773,51 +761,42 @@ schema @myDirective(myDirectiveArg: "myDirectiveArgValue") @myOtherDirective {
 # Schema extension
 ################################################################
 
-# prettier-ignore
 extend schema {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-# prettier-ignore
 extend schema @myDirective {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-# prettier-ignore
 extend schema @myDirective @myOtherDirective {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-# prettier-ignore
 extend schema @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-# prettier-ignore
 extend schema @myDirective(myDirectiveArg: "myDirectiveArgValue") @myOtherDirective {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
-# prettier-ignore
 extend schema @myDirective
 
-# prettier-ignore
 extend schema @myDirective @myOtherDirective
 
-# prettier-ignore
 extend schema @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend schema @myDirective(myDirectiveArg: "myDirectiveArgValue") @myOtherDirective
 
 ################################################################
@@ -926,48 +905,33 @@ type MyObjectType implements MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface
 
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective @myOtherDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -1007,52 +971,37 @@ type MyObjectType implements MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface @myDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface @myDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -1157,66 +1106,51 @@ type MyObjectType implements MyInterface
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface @myDirective @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -1278,70 +1212,55 @@ type MyObjectType implements MyInterface & MyOtherInterface
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -1397,30 +1316,25 @@ extend type MyObjectType implements MyInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -1453,30 +1367,25 @@ extend type MyObjectType implements MyInterface & MyOtherInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -1504,19 +1413,15 @@ extend type MyObjectType implements MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface @myDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -1534,31 +1439,25 @@ extend type MyObjectType implements MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface @myDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
 extend type MyObjectType implements MyInterface
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface
 
 extend type MyObjectType implements MyInterface & MyOtherInterface
 
-# prettier-ignore
 extend type MyObjectType implements & MyInterface & MyOtherInterface
 
 ################################################################
@@ -1717,14 +1616,11 @@ interface MyInterface implements MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface {
   myField: MyType
 }
@@ -1738,14 +1634,11 @@ interface MyInterface implements MyOtherInterface & AnotherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface {
   myField: MyType
 }
@@ -1836,58 +1729,46 @@ interface MyInterface implements MyOtherInterface
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -1942,60 +1823,48 @@ interface MyInterface implements MyOtherInterface & AnotherInterface
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
   myField: MyType
 }
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -2012,12 +1881,9 @@ interface MyInterface implements MyOtherInterface
 "My description"
 interface MyInterface implements MyOtherInterface
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
 
 interface MyInterface implements MyOtherInterface & AnotherInterface
@@ -2025,12 +1891,9 @@ interface MyInterface implements MyOtherInterface & AnotherInterface
 "My description"
 interface MyInterface implements MyOtherInterface & AnotherInterface
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
 
 interface MyInterface @myDirective
@@ -2083,40 +1946,28 @@ interface MyInterface implements MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface @myDirective @myOtherDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -2153,46 +2004,34 @@ interface MyInterface implements MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -2209,7 +2048,6 @@ extend interface MyInterface implements MyOtherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface {
   myField: MyType
 }
@@ -2218,7 +2056,6 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface {
   myField: MyType
 }
@@ -2241,12 +2078,10 @@ extend interface MyInterface implements MyOtherInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective
   @myOtherDirective {
@@ -2264,13 +2099,11 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective {
@@ -2299,13 +2132,11 @@ extend interface MyInterface implements MyOtherInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -2323,13 +2154,11 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue") {
   myField: MyType
 }
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective {
@@ -2346,10 +2175,8 @@ extend interface MyInterface implements MyOtherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface @myDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective
   @myOtherDirective
@@ -2361,11 +2188,9 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
@@ -2383,11 +2208,9 @@ extend interface MyInterface implements MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -2399,23 +2222,19 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
 extend interface MyInterface implements MyOtherInterface
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
 
 extend interface MyInterface implements MyOtherInterface & AnotherInterface
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
 
 extend interface MyInterface implements MyOtherInterface @myDirective
@@ -2424,10 +2243,8 @@ extend interface MyInterface implements MyOtherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface @myDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective
   @myOtherDirective
@@ -2439,11 +2256,9 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective
   @myOtherDirective
@@ -2455,11 +2270,9 @@ extend interface MyInterface implements MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -2471,11 +2284,9 @@ extend interface MyInterface implements MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
 
-# prettier-ignore
 extend interface MyInterface implements & MyOtherInterface & AnotherInterface
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective
@@ -2494,12 +2305,9 @@ union MyUnion = MyType
 "My description"
 union MyUnion = MyType
 
-# prettier-ignore
 union MyUnion = | MyType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion = | MyType
 
 union MyUnion = MyType | MyOtherType
@@ -2507,12 +2315,9 @@ union MyUnion = MyType | MyOtherType
 "My description"
 union MyUnion = MyType | MyOtherType
 
-# prettier-ignore
 union MyUnion = | MyType | MyOtherType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion = | MyType | MyOtherType
 
 union MyUnion @myDirective
@@ -2535,20 +2340,14 @@ union MyUnion @myDirective @myOtherDirective = MyType
 "My description"
 union MyUnion @myDirective @myOtherDirective = MyType
 
-# prettier-ignore
 union MyUnion @myDirective = | MyType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective = | MyType
 
-# prettier-ignore
 union MyUnion @myDirective @myOtherDirective = | MyType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective @myOtherDirective = | MyType
 
 union MyUnion @myDirective = MyType | MyOtherType
@@ -2561,20 +2360,14 @@ union MyUnion @myDirective @myOtherDirective = MyType | MyOtherType
 "My description"
 union MyUnion @myDirective @myOtherDirective = MyType | MyOtherType
 
-# prettier-ignore
 union MyUnion @myDirective = | MyType | MyOtherType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective = | MyType | MyOtherType
 
-# prettier-ignore
 union MyUnion @myDirective @myOtherDirective = | MyType | MyOtherType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective @myOtherDirective = | MyType | MyOtherType
 
 union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue")
@@ -2607,23 +2400,17 @@ union MyUnion
   @myOtherDirective =
     MyType
 
-# prettier-ignore
 union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") = | MyType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") = | MyType
 
-# prettier-ignore
 union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
   | MyType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
@@ -2651,28 +2438,22 @@ union MyUnion
     MyType
   | MyOtherType
 
-# prettier-ignore
 union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") =
   | MyType
   | MyOtherType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") =
   | MyType
   | MyOtherType
 
-# prettier-ignore
 union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
   | MyType
   | MyOtherType
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
@@ -2685,32 +2466,26 @@ union MyUnion
 
 extend union MyUnion = MyType
 
-# prettier-ignore
 extend union MyUnion = | MyType
 
 extend union MyUnion = MyType | MyOtherType
 
-# prettier-ignore
 extend union MyUnion = | MyType | MyOtherType
 
 extend union MyUnion @myDirective = MyType
 
 extend union MyUnion @myDirective @myOtherDirective = MyType
 
-# prettier-ignore
 extend union MyUnion @myDirective = | MyType
 
-# prettier-ignore
 extend union MyUnion @myDirective @myOtherDirective = | MyType
 
 extend union MyUnion @myDirective = MyType | MyOtherType
 
 extend union MyUnion @myDirective @myOtherDirective = MyType | MyOtherType
 
-# prettier-ignore
 extend union MyUnion @myDirective = | MyType | MyOtherType
 
-# prettier-ignore
 extend union MyUnion @myDirective @myOtherDirective = | MyType | MyOtherType
 
 extend union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") =
@@ -2721,11 +2496,9 @@ extend union MyUnion
   @myOtherDirective =
     MyType
 
-# prettier-ignore
 extend union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") =
   | MyType
 
-# prettier-ignore
 extend union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
@@ -2741,12 +2514,10 @@ extend union MyUnion
     MyType
   | MyOtherType
 
-# prettier-ignore
 extend union MyUnion @myDirective(myDirectiveArg: "myDirectiveArgValue") =
   | MyType
   | MyOtherType
 
-# prettier-ignore
 extend union MyUnion
   @myDirective(myDirectiveArg: "myDirectiveArgValue")
   @myOtherDirective =
@@ -3105,12 +2876,9 @@ directive @myDirective on QUERY
 "My description"
 directive @myDirective on QUERY
 
-# prettier-ignore
 directive @myDirective on | QUERY
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective on | QUERY
 
 directive @myDirective on QUERY | SCHEMA
@@ -3118,12 +2886,9 @@ directive @myDirective on QUERY | SCHEMA
 "My description"
 directive @myDirective on QUERY | SCHEMA
 
-# prettier-ignore
 directive @myDirective on | QUERY | SCHEMA
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective on | QUERY | SCHEMA
 
 directive @myDirective repeatable on QUERY
@@ -3131,12 +2896,9 @@ directive @myDirective repeatable on QUERY
 "My description"
 directive @myDirective repeatable on QUERY
 
-# prettier-ignore
 directive @myDirective repeatable on | QUERY
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective repeatable on | QUERY
 
 directive @myDirective repeatable on QUERY | SCHEMA
@@ -3144,12 +2906,9 @@ directive @myDirective repeatable on QUERY | SCHEMA
 "My description"
 directive @myDirective repeatable on QUERY | SCHEMA
 
-# prettier-ignore
 directive @myDirective repeatable on | QUERY | SCHEMA
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective repeatable on | QUERY | SCHEMA
 
 directive @myDirective(myDirectiveArg: MyType) on QUERY
@@ -3157,12 +2916,9 @@ directive @myDirective(myDirectiveArg: MyType) on QUERY
 "My description"
 directive @myDirective(myDirectiveArg: MyType) on QUERY
 
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) on | QUERY
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) on | QUERY
 
 directive @myDirective(myDirectiveArg: MyType) on QUERY | SCHEMA
@@ -3170,12 +2926,9 @@ directive @myDirective(myDirectiveArg: MyType) on QUERY | SCHEMA
 "My description"
 directive @myDirective(myDirectiveArg: MyType) on QUERY | SCHEMA
 
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) on | QUERY | SCHEMA
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) on | QUERY | SCHEMA
 
 directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY
@@ -3183,12 +2936,9 @@ directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY
 "My description"
 directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY
 
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) repeatable on | QUERY
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) repeatable on | QUERY
 
 directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY | SCHEMA
@@ -3196,10 +2946,7 @@ directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY | SCHEMA
 "My description"
 directive @myDirective(myDirectiveArg: MyType) repeatable on QUERY | SCHEMA
 
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) repeatable on | QUERY | SCHEMA
 
-# prettier-ignore
 "My description"
-# prettier-ignore
 directive @myDirective(myDirectiveArg: MyType) repeatable on | QUERY | SCHEMA
