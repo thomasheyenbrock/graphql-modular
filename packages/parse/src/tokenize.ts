@@ -66,7 +66,7 @@ const COMMENTS = [
   /** Full-line */
   {
     r: /^((\n|\r(?!\n)|\r\n)[\t ]*#.*)+/,
-    t: "COMMENT",
+    t: "BLOCK_COMMENT",
     v: (input: string) => {
       let value = "";
 

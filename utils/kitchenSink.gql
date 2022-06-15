@@ -1,9 +1,10 @@
 query queryName($foo: ComplexType, $site: Site = MOBILE) @onQuery {
   whoever123is: node(id: [123, 456]) {
+    # field block comment
     id
     ... on User @onInlineFragment {
       field2 {
-        id
+        id # field inline comment
         alias: field1(first: 10, after: $foo) @include(if: $foo) {
           id
           ...frag @onFragmentSpread
@@ -19,6 +20,10 @@ query queryName($foo: ComplexType, $site: Site = MOBILE) @onQuery {
   }
 }
 
+# block comment
+# with multiple lines
+
+# this is a new comment
 mutation likeStory @onMutation {
   like(story: 123) @onField {
     story {

@@ -1,6 +1,7 @@
 import {
   ArgumentConstNode,
   ArgumentNode,
+  CommentNode,
   DirectiveConstNode,
   DirectiveLocationNode,
   DirectiveNode,
@@ -182,9 +183,10 @@ export function parse(source: string): DocumentNode {
   function parseName(bad?: string): NameNode {
     const {
       token: { value },
+      comments,
     } = takeToken("NAME");
     if (bad && value === bad) throw new Error(`Unexpected token "${bad}"`);
-    return { kind: "Name", value };
+    return { kind: "Name", comments, value };
   }
 
   function parseNamedType(): NamedTypeNode {
@@ -786,7 +788,7 @@ class TokenStream {
   private next: Token | undefined;
   private nextNext: Token | undefined;
   private peekCache:
-    | { token: Token | undefined; comments: Token[] }
+    | { token: Token | undefined; comments: CommentNode[] }
     | undefined;
 
   constructor(source: string) {
@@ -814,8 +816,11 @@ class TokenStream {
       this.peekCache = { token: undefined, comments: [] };
 
       let nextToken: Token | undefined = this.next;
-      while (nextToken && nextToken.type === "COMMENT") {
-        this.peekCache.comments.push(nextToken);
+      while (nextToken && nextToken.type === "BLOCK_COMMENT") {
+        this.peekCache.comments.push({
+          kind: "BlockComment",
+          value: nextToken.value,
+        });
         nextToken = this.iterator.next().value;
       }
 
@@ -823,7 +828,10 @@ class TokenStream {
 
       this.nextNext = this.iterator.next().value;
       while (this.nextNext && this.nextNext.type === "INLINE_COMMENT") {
-        this.peekCache.comments.push(this.nextNext);
+        this.peekCache.comments.push({
+          kind: "InlineComment",
+          value: this.nextNext.value,
+        });
         this.nextNext = this.iterator.next().value;
       }
     }

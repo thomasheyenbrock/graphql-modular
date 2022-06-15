@@ -16,11 +16,15 @@ const KITCHEN_SINK = fs.readFileSync(
 );
 
 it("parses the kitchen sink query", () => {
-  expect(parse(KITCHEN_SINK)).toEqual(parseGql(KITCHEN_SINK));
+  const ast = parse(KITCHEN_SINK);
+  stripComments(ast);
+  expect(ast).toEqual(parseGql(KITCHEN_SINK));
 });
 
 it("parses all language features", () => {
-  expect(parse(LANGUAGE)).toEqual(parseGql(LANGUAGE));
+  const ast = parse(LANGUAGE);
+  stripComments(ast);
+  expect(ast).toEqual(parseGql(LANGUAGE));
 });
 
 it.skip("timing", () => {
@@ -208,4 +212,11 @@ function parseGql(source: string): DocumentNode {
       },
     },
   });
+}
+
+function stripComments(obj: any) {
+  if (Array.isArray(obj)) return obj.forEach(stripComments);
+  if (!obj || typeof obj !== "object") return;
+  delete obj.comments;
+  Object.values(obj).forEach(stripComments);
 }

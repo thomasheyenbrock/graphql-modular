@@ -11,7 +11,7 @@ const KITCHEN_SINK = fs.readFileSync(
 );
 
 it("transforms a node without nested items", () => {
-  const node: NameNode = { kind: "Name", value: "abcd" };
+  const node: NameNode = { kind: "Name", value: "abcd", comments: [] };
   expect(
     traverse(node, {
       Name: {
@@ -25,6 +25,7 @@ it("transforms a node without nested items", () => {
     })
   ).toMatchInlineSnapshot(`
     {
+      "comments": [],
       "kind": "Name",
       "value": "bcdbcd",
     }
@@ -33,8 +34,8 @@ it("transforms a node without nested items", () => {
 
 it("transforms a list of nodes without nested items", () => {
   const n: NameNode[] = [
-    { kind: "Name", value: "abcd" },
-    { kind: "Name", value: "ABCD" },
+    { kind: "Name", value: "abcd", comments: [] },
+    { kind: "Name", value: "ABCD", comments: [] },
   ];
   expect(
     traverse(n, {
@@ -50,10 +51,12 @@ it("transforms a list of nodes without nested items", () => {
   ).toMatchInlineSnapshot(`
     [
       {
+        "comments": [],
         "kind": "Name",
         "value": "bcdbcd",
       },
       {
+        "comments": [],
         "kind": "Name",
         "value": "BCDBCD",
       },
@@ -64,7 +67,7 @@ it("transforms a list of nodes without nested items", () => {
 it("transforms a node with nested items", () => {
   const node: NamedTypeNode = {
     kind: "NamedType",
-    name: { kind: "Name", value: "abcd" },
+    name: { kind: "Name", value: "abcd", comments: [] },
   };
   expect(
     traverse(node, {
@@ -81,6 +84,7 @@ it("transforms a node with nested items", () => {
     {
       "kind": "NamedType",
       "name": {
+        "comments": [],
         "kind": "Name",
         "value": "bcdbcd",
       },
@@ -92,11 +96,11 @@ it("transforms a list of nodes with nested items", () => {
   const node: NamedTypeNode[] = [
     {
       kind: "NamedType",
-      name: { kind: "Name", value: "abcd" },
+      name: { kind: "Name", value: "abcd", comments: [] },
     },
     {
       kind: "NamedType",
-      name: { kind: "Name", value: "ABCD" },
+      name: { kind: "Name", value: "ABCD", comments: [] },
     },
   ];
   expect(
@@ -115,6 +119,7 @@ it("transforms a list of nodes with nested items", () => {
       {
         "kind": "NamedType",
         "name": {
+          "comments": [],
           "kind": "Name",
           "value": "bcdbcd",
         },
@@ -122,6 +127,7 @@ it("transforms a list of nodes with nested items", () => {
       {
         "kind": "NamedType",
         "name": {
+          "comments": [],
           "kind": "Name",
           "value": "BCDBCD",
         },
@@ -152,6 +158,7 @@ it("traverses with multiple layers of nesting", () => {
               "args": [],
               "kind": "Directive",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "nQuerynQuery",
               },
@@ -159,6 +166,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "kind": "OperationDefinition",
           "name": {
+            "comments": [],
             "kind": "Name",
             "value": "ueryNameueryName",
           },
@@ -166,6 +174,7 @@ it("traverses with multiple layers of nesting", () => {
           "selectionSet": [
             {
               "alias": {
+                "comments": [],
                 "kind": "Name",
                 "value": "hoever123ishoever123is",
               },
@@ -173,6 +182,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "dd",
                   },
@@ -194,6 +204,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "odeode",
               },
@@ -204,6 +215,12 @@ it("traverses with multiple layers of nesting", () => {
                   "directives": [],
                   "kind": "Field",
                   "name": {
+                    "comments": [
+                      {
+                        "kind": "BlockComment",
+                        "value": "field block comment",
+                      },
+                    ],
                     "kind": "Name",
                     "value": "dd",
                   },
@@ -215,6 +232,7 @@ it("traverses with multiple layers of nesting", () => {
                       "args": [],
                       "kind": "Directive",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "nInlineFragmentnInlineFragment",
                       },
@@ -228,6 +246,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "ield2ield2",
                       },
@@ -238,6 +257,12 @@ it("traverses with multiple layers of nesting", () => {
                           "directives": [],
                           "kind": "Field",
                           "name": {
+                            "comments": [
+                              {
+                                "kind": "InlineComment",
+                                "value": "field inline comment",
+                              },
+                            ],
                             "kind": "Name",
                             "value": "dd",
                           },
@@ -245,6 +270,7 @@ it("traverses with multiple layers of nesting", () => {
                         },
                         {
                           "alias": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "liaslias",
                           },
@@ -252,6 +278,7 @@ it("traverses with multiple layers of nesting", () => {
                             {
                               "kind": "Argument",
                               "name": {
+                                "comments": [],
                                 "kind": "Name",
                                 "value": "irstirst",
                               },
@@ -263,12 +290,14 @@ it("traverses with multiple layers of nesting", () => {
                             {
                               "kind": "Argument",
                               "name": {
+                                "comments": [],
                                 "kind": "Name",
                                 "value": "fterfter",
                               },
                               "value": {
                                 "kind": "Variable",
                                 "name": {
+                                  "comments": [],
                                   "kind": "Name",
                                   "value": "oooo",
                                 },
@@ -281,12 +310,14 @@ it("traverses with multiple layers of nesting", () => {
                                 {
                                   "kind": "Argument",
                                   "name": {
+                                    "comments": [],
                                     "kind": "Name",
                                     "value": "ff",
                                   },
                                   "value": {
                                     "kind": "Variable",
                                     "name": {
+                                      "comments": [],
                                       "kind": "Name",
                                       "value": "oooo",
                                     },
@@ -295,6 +326,7 @@ it("traverses with multiple layers of nesting", () => {
                               ],
                               "kind": "Directive",
                               "name": {
+                                "comments": [],
                                 "kind": "Name",
                                 "value": "ncludenclude",
                               },
@@ -302,6 +334,7 @@ it("traverses with multiple layers of nesting", () => {
                           ],
                           "kind": "Field",
                           "name": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "ield1ield1",
                           },
@@ -312,6 +345,7 @@ it("traverses with multiple layers of nesting", () => {
                               "directives": [],
                               "kind": "Field",
                               "name": {
+                                "comments": [],
                                 "kind": "Name",
                                 "value": "dd",
                               },
@@ -323,6 +357,7 @@ it("traverses with multiple layers of nesting", () => {
                                   "args": [],
                                   "kind": "Directive",
                                   "name": {
+                                    "comments": [],
                                     "kind": "Name",
                                     "value": "nFragmentSpreadnFragmentSpread",
                                   },
@@ -330,6 +365,7 @@ it("traverses with multiple layers of nesting", () => {
                               ],
                               "kind": "FragmentSpread",
                               "name": {
+                                "comments": [],
                                 "kind": "Name",
                                 "value": "ragrag",
                               },
@@ -342,6 +378,7 @@ it("traverses with multiple layers of nesting", () => {
                   "typeCondition": {
                     "kind": "NamedType",
                     "name": {
+                      "comments": [],
                       "kind": "Name",
                       "value": "serser",
                     },
@@ -354,12 +391,14 @@ it("traverses with multiple layers of nesting", () => {
                         {
                           "kind": "Argument",
                           "name": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "nlessnless",
                           },
                           "value": {
                             "kind": "Variable",
                             "name": {
+                              "comments": [],
                               "kind": "Name",
                               "value": "oooo",
                             },
@@ -368,6 +407,7 @@ it("traverses with multiple layers of nesting", () => {
                       ],
                       "kind": "Directive",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "kipkip",
                       },
@@ -381,6 +421,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "dd",
                       },
@@ -399,6 +440,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "dd",
                       },
@@ -418,6 +460,7 @@ it("traverses with multiple layers of nesting", () => {
               "type": {
                 "kind": "NamedType",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "omplexTypeomplexType",
                 },
@@ -425,6 +468,7 @@ it("traverses with multiple layers of nesting", () => {
               "variable": {
                 "kind": "Variable",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "oooo",
                 },
@@ -440,6 +484,7 @@ it("traverses with multiple layers of nesting", () => {
               "type": {
                 "kind": "NamedType",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "iteite",
                 },
@@ -447,6 +492,7 @@ it("traverses with multiple layers of nesting", () => {
               "variable": {
                 "kind": "Variable",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "iteite",
                 },
@@ -460,6 +506,7 @@ it("traverses with multiple layers of nesting", () => {
               "args": [],
               "kind": "Directive",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "nMutationnMutation",
               },
@@ -467,6 +514,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "kind": "OperationDefinition",
           "name": {
+            "comments": [],
             "kind": "Name",
             "value": "ikeStoryikeStory",
           },
@@ -478,6 +526,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "torytory",
                   },
@@ -492,6 +541,7 @@ it("traverses with multiple layers of nesting", () => {
                   "args": [],
                   "kind": "Directive",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "nFieldnField",
                   },
@@ -499,6 +549,7 @@ it("traverses with multiple layers of nesting", () => {
               ],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "ikeike",
               },
@@ -509,6 +560,7 @@ it("traverses with multiple layers of nesting", () => {
                   "directives": [],
                   "kind": "Field",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "torytory",
                   },
@@ -521,6 +573,7 @@ it("traverses with multiple layers of nesting", () => {
                           "args": [],
                           "kind": "Directive",
                           "name": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "nFieldnField",
                           },
@@ -528,6 +581,7 @@ it("traverses with multiple layers of nesting", () => {
                       ],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "dd",
                       },
@@ -546,6 +600,7 @@ it("traverses with multiple layers of nesting", () => {
               "args": [],
               "kind": "Directive",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "nSubscriptionnSubscription",
               },
@@ -553,6 +608,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "kind": "OperationDefinition",
           "name": {
+            "comments": [],
             "kind": "Name",
             "value": "toryLikeSubscriptiontoryLikeSubscription",
           },
@@ -564,12 +620,14 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "nputnput",
                   },
                   "value": {
                     "kind": "Variable",
                     "name": {
+                      "comments": [],
                       "kind": "Name",
                       "value": "nputnput",
                     },
@@ -579,6 +637,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "toryLikeSubscribetoryLikeSubscribe",
               },
@@ -589,6 +648,7 @@ it("traverses with multiple layers of nesting", () => {
                   "directives": [],
                   "kind": "Field",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "torytory",
                   },
@@ -599,6 +659,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "ikersikers",
                       },
@@ -609,6 +670,7 @@ it("traverses with multiple layers of nesting", () => {
                           "directives": [],
                           "kind": "Field",
                           "name": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "ountount",
                           },
@@ -622,6 +684,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [],
                       "kind": "Field",
                       "name": {
+                        "comments": [],
                         "kind": "Name",
                         "value": "ikeSentenceikeSentence",
                       },
@@ -632,6 +695,7 @@ it("traverses with multiple layers of nesting", () => {
                           "directives": [],
                           "kind": "Field",
                           "name": {
+                            "comments": [],
                             "kind": "Name",
                             "value": "extext",
                           },
@@ -652,6 +716,7 @@ it("traverses with multiple layers of nesting", () => {
                   "args": [],
                   "kind": "Directive",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "nVariableDefinitionnVariableDefinition",
                   },
@@ -661,6 +726,7 @@ it("traverses with multiple layers of nesting", () => {
               "type": {
                 "kind": "NamedType",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "toryLikeSubscribeInputtoryLikeSubscribeInput",
                 },
@@ -668,6 +734,7 @@ it("traverses with multiple layers of nesting", () => {
               "variable": {
                 "kind": "Variable",
                 "name": {
+                  "comments": [],
                   "kind": "Name",
                   "value": "nputnput",
                 },
@@ -681,6 +748,7 @@ it("traverses with multiple layers of nesting", () => {
               "args": [],
               "kind": "Directive",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "nFragmentDefinitionnFragmentDefinition",
               },
@@ -688,6 +756,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "kind": "FragmentDefinition",
           "name": {
+            "comments": [],
             "kind": "Name",
             "value": "ragrag",
           },
@@ -698,12 +767,14 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "izeize",
                   },
                   "value": {
                     "kind": "Variable",
                     "name": {
+                      "comments": [],
                       "kind": "Name",
                       "value": "izeize",
                     },
@@ -712,12 +783,14 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "arar",
                   },
                   "value": {
                     "kind": "Variable",
                     "name": {
+                      "comments": [],
                       "kind": "Name",
                       "value": "",
                     },
@@ -726,6 +799,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "bjbj",
                   },
@@ -734,6 +808,7 @@ it("traverses with multiple layers of nesting", () => {
                       {
                         "kind": "ObjectField",
                         "name": {
+                          "comments": [],
                           "kind": "Name",
                           "value": "eyey",
                         },
@@ -746,6 +821,7 @@ it("traverses with multiple layers of nesting", () => {
                       {
                         "kind": "ObjectField",
                         "name": {
+                          "comments": [],
                           "kind": "Name",
                           "value": "locklock",
                         },
@@ -763,6 +839,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "oooo",
               },
@@ -772,6 +849,7 @@ it("traverses with multiple layers of nesting", () => {
           "typeCondition": {
             "kind": "NamedType",
             "name": {
+              "comments": [],
               "kind": "Name",
               "value": "riendriend",
             },
@@ -789,6 +867,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "ruthyruthy",
                   },
@@ -800,6 +879,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "alsyalsy",
                   },
@@ -811,6 +891,7 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "kind": "Argument",
                   "name": {
+                    "comments": [],
                     "kind": "Name",
                     "value": "ullishullish",
                   },
@@ -822,6 +903,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "nnamednnamed",
               },
@@ -833,6 +915,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "ueryuery",
               },
@@ -853,6 +936,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "Field",
               "name": {
+                "comments": [],
                 "kind": "Name",
                 "value": "_typename_typename",
               },

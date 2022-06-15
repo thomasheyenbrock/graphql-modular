@@ -451,5 +451,18 @@ export type VariableNode = {
 
 export type NameNode = {
   kind: "Name";
+  comments: CommentNode[];
+  value: string;
+};
+
+export type CommentNode = BlockCommentNode | InlineCommentNode;
+
+export type BlockCommentNode = {
+  kind: "BlockComment";
+  value: string;
+};
+
+export type InlineCommentNode = {
+  kind: "InlineComment";
   value: string;
 };
