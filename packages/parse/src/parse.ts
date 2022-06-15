@@ -129,8 +129,10 @@ export function parse(source: string): DocumentNode {
       if (isOptional) return [];
       throw err;
     }
-    const items = takeList(() => !isNextPunctuator(endPunctuator), callback);
-    takePunctuator(endPunctuator);
+    const items = takeList(
+      () => !isNextPunctuator(endPunctuator, true),
+      callback
+    );
     return items;
   }
 
@@ -292,11 +294,11 @@ export function parse(source: string): DocumentNode {
     isConst: boolean
   ): DirectiveNode[] | DirectiveConstNode[] {
     return takeList<DirectiveNode | DirectiveConstNode>(
-      () => isNextPunctuator("@"),
+      () => isNextPunctuator("@", true),
       () => {
         return {
           kind: "Directive",
-          name: (takePunctuator("@"), parseName()),
+          name: parseName(),
           args: isConst ? parseArgs(true) : parseArgs(false),
         };
       }
