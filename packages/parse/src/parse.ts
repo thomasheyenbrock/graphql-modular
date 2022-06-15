@@ -92,10 +92,6 @@ export function parse(source: string): DocumentNode {
     return takeToken("PUNCTUATOR", punctuator);
   }
 
-  function takeNextIf(type: Token["type"], value?: string) {
-    return isNext(type, value) ? tokens.take() : null;
-  }
-
   function isNextPunctuator(punctuator: string, take?: boolean) {
     const { token } = tokens.peek();
     const result =
@@ -748,7 +744,9 @@ export function parse(source: string): DocumentNode {
           name:
             (takeToken("NAME", "directive"), takePunctuator("@"), parseName()),
           args: parseInputValueDefinitions("(", ")"),
-          repeatable: !!takeNextIf("NAME", "repeatable"),
+          repeatable: isNext("NAME", "repeatable")
+            ? (tokens.take(), true)
+            : false,
           locations: takeDelimitedList<DirectiveLocation>(
             "|",
             { type: "NAME", value: "on" },
