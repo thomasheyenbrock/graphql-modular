@@ -85,6 +85,11 @@ export type ExecutableDefinitionNode =
 
 export type OperationDefinitionNode = {
   kind: "OperationDefinition";
+  comments: CommentNode[];
+  commentsVariableDefinitionsOpeningBracket: CommentNode[];
+  commentsVariableDefinitionsClosingBracket: CommentNode[];
+  commentsSelectionSetOpeningBracket: CommentNode[];
+  commentsSelectionSetClosingBracket: CommentNode[];
   operation: OperationType;
   name: NameNode | null;
   variableDefinitions: VariableDefinitionNode[];

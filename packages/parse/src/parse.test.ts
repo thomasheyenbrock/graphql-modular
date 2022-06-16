@@ -1509,6 +1509,8 @@ it("parses comments for operation type definitions", () => {
   expect(
     (ast.definitions[0] as SchemaDefinitionNode).operationTypes[0].comments
   ).toEqual([
+    { kind: "BlockComment", value: "comment operation type before" },
+    { kind: "InlineComment", value: "comment operation type after" },
     { kind: "BlockComment", value: "comment colon before" },
     { kind: "InlineComment", value: "comment colon after" },
   ]);
@@ -1872,6 +1874,161 @@ it("parses comments for fragment definitions", () => {
   ]);
 });
 
+describe("parsing comments in operation definitions", () => {
+  it("parses comments for query shorthand operation definitions", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment selection set open before
+      { # comment selection set open after
+        id
+      # comment selection set close before
+      } # comment selection set close after
+    `);
+    const definition = ast.definitions[0] as OperationDefinitionNode;
+    expect(definition.comments).toEqual([]);
+    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
+    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
+    expect(definition.commentsSelectionSetOpeningBracket).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment selection set open before",
+      },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(definition.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for operation definitions without name", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment keyword before
+      query # comment keyword after
+      # comment directive before
+      @foo # comment directive after
+      # comment selection set open before
+      { # comment selection set open after
+        id
+      # comment selection set close before
+      } # comment selection set close after
+    `);
+    const definition = ast.definitions[0] as OperationDefinitionNode;
+    expect(definition.comments).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment keyword before",
+      },
+      { kind: "InlineComment", value: "comment keyword after" },
+    ]);
+    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
+    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
+    expect(definition.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(definition.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for operation definitions without variables", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment keyword before
+      query # comment keyword after
+      # comment name before
+      Foo # comment name after
+      # comment directive before
+      @foo # comment directive after
+      # comment selection set open before
+      { # comment selection set open after
+        id
+      # comment selection set close before
+      } # comment selection set close after
+    `);
+    const definition = ast.definitions[0] as OperationDefinitionNode;
+    expect(definition.comments).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment keyword before",
+      },
+      { kind: "InlineComment", value: "comment keyword after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
+    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
+    expect(definition.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(definition.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for operation definitions with variables", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment keyword before
+      query # comment keyword after
+      # comment name before
+      Foo # comment name after
+      # comment variable definitions open before
+      ( # comment variable definitions open after
+        $variable: Int
+      # comment variable definitions close before
+      ) # comment variable definitions close after
+      # comment directive before
+      @foo # comment directive after
+      # comment selection set open before
+      { # comment selection set open after
+        id
+      # comment selection set close before
+      } # comment selection set close after
+    `);
+    const definition = ast.definitions[0] as OperationDefinitionNode;
+    expect(definition.comments).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment keyword before",
+      },
+      { kind: "InlineComment", value: "comment keyword after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([
+      {
+        kind: "BlockComment",
+        value: "comment variable definitions open before",
+      },
+      {
+        kind: "InlineComment",
+        value: "comment variable definitions open after",
+      },
+    ]);
+    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([
+      {
+        kind: "BlockComment",
+        value: "comment variable definitions close before",
+      },
+      {
+        kind: "InlineComment",
+        value: "comment variable definitions close after",
+      },
+    ]);
+    expect(definition.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(definition.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -2069,6 +2226,8 @@ function stripComments(obj: any) {
   delete obj.commentsClosingBracket;
   delete obj.commentsSelectionSetOpeningBracket;
   delete obj.commentsSelectionSetClosingBracket;
+  delete obj.commentsVariableDefinitionsOpeningBracket;
+  delete obj.commentsVariableDefinitionsClosingBracket;
   delete obj.commentsArgsOpeningBracket;
   delete obj.commentsArgsClosingBracket;
   delete obj.commentsFieldsOpeningBracket;

@@ -159,6 +159,11 @@ it("traverses with multiple layers of nesting", () => {
     {
       "definitions": [
         {
+          "comments": [],
+          "commentsSelectionSetClosingBracket": [],
+          "commentsSelectionSetOpeningBracket": [],
+          "commentsVariableDefinitionsClosingBracket": [],
+          "commentsVariableDefinitionsOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -603,6 +608,21 @@ it("traverses with multiple layers of nesting", () => {
           ],
         },
         {
+          "comments": [
+            {
+              "kind": "BlockComment",
+              "value": "block comment
+    with multiple lines",
+            },
+            {
+              "kind": "BlockComment",
+              "value": "this is a new comment",
+            },
+          ],
+          "commentsSelectionSetClosingBracket": [],
+          "commentsSelectionSetOpeningBracket": [],
+          "commentsVariableDefinitionsClosingBracket": [],
+          "commentsVariableDefinitionsOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -723,6 +743,11 @@ it("traverses with multiple layers of nesting", () => {
           "variableDefinitions": [],
         },
         {
+          "comments": [],
+          "commentsSelectionSetClosingBracket": [],
+          "commentsSelectionSetOpeningBracket": [],
+          "commentsVariableDefinitionsClosingBracket": [],
+          "commentsVariableDefinitionsOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -1048,6 +1073,11 @@ it("traverses with multiple layers of nesting", () => {
           },
         },
         {
+          "comments": [],
+          "commentsSelectionSetClosingBracket": [],
+          "commentsSelectionSetOpeningBracket": [],
+          "commentsVariableDefinitionsClosingBracket": [],
+          "commentsVariableDefinitionsOpeningBracket": [],
           "directives": [],
           "kind": "OperationDefinition",
           "name": null,
@@ -1133,6 +1163,11 @@ it("traverses with multiple layers of nesting", () => {
           "variableDefinitions": [],
         },
         {
+          "comments": [],
+          "commentsSelectionSetClosingBracket": [],
+          "commentsSelectionSetOpeningBracket": [],
+          "commentsVariableDefinitionsClosingBracket": [],
+          "commentsVariableDefinitionsOpeningBracket": [],
           "directives": [],
           "kind": "OperationDefinition",
           "name": null,

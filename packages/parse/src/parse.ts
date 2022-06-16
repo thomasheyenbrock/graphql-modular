@@ -465,13 +465,17 @@ export function parse(source: string): DocumentNode {
     });
   }
 
-  function parseOperationType(): OperationType {
+  function parseOperationType(): {
+    value: OperationType;
+    comments: CommentNode[];
+  } {
     const {
       token: { value },
+      comments,
     } = takeToken("NAME");
     if (value !== "query" && value !== "mutation" && value !== "subscription")
       throw new Error(`Unexpected token "${value}"`);
-    return value;
+    return { value, comments };
   }
 
   function parseInterfaces(): {
@@ -595,9 +599,9 @@ export function parse(source: string): DocumentNode {
         const type = parseNamedType();
         return {
           kind: "OperationTypeDefinition",
-          operation,
+          operation: operation.value,
           type,
-          comments: colon.comments,
+          comments: [...operation.comments, ...colon.comments],
         };
       }
     );
@@ -964,13 +968,19 @@ export function parse(source: string): DocumentNode {
 
   function parseDefinition(): DefinitionNode {
     if (isNextPunctuator("{")) {
+      const selectionSet = parseSelectionSet(false);
       return {
         kind: "OperationDefinition",
         operation: "query",
         name: null,
         variableDefinitions: [],
         directives: [],
-        selectionSet: parseSelectionSet(false).items, // TODO: this returns comments
+        selectionSet: selectionSet.items,
+        comments: [],
+        commentsVariableDefinitionsOpeningBracket: [],
+        commentsVariableDefinitionsClosingBracket: [],
+        commentsSelectionSetOpeningBracket: selectionSet.commentsOpeningBracket,
+        commentsSelectionSetClosingBracket: selectionSet.commentsClosingBracket,
       };
     }
 
@@ -985,34 +995,52 @@ export function parse(source: string): DocumentNode {
       case "subscription":
         if (description !== null)
           throw new Error(`Unexpected token "${description}"`);
+        const operation = parseOperationType();
+        const name = isNext("NAME") ? parseName() : null;
+        const variableDefinitions = takeWrappedList<VariableDefinitionNode>(
+          true,
+          "(",
+          ")",
+          () => {
+            const variable = parseVariable();
+            const colon = takePunctuator(":");
+            const type = parseType();
+            const defaultValue = parseDefaultValue();
+            const directives = parseDirectives(true);
+            const comments = [...variable.comments, ...colon.comments];
+            variable.comments = [];
+            return {
+              kind: "VariableDefinition",
+              variable,
+              type,
+              defaultValue,
+              directives,
+              comments,
+            };
+          }
+        );
+        const directives = parseDirectives(false);
+        const selectionSet = parseSelectionSet(false);
+        const comments = [
+          ...operation.comments,
+          ...(name ? name.comments : []),
+        ];
         return {
           kind: "OperationDefinition",
-          operation: parseOperationType(),
-          name: isNext("NAME") ? parseName() : null,
-          variableDefinitions: takeWrappedList<VariableDefinitionNode>(
-            true,
-            "(",
-            ")",
-            () => {
-              const variable = parseVariable();
-              const colon = takePunctuator(":");
-              const type = parseType();
-              const defaultValue = parseDefaultValue();
-              const directives = parseDirectives(true);
-              const comments = [...variable.comments, ...colon.comments];
-              variable.comments = [];
-              return {
-                kind: "VariableDefinition",
-                variable,
-                type,
-                defaultValue,
-                directives,
-                comments,
-              };
-            }
-          ).items, // TODO: this returns comments
-          directives: parseDirectives(false),
-          selectionSet: parseSelectionSet(false).items, // TODO: this returns comments,
+          operation: operation.value,
+          name,
+          variableDefinitions: variableDefinitions.items,
+          directives,
+          selectionSet: selectionSet.items,
+          comments,
+          commentsVariableDefinitionsOpeningBracket:
+            variableDefinitions.commentsOpeningBracket,
+          commentsVariableDefinitionsClosingBracket:
+            variableDefinitions.commentsClosingBracket,
+          commentsSelectionSetOpeningBracket:
+            selectionSet.commentsOpeningBracket,
+          commentsSelectionSetClosingBracket:
+            selectionSet.commentsClosingBracket,
         };
       case "fragment": {
         if (description !== null)
