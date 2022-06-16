@@ -310,6 +310,7 @@ export type DirectiveNode = {
 
 export type ArgumentNode = {
   kind: "Argument";
+  comments: CommentNode[];
   name: NameNode;
   value: ValueNode;
 };
@@ -322,6 +323,7 @@ export type DirectiveConstNode = {
 
 export type ArgumentConstNode = {
   kind: "Argument";
+  comments: CommentNode[];
   name: NameNode;
   value: ValueConstNode;
 };

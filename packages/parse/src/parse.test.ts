@@ -574,6 +574,37 @@ it("parses comments for field definitions", () => {
   ]);
 });
 
+it("parses comments for arguments", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    {
+      # comment field before
+      field # comment field after
+      # comment args open before
+      ( # comment args open after
+        # comment arg name before
+        argName # comment arg name after
+        # comment colon before
+        : # comment colon after
+        # comment arg value before
+        42 # comment arg value after
+      # comment args close before
+      ) # comment args close after
+    }
+  `);
+  expect(
+    (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FieldNode
+    ).args[0].comments
+  ).toEqual([
+    { kind: "BlockComment", value: "comment arg name before" },
+    { kind: "InlineComment", value: "comment arg name after" },
+    { kind: "BlockComment", value: "comment colon before" },
+    { kind: "InlineComment", value: "comment colon after" },
+  ]);
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {

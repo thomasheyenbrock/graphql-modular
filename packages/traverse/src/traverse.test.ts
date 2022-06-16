@@ -186,6 +186,7 @@ it("traverses with multiple layers of nesting", () => {
               },
               "args": [
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -286,6 +287,7 @@ it("traverses with multiple layers of nesting", () => {
                           },
                           "args": [
                             {
+                              "comments": [],
                               "kind": "Argument",
                               "name": {
                                 "comments": [],
@@ -299,6 +301,7 @@ it("traverses with multiple layers of nesting", () => {
                               },
                             },
                             {
+                              "comments": [],
                               "kind": "Argument",
                               "name": {
                                 "comments": [],
@@ -320,6 +323,7 @@ it("traverses with multiple layers of nesting", () => {
                             {
                               "args": [
                                 {
+                                  "comments": [],
                                   "kind": "Argument",
                                   "name": {
                                     "comments": [],
@@ -403,6 +407,7 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "args": [
                         {
+                          "comments": [],
                           "kind": "Argument",
                           "name": {
                             "comments": [],
@@ -544,6 +549,7 @@ it("traverses with multiple layers of nesting", () => {
               "alias": null,
               "args": [
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -639,6 +645,7 @@ it("traverses with multiple layers of nesting", () => {
               "alias": null,
               "args": [
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -789,6 +796,7 @@ it("traverses with multiple layers of nesting", () => {
               "alias": null,
               "args": [
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -806,6 +814,7 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -823,6 +832,7 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -898,6 +908,7 @@ it("traverses with multiple layers of nesting", () => {
               "alias": null,
               "args": [
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -911,6 +922,7 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],
@@ -924,6 +936,7 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
                 {
+                  "comments": [],
                   "kind": "Argument",
                   "name": {
                     "comments": [],

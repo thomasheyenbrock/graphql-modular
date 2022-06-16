@@ -321,12 +321,13 @@ export function parse(source: string): DocumentNode {
       true,
       "(",
       ")",
-      () => ({
-        kind: "Argument",
-        name: parseName(),
-        value:
-          (takePunctuator(":"), isConst ? parseValue(true) : parseValue(false)),
-      })
+      () => {
+        const name = parseName();
+        const colon = takePunctuator(":");
+        const value = isConst ? parseValue(true) : parseValue(false);
+        const comments = [...name.comments, ...colon.comments];
+        return { kind: "Argument", name, value, comments };
+      }
     ).items;
   }
 
