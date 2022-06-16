@@ -968,12 +968,10 @@ export function parse(source: string): DocumentNode {
         kind: "OperationDefinition",
         operation: "query",
         name: null,
-        variableDefinitions: [],
+        variableDefinitionSet: null,
         directives: [],
         selectionSet: selectionSet.items,
         comments: [],
-        commentsVariableDefinitionsOpeningBracket: [],
-        commentsVariableDefinitionsClosingBracket: [],
         commentsSelectionSetOpeningBracket: selectionSet.commentsOpeningBracket,
         commentsSelectionSetClosingBracket: selectionSet.commentsClosingBracket,
       };
@@ -1024,14 +1022,20 @@ export function parse(source: string): DocumentNode {
           kind: "OperationDefinition",
           operation: operation.value,
           name: name ? name.node : null,
-          variableDefinitions: variableDefinitions.items,
+          variableDefinitionSet:
+            variableDefinitions.items.length > 0
+              ? {
+                  kind: "VariableDefinitionSet",
+                  variableDefinitions: variableDefinitions.items,
+                  commentsOpeningBracket:
+                    variableDefinitions.commentsOpeningBracket,
+                  commentsClosingBracket:
+                    variableDefinitions.commentsClosingBracket,
+                }
+              : null,
           directives,
           selectionSet: selectionSet.items,
           comments,
-          commentsVariableDefinitionsOpeningBracket:
-            variableDefinitions.commentsOpeningBracket,
-          commentsVariableDefinitionsClosingBracket:
-            variableDefinitions.commentsClosingBracket,
           commentsSelectionSetOpeningBracket:
             selectionSet.commentsOpeningBracket,
           commentsSelectionSetClosingBracket:

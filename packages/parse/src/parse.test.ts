@@ -100,9 +100,10 @@ it("parsing comments for variables", () => {
         id
       }
     `);
-    const { variable } = (ast.definitions[0] as OperationDefinitionNode)
-      .variableDefinitions[0];
-    expect(variable.comments).toEqual([]);
+    expect(
+      (ast.definitions[0] as OperationDefinitionNode).variableDefinitionSet
+        ?.variableDefinitions[0].variable.comments
+    ).toEqual([]);
   });
 });
 
@@ -1874,6 +1875,41 @@ it("parses comments for fragment definitions", () => {
   ]);
 });
 
+it("parses comments in variable description sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    query Foo
+    # comment variable definitions open before
+    ( # comment variable definitions open after
+      $variable: Int
+    # comment variable definitions close before
+    ) # comment variable definitions close after
+    { id }
+  `);
+  const { variableDefinitionSet } = ast
+    .definitions[0] as OperationDefinitionNode;
+  expect(variableDefinitionSet?.commentsOpeningBracket).toEqual([
+    {
+      kind: "BlockComment",
+      value: "comment variable definitions open before",
+    },
+    {
+      kind: "InlineComment",
+      value: "comment variable definitions open after",
+    },
+  ]);
+  expect(variableDefinitionSet?.commentsClosingBracket).toEqual([
+    {
+      kind: "BlockComment",
+      value: "comment variable definitions close before",
+    },
+    {
+      kind: "InlineComment",
+      value: "comment variable definitions close after",
+    },
+  ]);
+});
+
 describe("parsing comments in operation definitions", () => {
   it("parses comments for query shorthand operation definitions", () => {
     const ast = parse(/* GraphQL */ `
@@ -1886,8 +1922,6 @@ describe("parsing comments in operation definitions", () => {
     `);
     const definition = ast.definitions[0] as OperationDefinitionNode;
     expect(definition.comments).toEqual([]);
-    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
-    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
     expect(definition.commentsSelectionSetOpeningBracket).toEqual([
       {
         kind: "BlockComment",
@@ -1900,7 +1934,7 @@ describe("parsing comments in operation definitions", () => {
       { kind: "InlineComment", value: "comment selection set close after" },
     ]);
   });
-  it("parses comments for operation definitions without name", () => {
+  it("parses comments for unnamed operation definitions", () => {
     const ast = parse(/* GraphQL */ `
       # prettier-ignore
       # comment keyword before
@@ -1921,8 +1955,6 @@ describe("parsing comments in operation definitions", () => {
       },
       { kind: "InlineComment", value: "comment keyword after" },
     ]);
-    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
-    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
     expect(definition.commentsSelectionSetOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment selection set open before" },
       { kind: "InlineComment", value: "comment selection set open after" },
@@ -1932,7 +1964,7 @@ describe("parsing comments in operation definitions", () => {
       { kind: "InlineComment", value: "comment selection set close after" },
     ]);
   });
-  it("parses comments for operation definitions without variables", () => {
+  it("parses comments for named operation definitions", () => {
     const ast = parse(/* GraphQL */ `
       # prettier-ignore
       # comment keyword before
@@ -1956,67 +1988,6 @@ describe("parsing comments in operation definitions", () => {
       { kind: "InlineComment", value: "comment keyword after" },
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
-    ]);
-    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([]);
-    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([]);
-    expect(definition.commentsSelectionSetOpeningBracket).toEqual([
-      { kind: "BlockComment", value: "comment selection set open before" },
-      { kind: "InlineComment", value: "comment selection set open after" },
-    ]);
-    expect(definition.commentsSelectionSetClosingBracket).toEqual([
-      { kind: "BlockComment", value: "comment selection set close before" },
-      { kind: "InlineComment", value: "comment selection set close after" },
-    ]);
-  });
-  it("parses comments for operation definitions with variables", () => {
-    const ast = parse(/* GraphQL */ `
-      # prettier-ignore
-      # comment keyword before
-      query # comment keyword after
-      # comment name before
-      Foo # comment name after
-      # comment variable definitions open before
-      ( # comment variable definitions open after
-        $variable: Int
-      # comment variable definitions close before
-      ) # comment variable definitions close after
-      # comment directive before
-      @foo # comment directive after
-      # comment selection set open before
-      { # comment selection set open after
-        id
-      # comment selection set close before
-      } # comment selection set close after
-    `);
-    const definition = ast.definitions[0] as OperationDefinitionNode;
-    expect(definition.comments).toEqual([
-      {
-        kind: "BlockComment",
-        value: "prettier-ignore\ncomment keyword before",
-      },
-      { kind: "InlineComment", value: "comment keyword after" },
-      { kind: "BlockComment", value: "comment name before" },
-      { kind: "InlineComment", value: "comment name after" },
-    ]);
-    expect(definition.commentsVariableDefinitionsOpeningBracket).toEqual([
-      {
-        kind: "BlockComment",
-        value: "comment variable definitions open before",
-      },
-      {
-        kind: "InlineComment",
-        value: "comment variable definitions open after",
-      },
-    ]);
-    expect(definition.commentsVariableDefinitionsClosingBracket).toEqual([
-      {
-        kind: "BlockComment",
-        value: "comment variable definitions close before",
-      },
-      {
-        kind: "InlineComment",
-        value: "comment variable definitions close after",
-      },
     ]);
     expect(definition.commentsSelectionSetOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment selection set open before" },
@@ -2175,11 +2146,16 @@ function parseGql(source: string): DocumentNode {
       },
     },
     OperationDefinition: {
-      leave(node) {
+      leave({ variableDefinitions, ...restNode }) {
         return {
-          ...node,
+          ...restNode,
           /** null instead of undefined */
-          name: node.name ?? null,
+          name: restNode.name ?? null,
+          /** variable definition set instead of plain list */
+          variableDefinitionSet:
+            variableDefinitions.length > 0
+              ? { kind: "VariableDefinitionSet", variableDefinitions }
+              : null,
         };
       },
     },

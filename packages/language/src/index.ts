@@ -47,6 +47,7 @@ export type AstNodes = {
   InputObjectTypeDefinition: InputObjectTypeDefinitionNode;
   InputObjectTypeExtension: InputObjectTypeExtensionNode;
   DirectiveDefinition: DirectiveDefinitionNode;
+  VariableDefinitionSet: VariableDefinitionSetNode;
   VariableDefinition: VariableDefinitionNode;
   Directive: DirectiveNode | DirectiveConstNode;
   Argument: ArgumentNode | ArgumentConstNode;
@@ -87,13 +88,11 @@ export type ExecutableDefinitionNode =
 export type OperationDefinitionNode = {
   kind: "OperationDefinition";
   comments: CommentNode[];
-  commentsVariableDefinitionsOpeningBracket: CommentNode[];
-  commentsVariableDefinitionsClosingBracket: CommentNode[];
   commentsSelectionSetOpeningBracket: CommentNode[];
   commentsSelectionSetClosingBracket: CommentNode[];
   operation: OperationType;
   name: NameNode | null;
-  variableDefinitions: VariableDefinitionNode[];
+  variableDefinitionSet: VariableDefinitionSetNode | null;
   directives: DirectiveNode[];
   selectionSet: SelectionNode[];
 };
@@ -358,6 +357,13 @@ export type TypeSystemDirectiveLocationNode = {
   kind: "TypeSystemDirectiveLocation";
   comments: CommentNode[];
   value: typeof TYPE_SYSTEM_DIRECTIVE_LOCATION[number];
+};
+
+export type VariableDefinitionSetNode = {
+  kind: "VariableDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  variableDefinitions: VariableDefinitionNode[];
 };
 
 export type VariableDefinitionNode = {
