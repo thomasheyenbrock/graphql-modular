@@ -477,7 +477,11 @@ export function parse(source: string): DocumentNode {
     );
   }
 
-  function parseFieldDefinitions(): FieldDefinitionNode[] {
+  function parseFieldDefinitions(): {
+    items: FieldDefinitionNode[];
+    commentsOpenBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  } {
     return takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => {
       const description = parseDescription();
       const name = parseName();
@@ -500,7 +504,7 @@ export function parse(source: string): DocumentNode {
         directives,
         comments,
       };
-    }).items; // TODO: this returns comments
+    });
   }
 
   function parseEnumValue(): EnumValueNode {
@@ -591,7 +595,7 @@ export function parse(source: string): DocumentNode {
     const name = parseName();
     const interfaces = parseInterfaces();
     const directives = parseDirectives(true);
-    const fields = parseFieldDefinitions();
+    const fields = parseFieldDefinitions().items; // TODO: this returns comments
     if (isExtension)
       assertCombinedListLength([interfaces, directives, fields], "{");
     return isExtension
@@ -628,7 +632,7 @@ export function parse(source: string): DocumentNode {
     const name = parseName();
     const interfaces = parseInterfaces();
     const directives = parseDirectives(true);
-    const fields = parseFieldDefinitions();
+    const fields = parseFieldDefinitions().items; // TODO: this returns comments
     if (isExtension)
       assertCombinedListLength([interfaces, directives, fields], "{");
     return isExtension
