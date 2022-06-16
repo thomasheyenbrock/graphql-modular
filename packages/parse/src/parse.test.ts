@@ -15,6 +15,7 @@ import {
   ObjectValueNode,
   OperationDefinitionNode,
   StringValueNode,
+  UnionTypeDefinitionNode,
   VariableNode,
 } from "@graphql-modular/language";
 import fs from "fs";
@@ -690,6 +691,180 @@ describe("parsing comments for directives", () => {
       { kind: "InlineComment", value: "comment args open after" },
       { kind: "BlockComment", value: "comment args close before" },
       { kind: "InlineComment", value: "comment args close after" },
+    ]);
+  });
+});
+
+describe("parsing comments for interface implementations", () => {
+  it("parses comments for a single interface implementation", () => {
+    const ast = parse(`
+      # prettier-ignore
+      type Foo implements
+      # comment before
+      SomeInterface # comment after
+    `);
+    expect(
+      (ast.definitions[0] as ObjectTypeDefinitionNode).interfaces[0].comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment before" },
+      { kind: "InlineComment", value: "comment after" },
+    ]);
+  });
+  it("parses comments for multiple interface implementations", () => {
+    const ast = parse(`
+      # prettier-ignore
+      type Foo implements
+      # comment name 1 before
+      SomeInterface1 # comment name 1 after
+      # comment delimiter 2 before
+      & # comment delimiter 2 after
+      # comment name 2 before
+      SomeInterface2 # comment name 2 after
+      # comment delimiter 3 before
+      & # comment delimiter 3 after
+      # comment name 3 before
+      SomeInterface3 # comment name 3 after
+    `);
+    const { interfaces } = ast.definitions[0] as ObjectTypeDefinitionNode;
+    expect(interfaces[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment name 1 before" },
+      { kind: "InlineComment", value: "comment name 1 after" },
+    ]);
+    expect(interfaces[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment name 2 before" },
+      { kind: "InlineComment", value: "comment name 2 after" },
+    ]);
+    expect(interfaces[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment name 3 before" },
+      { kind: "InlineComment", value: "comment name 3 after" },
+    ]);
+  });
+  it("parses comments for multiple interface implementations with leading delimiter", () => {
+    const ast = parse(`
+      # prettier-ignore
+      type Foo implements
+      # comment delimiter 1 before
+      & # comment delimiter 1 after
+      # comment name 1 before
+      SomeInterface1 # comment name 1 after
+      # comment delimiter 2 before
+      & # comment delimiter 2 after
+      # comment name 2 before
+      SomeInterface2 # comment name 2 after
+      # comment delimiter 3 before
+      & # comment delimiter 3 after
+      # comment name 3 before
+      SomeInterface3 # comment name 3 after
+    `);
+    const { interfaces } = ast.definitions[0] as ObjectTypeDefinitionNode;
+    expect(interfaces[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 1 before" },
+      { kind: "InlineComment", value: "comment delimiter 1 after" },
+      { kind: "BlockComment", value: "comment name 1 before" },
+      { kind: "InlineComment", value: "comment name 1 after" },
+    ]);
+    expect(interfaces[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment name 2 before" },
+      { kind: "InlineComment", value: "comment name 2 after" },
+    ]);
+    expect(interfaces[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment name 3 before" },
+      { kind: "InlineComment", value: "comment name 3 after" },
+    ]);
+  });
+});
+
+describe("parsing comments for union type members", () => {
+  it("parses comments for a single member", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      union Foo =
+      # comment before
+      SomeType # comment after
+    `);
+    expect(
+      (ast.definitions[0] as UnionTypeDefinitionNode).types[0].comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment before" },
+      { kind: "InlineComment", value: "comment after" },
+    ]);
+  });
+  it("parses comments for multiple members", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      union Foo =
+      # comment name 1 before
+      SomeType1 # comment name 1 after
+      # comment delimiter 2 before
+      | # comment delimiter 2 after
+      # comment name 2 before
+      SomeType2 # comment name 2 after
+      # comment delimiter 3 before
+      | # comment delimiter 3 after
+      # comment name 3 before
+      SomeType3 # comment name 3 after
+    `);
+    const { types } = ast.definitions[0] as UnionTypeDefinitionNode;
+    expect(types[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment name 1 before" },
+      { kind: "InlineComment", value: "comment name 1 after" },
+    ]);
+    expect(types[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment name 2 before" },
+      { kind: "InlineComment", value: "comment name 2 after" },
+    ]);
+    expect(types[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment name 3 before" },
+      { kind: "InlineComment", value: "comment name 3 after" },
+    ]);
+  });
+  it("parses comments for multiple members with leading delimiter", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      union Foo =
+      # comment delimiter 1 before
+      | # comment delimiter 1 after
+      # comment name 1 before
+      SomeType1 # comment name 1 after
+      # comment delimiter 2 before
+      | # comment delimiter 2 after
+      # comment name 2 before
+      SomeType2 # comment name 2 after
+      # comment delimiter 3 before
+      | # comment delimiter 3 after
+      # comment name 3 before
+      SomeType3 # comment name 3 after
+    `);
+    const { types } = ast.definitions[0] as UnionTypeDefinitionNode;
+    expect(types[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 1 before" },
+      { kind: "InlineComment", value: "comment delimiter 1 after" },
+      { kind: "BlockComment", value: "comment name 1 before" },
+      { kind: "InlineComment", value: "comment name 1 after" },
+    ]);
+    expect(types[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment name 2 before" },
+      { kind: "InlineComment", value: "comment name 2 after" },
+    ]);
+    expect(types[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment name 3 before" },
+      { kind: "InlineComment", value: "comment name 3 after" },
     ]);
   });
 });

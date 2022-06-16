@@ -149,7 +149,7 @@ export function parse(source: string): DocumentNode {
   function takeDelimitedList<T>(
     delimiter: string,
     initializer: Token,
-    callback: () => T
+    callback: (comments: CommentNode[]) => T
   ) {
     const items: T[] = [];
 
@@ -163,14 +163,16 @@ export function parse(source: string): DocumentNode {
       return { items, initializerComments: [] };
     }
 
+    let comments: CommentNode[] = [];
     try {
-      takePunctuator(delimiter);
+      comments = takePunctuator(delimiter).comments;
     } catch {}
 
-    items.push(callback());
+    items.push(callback(comments));
 
-    while (takeIfNextPunctuator(delimiter).token) {
-      items.push(callback());
+    let token: Token | undefined;
+    while ((({ token, comments } = takeIfNextPunctuator(delimiter)), token)) {
+      items.push(callback(comments));
     }
 
     return { items, initializerComments };
@@ -436,7 +438,11 @@ export function parse(source: string): DocumentNode {
     return takeDelimitedList<NamedTypeNode>(
       "&",
       { type: "NAME", value: "implements" },
-      () => parseNamedType()
+      (comments) => {
+        const type = parseNamedType();
+        type.comments.unshift(...comments);
+        return type;
+      }
     );
   }
 
@@ -678,7 +684,11 @@ export function parse(source: string): DocumentNode {
     const types = takeDelimitedList<NamedTypeNode>(
       "|",
       { type: "PUNCTUATOR", value: "=" },
-      () => parseNamedType()
+      (comments) => {
+        const type = parseNamedType();
+        type.comments.unshift(...comments);
+        return type;
+      }
     ).items; // TODO: this returns comments
     if (isExtension) assertCombinedListLength([directives, types], "=");
     return isExtension
