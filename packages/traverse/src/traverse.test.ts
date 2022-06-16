@@ -68,6 +68,7 @@ it("transforms a node with nested items", () => {
   const node: NamedTypeNode = {
     kind: "NamedType",
     name: { kind: "Name", value: "abcd", comments: [] },
+    comments: [],
   };
   expect(
     traverse(node, {
@@ -82,6 +83,7 @@ it("transforms a node with nested items", () => {
     })
   ).toMatchInlineSnapshot(`
     {
+      "comments": [],
       "kind": "NamedType",
       "name": {
         "comments": [],
@@ -97,10 +99,12 @@ it("transforms a list of nodes with nested items", () => {
     {
       kind: "NamedType",
       name: { kind: "Name", value: "abcd", comments: [] },
+      comments: [],
     },
     {
       kind: "NamedType",
       name: { kind: "Name", value: "ABCD", comments: [] },
+      comments: [],
     },
   ];
   expect(
@@ -117,6 +121,7 @@ it("transforms a list of nodes with nested items", () => {
   ).toMatchInlineSnapshot(`
     [
       {
+        "comments": [],
         "kind": "NamedType",
         "name": {
           "comments": [],
@@ -125,6 +130,7 @@ it("transforms a list of nodes with nested items", () => {
         },
       },
       {
+        "comments": [],
         "kind": "NamedType",
         "name": {
           "comments": [],
@@ -383,6 +389,7 @@ it("traverses with multiple layers of nesting", () => {
                     },
                   ],
                   "typeCondition": {
+                    "comments": [],
                     "kind": "NamedType",
                     "name": {
                       "comments": [],
@@ -466,6 +473,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "VariableDefinition",
               "type": {
+                "comments": [],
                 "kind": "NamedType",
                 "name": {
                   "comments": [],
@@ -492,6 +500,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [],
               "kind": "VariableDefinition",
               "type": {
+                "comments": [],
                 "kind": "NamedType",
                 "name": {
                   "comments": [],
@@ -737,6 +746,7 @@ it("traverses with multiple layers of nesting", () => {
               ],
               "kind": "VariableDefinition",
               "type": {
+                "comments": [],
                 "kind": "NamedType",
                 "name": {
                   "comments": [],
@@ -869,6 +879,7 @@ it("traverses with multiple layers of nesting", () => {
             },
           ],
           "typeCondition": {
+            "comments": [],
             "kind": "NamedType",
             "name": {
               "comments": [],

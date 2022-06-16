@@ -348,16 +348,19 @@ export type TypeNode = NamedTypeNode | ListTypeNode | NonNullTypeNode;
 
 export type NamedTypeNode = {
   kind: "NamedType";
+  comments: CommentNode[];
   name: NameNode;
 };
 
 export type ListTypeNode = {
   kind: "ListType";
+  comments: CommentNode[];
   type: TypeNode;
 };
 
 export type NonNullTypeNode = {
   kind: "NonNullType";
+  comments: CommentNode[];
   type: NamedTypeNode | ListTypeNode;
 };
 

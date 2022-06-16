@@ -199,18 +199,30 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseNamedType(): NamedTypeNode {
-    return { kind: "NamedType", name: parseName() };
+    const name = parseName();
+    const comments = name.comments;
+    name.comments = [];
+    return { kind: "NamedType", name, comments };
   }
 
   function parseType(): TypeNode {
-    if (takeIfNextPunctuator("[").token) {
+    const open = takeIfNextPunctuator("[");
+    if (open.token) {
       const type = parseType();
-      takePunctuator("]");
+      const close = takePunctuator("]");
 
-      const listType: ListTypeNode = { kind: "ListType", type };
+      const listType: ListTypeNode = {
+        kind: "ListType",
+        type,
+        comments: [...open.comments, ...type.comments, ...close.comments],
+      };
+      type.comments = [];
 
-      if (takeIfNextPunctuator("!").token) {
-        return { kind: "NonNullType", type: listType };
+      const bang = takeIfNextPunctuator("!");
+      if (bang.token) {
+        const comments = [...listType.comments, ...bang.comments];
+        listType.comments = [];
+        return { kind: "NonNullType", type: listType, comments };
       }
 
       return listType;
@@ -218,8 +230,11 @@ export function parse(source: string): DocumentNode {
 
     const name = parseNamedType();
 
-    if (takeIfNextPunctuator("!").token) {
-      return { kind: "NonNullType", type: name };
+    const bang = takeIfNextPunctuator("!");
+    if (bang.token) {
+      const comments = [...name.comments, ...bang.comments];
+      name.comments = [];
+      return { kind: "NonNullType", type: name, comments };
     }
 
     return name;

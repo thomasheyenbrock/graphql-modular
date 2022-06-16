@@ -6,7 +6,9 @@ import {
   FieldNode,
   FloatValueNode,
   IntValueNode,
+  ListTypeNode,
   ListValueNode,
+  NonNullTypeNode,
   NullValueNode,
   ObjectTypeDefinitionNode,
   ObjectValueNode,
@@ -16,7 +18,7 @@ import {
 import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
 import path from "path";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { parse } from "./parse";
 
 const LANGUAGE = fs.readFileSync(
@@ -64,7 +66,7 @@ it("parses comments for variables", () => {
   expect(variable.name.comments).toEqual([]);
 });
 
-it("parses comments for value nodes", () => {
+it("parses comments for values", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     query Foo {
@@ -167,7 +169,7 @@ it("parses comments for descriptions", () => {
     }
   `);
   const { description } = ast.definitions[0] as ObjectTypeDefinitionNode;
-  expect(description.comments).toEqual([
+  expect(description?.comments).toEqual([
     { kind: "BlockComment", value: "prettier-ignore\ncomment before" },
     { kind: "InlineComment", value: "comment after" },
   ]);
@@ -187,6 +189,190 @@ it("parses comments for enum values", () => {
     { kind: "InlineComment", value: "comment after" },
   ]);
 });
+
+describe("comments for types", () => {
+  it("parses comments for named types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        name: 
+        # comment name before
+        ID # comment name after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+  });
+  it("parses comments for non-null types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        nonNull:
+        # comment name before
+        ID # comment name after
+        # comment bang before
+        ! # comment bang after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment bang before" },
+      { kind: "InlineComment", value: "comment bang after" },
+    ]);
+    expect((type as NonNullTypeNode).type.comments).toEqual([]);
+  });
+  it("parses comments for list types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        list:
+        # comment open before
+        [ # comment open after
+        # comment name before
+        ID # comment name after
+        # comment close before
+        ] # comment close after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment open before" },
+      { kind: "InlineComment", value: "comment open after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment close before" },
+      { kind: "InlineComment", value: "comment close after" },
+    ]);
+    expect((type as ListTypeNode).type.comments).toEqual([]);
+  });
+  it("parses comments for list-non-null types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        listNonNull:
+        # comment open before
+        [ # comment open after
+        # comment name before
+        ID # comment name after
+        # comment bang before
+        ! # comment bang after
+        # comment close before
+        ] # comment close after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment open before" },
+      { kind: "InlineComment", value: "comment open after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment bang before" },
+      { kind: "InlineComment", value: "comment bang after" },
+      { kind: "BlockComment", value: "comment close before" },
+      { kind: "InlineComment", value: "comment close after" },
+    ]);
+    expect((type as ListTypeNode).type.comments).toEqual([]);
+  });
+  it("parses comments for non-null-list types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        nonNullList:
+        # comment open before
+        [ # comment open after
+        # comment name before
+        ID # comment name after
+        # comment close before
+        ] # comment close after
+        # comment bang before
+        ! # comment bang after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment open before" },
+      { kind: "InlineComment", value: "comment open after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment close before" },
+      { kind: "InlineComment", value: "comment close after" },
+      { kind: "BlockComment", value: "comment bang before" },
+      { kind: "InlineComment", value: "comment bang after" },
+    ]);
+    expect((type as NonNullTypeNode).type.comments).toEqual([]);
+  });
+  it("parses comments for non-null-list-non-null types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        nonNullListNonNull:
+        # comment open before
+        [ # comment open after
+        # comment name before
+        ID # comment name after
+        # comment bang before
+        ! # comment bang after
+        # comment close before
+        ] # comment close after
+        # comment bang before
+        ! # comment bang after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment open before" },
+      { kind: "InlineComment", value: "comment open after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment bang before" },
+      { kind: "InlineComment", value: "comment bang after" },
+      { kind: "BlockComment", value: "comment close before" },
+      { kind: "InlineComment", value: "comment close after" },
+      { kind: "BlockComment", value: "comment bang before" },
+      { kind: "InlineComment", value: "comment bang after" },
+    ]);
+    expect((type as NonNullTypeNode).type.comments).toEqual([]);
+  });
+  it("parses comments for nested list types", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      type Foo {
+        nestedList:
+        # comment open outer before
+        [ # comment open outer after
+        # comment open inner before
+        [ # comment open inner after
+        # comment name before
+        ID # comment name after
+        # comment close inner before
+        ] # comment close inner after
+        # comment close outer before
+        ] # comment close outer after
+      }
+    `);
+    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
+    expect(type.comments).toEqual([
+      { kind: "BlockComment", value: "comment open outer before" },
+      { kind: "InlineComment", value: "comment open outer after" },
+      { kind: "BlockComment", value: "comment open inner before" },
+      { kind: "InlineComment", value: "comment open inner after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+      { kind: "BlockComment", value: "comment close inner before" },
+      { kind: "InlineComment", value: "comment close inner after" },
+      { kind: "BlockComment", value: "comment close outer before" },
+      { kind: "InlineComment", value: "comment close outer after" },
+    ]);
+    expect((type as ListTypeNode).type.comments).toEqual([]);
+  });
+});
+
+// TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
   let start = Date.now();
