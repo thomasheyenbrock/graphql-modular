@@ -19,6 +19,8 @@ import {
   ObjectTypeExtensionNode,
   ObjectValueNode,
   OperationDefinitionNode,
+  ScalarTypeDefinitionNode,
+  ScalarTypeExtensionNode,
   StringValueNode,
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
@@ -1435,6 +1437,55 @@ it("parses comments for object type extensions", () => {
   expect(definition.commentsFieldsClosingBracket).toEqual([
     { kind: "BlockComment", value: "comment fields close before" },
     { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for scalar type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    scalar # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+  `);
+  const definition = ast.definitions[0] as ScalarTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+});
+
+it("parses comments for scalar type extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    scalar # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+  `);
+  const definition = ast.definitions[0] as ScalarTypeExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
   ]);
 });
 

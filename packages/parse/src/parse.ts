@@ -571,24 +571,41 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseScalarTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): ScalarTypeDefinitionNode;
   function parseScalarTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): ScalarTypeExtensionNode;
   function parseScalarTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): ScalarTypeDefinitionNode | ScalarTypeExtensionNode {
-    takeToken("NAME", "scalar");
+    const keyword = takeToken("NAME", "scalar");
     const name = parseName();
     const directives = parseDirectives(true);
-    if (isExtension) assertCombinedListLength([directives], "@");
-    return isExtension
-      ? { kind: "ScalarTypeExtension", name, directives }
-      : { kind: "ScalarTypeDefinition", description, name, directives };
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    name.comments = [];
+    if (extendComments) assertCombinedListLength([directives], "@");
+    return extendComments
+      ? {
+          kind: "ScalarTypeExtension",
+          name,
+          directives,
+          comments,
+        }
+      : {
+          kind: "ScalarTypeDefinition",
+          description,
+          name,
+          directives,
+          comments,
+        };
   }
 
   function parseObjectTypeDefinition(
@@ -613,6 +630,7 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
+    name.comments = [];
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
@@ -666,6 +684,7 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
+    name.comments = [];
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
@@ -726,6 +745,7 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
+    name.comments = [];
     if (extendComments)
       assertCombinedListLength([directives, types.items], "=");
     return extendComments
@@ -868,7 +888,7 @@ export function parse(source: string): DocumentNode {
       case "schema":
         return parseSchemaDefinition(true);
       case "scalar":
-        return parseScalarTypeDefinition(true);
+        return parseScalarTypeDefinition(comments);
       case "type":
         return parseObjectTypeDefinition(comments);
       case "interface":
@@ -949,7 +969,7 @@ export function parse(source: string): DocumentNode {
       case "schema":
         return parseSchemaDefinition(false, description);
       case "scalar":
-        return parseScalarTypeDefinition(false, description);
+        return parseScalarTypeDefinition(null, description);
       case "type":
         return parseObjectTypeDefinition(null, description);
       case "interface":

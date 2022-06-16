@@ -174,6 +174,7 @@ export type SchemaExtensionNode = {
 
 export type ScalarTypeDefinitionNode = {
   kind: "ScalarTypeDefinition";
+  comments: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
@@ -181,6 +182,7 @@ export type ScalarTypeDefinitionNode = {
 
 export type ScalarTypeExtensionNode = {
   kind: "ScalarTypeExtension";
+  comments: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
 };
