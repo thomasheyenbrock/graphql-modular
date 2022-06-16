@@ -40,7 +40,7 @@ import {
   VariableDefinitionNode,
   VariableNode,
 } from "@graphql-modular/language";
-import { Token, tokenize } from "./tokenize";
+import { LexicalToken, Token, tokenize } from "./tokenize";
 
 import type {
   DefinitionNode,
@@ -790,10 +790,10 @@ export function parse(source: string): DocumentNode {
 
 class TokenStream {
   private iterator: IterableIterator<Token>;
-  private next: Token | undefined;
-  private nextNext: Token | undefined;
+  private next: LexicalToken | undefined;
+  private nextNext: LexicalToken | undefined;
   private peekCache:
-    | { token: Token | undefined; comments: CommentNode[] }
+    | { token: LexicalToken | undefined; comments: CommentNode[] }
     | undefined;
 
   constructor(source: string) {
@@ -829,16 +829,17 @@ class TokenStream {
         nextToken = this.iterator.next().value;
       }
 
-      this.peekCache.token = nextToken;
+      this.peekCache.token = nextToken as LexicalToken;
 
-      this.nextNext = this.iterator.next().value;
-      while (this.nextNext && this.nextNext.type === "INLINE_COMMENT") {
+      let nextNext: Token | undefined = this.iterator.next().value;
+      while (nextNext && nextNext.type === "INLINE_COMMENT") {
         this.peekCache.comments.push({
           kind: "InlineComment",
-          value: this.nextNext.value,
+          value: nextNext.value,
         });
-        this.nextNext = this.iterator.next().value;
+        nextNext = this.iterator.next().value;
       }
+      this.nextNext = nextNext as LexicalToken;
     }
     return this.peekCache;
   }

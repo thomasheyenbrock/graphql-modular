@@ -1,5 +1,12 @@
-export type Token = {
-  type: typeof LEXICAL_TOKENS[number]["t"] | typeof COMMENTS[number]["t"];
+export type Token = LexicalToken | CommentToken;
+
+export type LexicalToken = {
+  type: typeof LEXICAL_TOKENS[number]["t"];
+  value: string;
+};
+
+export type CommentToken = {
+  type: typeof COMMENTS[number]["t"];
   value: string;
 };
 
