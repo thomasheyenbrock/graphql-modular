@@ -714,12 +714,20 @@ export function parse(source: string): DocumentNode {
       true,
       "{",
       "}",
-      () => ({
-        kind: "EnumValueDefinition",
-        description: parseDescription(),
-        name: parseEnumValue(),
-        directives: parseDirectives(true),
-      })
+      () => {
+        const description = parseDescription();
+        const name = parseEnumValue();
+        const directives = parseDirectives(true);
+        const comments = name.comments;
+        name.comments = [];
+        return {
+          kind: "EnumValueDefinition",
+          description,
+          name,
+          directives,
+          comments,
+        };
+      }
     ).items; // TODO: this returns comments
     if (isExtension) assertCombinedListLength([directives, values], "{");
     return isExtension

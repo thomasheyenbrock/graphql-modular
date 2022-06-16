@@ -251,6 +251,7 @@ export type EnumTypeExtensionNode = {
 
 export type EnumValueDefinitionNode = {
   kind: "EnumValueDefinition";
+  comments: CommentNode[];
   description: StringValueNode | null;
   name: EnumValueNode;
   directives: DirectiveConstNode[];

@@ -316,7 +316,7 @@ it("parses comments for descriptions", () => {
   ]);
 });
 
-it("parses comments for enum values", () => {
+it("parses comments for enum value definitions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     enum Foo {
@@ -324,11 +324,12 @@ it("parses comments for enum values", () => {
       ABC # comment after
     }
   `);
-  const { name } = (ast.definitions[0] as EnumTypeDefinitionNode).values[0];
-  expect(name.comments).toEqual([
+  const value = (ast.definitions[0] as EnumTypeDefinitionNode).values[0];
+  expect(value.comments).toEqual([
     { kind: "BlockComment", value: "comment before" },
     { kind: "InlineComment", value: "comment after" },
   ]);
+  expect(value.name.comments).toEqual([]);
 });
 
 describe("comments for types", () => {
