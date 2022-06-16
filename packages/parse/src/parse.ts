@@ -15,6 +15,7 @@ import {
   InputObjectTypeDefinitionNode,
   InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
+  InputValueDefinitionSetNode,
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
   ListTypeNode,
@@ -79,9 +80,13 @@ export function parse(source: string): DocumentNode {
 
   function assertCombinedListLength(
     lists: unknown[][],
+    nullableObjects: unknown[],
     expectedPunctuator: string
   ) {
-    if (lists.every((list) => list.length === 0))
+    if (
+      lists.every((list) => list.length === 0) &&
+      nullableObjects.every((obj) => obj === null)
+    )
       assertToken("PUNCTUATOR", expectedPunctuator);
   }
 
@@ -489,37 +494,42 @@ export function parse(source: string): DocumentNode {
     return parseValue(true);
   }
 
-  function parseInputValueDefinitions(
+  function parseInputValueDefinitionSet(
     startPunctuator: string,
     endPunctuator: string
-  ): {
-    items: InputValueDefinitionNode[];
-    commentsOpeningBracket: CommentNode[];
-    commentsClosingBracket: CommentNode[];
-  } {
-    return takeWrappedList<InputValueDefinitionNode>(
-      true,
-      startPunctuator,
-      endPunctuator,
-      () => {
-        const description = parseDescription();
-        const name = parseName();
-        const colon = takePunctuator(":");
-        const type = parseType();
-        const defaultValue = parseDefaultValue();
-        const directives = parseDirectives(true);
-        const comments = [...name.comments, ...colon.comments];
-        return {
-          kind: "InputValueDefinition",
-          description,
-          name: name.node,
-          type,
-          defaultValue,
-          directives,
-          comments,
+  ): InputValueDefinitionSetNode | null {
+    const { items, commentsOpeningBracket, commentsClosingBracket } =
+      takeWrappedList<InputValueDefinitionNode>(
+        true,
+        startPunctuator,
+        endPunctuator,
+        () => {
+          const description = parseDescription();
+          const name = parseName();
+          const colon = takePunctuator(":");
+          const type = parseType();
+          const defaultValue = parseDefaultValue();
+          const directives = parseDirectives(true);
+          const comments = [...name.comments, ...colon.comments];
+          return {
+            kind: "InputValueDefinition",
+            description,
+            name: name.node,
+            type,
+            defaultValue,
+            directives,
+            comments,
+          };
+        }
+      );
+    return items.length === 0
+      ? null
+      : {
+          kind: "InputValueDefinitionSet",
+          inputValueDefinitions: items,
+          commentsOpeningBracket,
+          commentsClosingBracket,
         };
-      }
-    );
   }
 
   function parseFieldDefinitions(): {
@@ -530,7 +540,7 @@ export function parse(source: string): DocumentNode {
     return takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => {
       const description = parseDescription();
       const name = parseName();
-      const args = parseInputValueDefinitions("(", ")");
+      const inputValueDefinitionSet = parseInputValueDefinitionSet("(", ")");
       const colon = takePunctuator(":");
       const type = parseType();
       const directives = parseDirectives(true);
@@ -539,12 +549,10 @@ export function parse(source: string): DocumentNode {
         kind: "FieldDefinition",
         description,
         name: name.node,
-        args: args.items,
+        inputValueDefinitionSet,
         type,
         directives,
         comments,
-        commentsArgsOpeningBracket: args.commentsOpeningBracket,
-        commentsArgsClosingBracket: args.commentsClosingBracket,
       };
     });
   }
@@ -596,7 +604,7 @@ export function parse(source: string): DocumentNode {
     );
     const comments = [...(extendComments || []), ...keyword.comments];
     if (extendComments)
-      assertCombinedListLength([directives, operationTypes.items], "{");
+      assertCombinedListLength([directives, operationTypes.items], [], "{");
     return extendComments
       ? {
           kind: "SchemaExtension",
@@ -641,7 +649,7 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    if (extendComments) assertCombinedListLength([directives], "@");
+    if (extendComments) assertCombinedListLength([directives], [], "@");
     return extendComments
       ? {
           kind: "ScalarTypeExtension",
@@ -683,6 +691,7 @@ export function parse(source: string): DocumentNode {
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
+        [],
         "{"
       );
     return extendComments
@@ -736,6 +745,7 @@ export function parse(source: string): DocumentNode {
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
+        [],
         "{"
       );
     return extendComments
@@ -794,7 +804,7 @@ export function parse(source: string): DocumentNode {
       ...name.comments,
     ];
     if (extendComments)
-      assertCombinedListLength([directives, types.items], "=");
+      assertCombinedListLength([directives, types.items], [], "=");
     return extendComments
       ? {
           kind: "UnionTypeExtension",
@@ -855,7 +865,7 @@ export function parse(source: string): DocumentNode {
       ...name.comments,
     ];
     if (extendComments)
-      assertCombinedListLength([directives, values.items], "{");
+      assertCombinedListLength([directives, values.items], [], "{");
     return extendComments
       ? {
           kind: "EnumTypeExtension",
@@ -893,33 +903,29 @@ export function parse(source: string): DocumentNode {
     const keyword = takeToken("NAME", "input");
     const name = parseName();
     const directives = parseDirectives(true);
-    const fields = parseInputValueDefinitions("{", "}");
+    const inputValueDefinitionSet = parseInputValueDefinitionSet("{", "}");
     const comments = [
       ...(extendComments || []),
       ...keyword.comments,
       ...name.comments,
     ];
     if (extendComments)
-      assertCombinedListLength([directives, fields.items], "{");
+      assertCombinedListLength([directives], [inputValueDefinitionSet], "{");
     return extendComments
       ? {
           kind: "InputObjectTypeExtension",
           name: name.node,
           directives,
-          fields: fields.items,
+          inputValueDefinitionSet,
           comments,
-          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
-          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         }
       : {
           kind: "InputObjectTypeDefinition",
           description,
           name: name.node,
           directives,
-          fields: fields.items,
+          inputValueDefinitionSet,
           comments,
-          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
-          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         };
   }
 
@@ -1062,7 +1068,7 @@ export function parse(source: string): DocumentNode {
         const keyword = takeToken("NAME", "directive");
         const at = takePunctuator("@");
         const name = parseName();
-        const args = parseInputValueDefinitions("(", ")");
+        const inputValueDefinitionSet = parseInputValueDefinitionSet("(", ")");
         const repeatable = isNext("NAME", "repeatable")
           ? (tokens.take(), true)
           : false;
@@ -1089,12 +1095,10 @@ export function parse(source: string): DocumentNode {
           kind: "DirectiveDefinition",
           description,
           name: name.node,
-          args: args.items,
+          inputValueDefinitionSet,
           repeatable,
           locations: locations.items,
           comments,
-          commentsArgsOpeningBracket: args.commentsOpeningBracket,
-          commentsArgsClosingBracket: args.commentsClosingBracket,
           commentsLocations: locations.initializerComments,
         };
       }

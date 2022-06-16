@@ -53,6 +53,7 @@ export type AstNodes = {
   Directive: DirectiveNode | DirectiveConstNode;
   Argument: ArgumentNode | ArgumentConstNode;
   FieldDefinition: FieldDefinitionNode;
+  InputValueDefinitionSet: InputValueDefinitionSetNode;
   InputValueDefinition: InputValueDefinitionNode;
   NamedType: NamedTypeNode;
   ListType: ListTypeNode;
@@ -310,33 +311,27 @@ export type EnumValueDefinitionNode = {
 export type InputObjectTypeDefinitionNode = {
   kind: "InputObjectTypeDefinition";
   comments: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
-  fields: InputValueDefinitionNode[];
+  inputValueDefinitionSet: InputValueDefinitionSetNode | null;
 };
 
 export type InputObjectTypeExtensionNode = {
   kind: "InputObjectTypeExtension";
   comments: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
-  fields: InputValueDefinitionNode[];
+  inputValueDefinitionSet: InputValueDefinitionSetNode | null;
 };
 
 export type DirectiveDefinitionNode = {
   kind: "DirectiveDefinition";
   comments: CommentNode[];
-  commentsArgsOpeningBracket: CommentNode[];
-  commentsArgsClosingBracket: CommentNode[];
   commentsLocations: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
-  args: InputValueDefinitionNode[];
+  inputValueDefinitionSet: InputValueDefinitionSetNode | null;
   repeatable: boolean;
   locations: DirectiveLocationNode[];
 };
@@ -418,13 +413,18 @@ export type ArgumentConstNode = {
 export type FieldDefinitionNode = {
   kind: "FieldDefinition";
   comments: CommentNode[];
-  commentsArgsOpeningBracket: CommentNode[];
-  commentsArgsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
-  args: InputValueDefinitionNode[];
+  inputValueDefinitionSet: InputValueDefinitionSetNode | null;
   type: TypeNode;
   directives: DirectiveConstNode[];
+};
+
+export type InputValueDefinitionSetNode = {
+  kind: "InputValueDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  inputValueDefinitions: InputValueDefinitionNode[];
 };
 
 export type InputValueDefinitionNode = {
