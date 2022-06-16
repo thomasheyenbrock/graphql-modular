@@ -254,20 +254,25 @@ export function parse(source: string): DocumentNode {
       };
     }
     if (isNextPunctuator("{")) {
-      return {
-        kind: "ObjectValue",
-        fields: takeWrappedList<ObjectFieldNode | ObjectFieldConstNode>(
+      const { items, commentsOpenBracket, commentsClosingBracket } =
+        takeWrappedList<ObjectFieldNode | ObjectFieldConstNode>(
           false,
           "{",
           "}",
-          () => ({
-            kind: "ObjectField",
-            name: parseName(),
-            value:
-              (takePunctuator(":"),
-              isConst ? parseValue(true) : parseValue(false)),
-          })
-        ).items,
+          () => {
+            const name = parseName();
+            const colon = takePunctuator(":");
+            const value = isConst ? parseValue(true) : parseValue(false);
+            const comments = [...name.comments, ...colon.comments];
+            name.comments = [];
+            return { kind: "ObjectField", name, value, comments };
+          }
+        );
+      return {
+        kind: "ObjectValue",
+        fields: items,
+        commentsOpenBracket,
+        commentsClosingBracket,
       };
     }
 

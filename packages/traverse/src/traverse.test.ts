@@ -820,8 +820,11 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "bjbj",
                   },
                   "value": {
+                    "commentsClosingBracket": [],
+                    "commentsOpenBracket": [],
                     "fields": [
                       {
+                        "comments": [],
                         "kind": "ObjectField",
                         "name": {
                           "comments": [],
@@ -836,6 +839,7 @@ it("traverses with multiple layers of nesting", () => {
                         },
                       },
                       {
+                        "comments": [],
                         "kind": "ObjectField",
                         "name": {
                           "comments": [],

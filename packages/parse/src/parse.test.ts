@@ -9,6 +9,7 @@ import {
   ListValueNode,
   NullValueNode,
   ObjectTypeDefinitionNode,
+  ObjectValueNode,
   OperationDefinitionNode,
   StringValueNode,
 } from "@graphql-modular/language";
@@ -92,6 +93,17 @@ it("parses comments for value nodes", () => {
           1,2,3
         # comment list close before
         ] # comment list close after
+        objectArg:
+        # comment object open before
+        { # comment object open after
+          # comment object field before
+          someField # comment object field after
+          # comment colon before
+          : # comment colon after
+          # comment value before
+          42 # comment value after
+        # comment object close before
+        } # comment object close after
       )
     }
   `);
@@ -128,6 +140,20 @@ it("parses comments for value nodes", () => {
   expect((args[6].value as ListValueNode).commentsClosingBracket).toEqual([
     { kind: "BlockComment", value: "comment list close before" },
     { kind: "InlineComment", value: "comment list close after" },
+  ]);
+  expect((args[7].value as ObjectValueNode).commentsOpenBracket).toEqual([
+    { kind: "BlockComment", value: "comment object open before" },
+    { kind: "InlineComment", value: "comment object open after" },
+  ]);
+  expect((args[7].value as ObjectValueNode).commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment object close before" },
+    { kind: "InlineComment", value: "comment object close after" },
+  ]);
+  expect((args[7].value as ObjectValueNode).fields[0].comments).toEqual([
+    { kind: "BlockComment", value: "comment object field before" },
+    { kind: "InlineComment", value: "comment object field after" },
+    { kind: "BlockComment", value: "comment colon before" },
+    { kind: "InlineComment", value: "comment colon after" },
   ]);
 });
 

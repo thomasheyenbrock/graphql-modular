@@ -427,11 +427,14 @@ export type ListValueNode = {
 
 export type ObjectValueNode = {
   kind: "ObjectValue";
+  commentsOpenBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   fields: ObjectFieldNode[];
 };
 
 export type ObjectFieldNode = {
   kind: "ObjectField";
+  comments: CommentNode[];
   name: NameNode;
   value: ValueNode;
 };
@@ -445,11 +448,14 @@ export type ListValueConstNode = {
 
 export type ObjectValueConstNode = {
   kind: "ObjectValue";
+  commentsOpenBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   fields: ObjectFieldConstNode[];
 };
 
 export type ObjectFieldConstNode = {
   kind: "ObjectField";
+  comments: CommentNode[];
   name: NameNode;
   value: ValueConstNode;
 };
