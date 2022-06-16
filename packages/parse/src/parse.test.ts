@@ -605,50 +605,68 @@ it("parses comments for arguments", () => {
   ]);
 });
 
-it("parses comments for directives", () => {
-  const ast = parse(/* GraphQL */ `
-    # prettier-ignore
-    {
-      # comment field before
-      field # comment field after
-      # comment at 1 before
-      @ # comment at 1 after
-      # comment directive 1 before
-      someDirective # comment directive 1 after
-      # comment args open before
-      ( # comment args open after
-        # comment arg name before
-        arg # comment arg name before
-        # comment colon before
-        : # comment colon before
-        # comment arg type before
-        Int # comment arg type before
-      # comment args close before
-      ) # comment args close after
-      # comment at 2 before
-      @ # comment at 2 after
-      # comment directive 2 before
-      someOtherDirective # comment directive 2 after
-    }
-  `);
-  const { directives } = (ast.definitions[0] as OperationDefinitionNode)
-    .selectionSet[0] as FieldNode;
-  expect(directives[0].comments).toEqual([
-    { kind: "BlockComment", value: "comment at 1 before" },
-    { kind: "InlineComment", value: "comment at 1 after" },
-    { kind: "BlockComment", value: "comment directive 1 before" },
-    { kind: "InlineComment", value: "comment directive 1 after" },
-    { kind: "BlockComment", value: "comment args open before" },
-    { kind: "InlineComment", value: "comment args open after" },
-    { kind: "BlockComment", value: "comment args close before" },
-    { kind: "InlineComment", value: "comment args close after" },
-  ]);
-  expect(directives[1].comments).toEqual([
-    { kind: "BlockComment", value: "comment at 2 before" },
-    { kind: "InlineComment", value: "comment at 2 after" },
-    { kind: "BlockComment", value: "comment directive 2 before" },
-    { kind: "InlineComment", value: "comment directive 2 after" },
-  ]);
+describe("parsing comments for directives", () => {
+  it("parses comments for directives without arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        field
+        # comment at before
+        @ # comment at after
+        # comment directive before
+        someOtherDirective # comment directive after
+      }
+    `);
+    expect(
+      (
+        (ast.definitions[0] as OperationDefinitionNode)
+          .selectionSet[0] as FieldNode
+      ).directives[0].comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment at before" },
+      { kind: "InlineComment", value: "comment at after" },
+      { kind: "BlockComment", value: "comment directive before" },
+      { kind: "InlineComment", value: "comment directive after" },
+    ]);
+  });
+  it("parses comments for directives with arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment field before
+        field # comment field after
+        # comment at before
+        @ # comment at after
+        # comment directive before
+        someDirective # comment directive after
+        # comment args open before
+        ( # comment args open after
+          # comment arg name before
+          arg # comment arg name before
+          # comment colon before
+          : # comment colon before
+          # comment arg type before
+          Int # comment arg type before
+        # comment args close before
+        ) # comment args close after
+      }
+    `);
+    expect(
+      (
+        (ast.definitions[0] as OperationDefinitionNode)
+          .selectionSet[0] as FieldNode
+      ).directives[0].comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment at before" },
+      { kind: "InlineComment", value: "comment at after" },
+      { kind: "BlockComment", value: "comment directive before" },
+      { kind: "InlineComment", value: "comment directive after" },
+      { kind: "BlockComment", value: "comment args open before" },
+      { kind: "InlineComment", value: "comment args open after" },
+      { kind: "BlockComment", value: "comment args close before" },
+      { kind: "InlineComment", value: "comment args close after" },
+    ]);
+  });
 });
 
 // TODO: add assertion functions to handle union types
