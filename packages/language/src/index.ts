@@ -273,6 +273,10 @@ export type InputObjectTypeExtensionNode = {
 
 export type DirectiveDefinitionNode = {
   kind: "DirectiveDefinition";
+  comments: CommentNode[];
+  commentsArgsOpeningBracket: CommentNode[];
+  commentsArgsClosingBracket: CommentNode[];
+  commentsLocations: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   args: InputValueDefinitionNode[];

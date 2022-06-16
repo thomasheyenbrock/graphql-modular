@@ -966,6 +966,86 @@ describe("parsing comments for directive locations", () => {
   });
 });
 
+describe("parsing comments for directive definitions", () => {
+  it("parses comments for directive definitions without arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment keyword before
+      directive # comment keyword after
+      # comment at before
+      @ # comment at after
+      # comment name before
+      foo # comment name after
+      # comment on before
+      on # comment on after
+      # comment location before
+      QUERY # comment location after
+    `);
+    const definition = ast.definitions[0] as DirectiveDefinitionNode;
+    expect(definition.comments).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment keyword before",
+      },
+      { kind: "InlineComment", value: "comment keyword after" },
+      { kind: "BlockComment", value: "comment at before" },
+      { kind: "InlineComment", value: "comment at after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(definition.commentsArgsOpeningBracket).toEqual([]);
+    expect(definition.commentsArgsClosingBracket).toEqual([]);
+    expect(definition.commentsLocations).toEqual([
+      { kind: "BlockComment", value: "comment on before" },
+      { kind: "InlineComment", value: "comment on after" },
+    ]);
+  });
+  it("parses comments for directive definitions with arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      # comment keyword before
+      directive # comment keyword after
+      # comment at before
+      @ # comment at after
+      # comment name before
+      foo # comment name after
+      # comment args open before
+      ( # comment args open after
+        foo: Int
+      # comment args close before
+      ) # comment args close after
+      # comment on before
+      on # comment on after
+      # comment location before
+      QUERY # comment location after
+    `);
+    const definition = ast.definitions[0] as DirectiveDefinitionNode;
+    expect(definition.comments).toEqual([
+      {
+        kind: "BlockComment",
+        value: "prettier-ignore\ncomment keyword before",
+      },
+      { kind: "InlineComment", value: "comment keyword after" },
+      { kind: "BlockComment", value: "comment at before" },
+      { kind: "InlineComment", value: "comment at after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(definition.commentsArgsOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment args open before" },
+      { kind: "InlineComment", value: "comment args open after" },
+    ]);
+    expect(definition.commentsArgsClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment args close before" },
+      { kind: "InlineComment", value: "comment args close after" },
+    ]);
+    expect(definition.commentsLocations).toEqual([
+      { kind: "BlockComment", value: "comment on before" },
+      { kind: "InlineComment", value: "comment on after" },
+    ]);
+  });
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -1163,5 +1243,6 @@ function stripComments(obj: any) {
   delete obj.commentsClosingBracket;
   delete obj.commentsArgsOpeningBracket;
   delete obj.commentsArgsClosingBracket;
+  delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
 }

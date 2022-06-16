@@ -863,29 +863,44 @@ export function parse(source: string): DocumentNode {
       case "input":
         return parseInputObjectTypeDefinition(false, description);
       case "directive":
+        const keyword = takeToken("NAME", "directive");
+        const at = takePunctuator("@");
+        const name = parseName();
+        const args = parseInputValueDefinitions("(", ")");
+        const repeatable = isNext("NAME", "repeatable")
+          ? (tokens.take(), true)
+          : false;
+        const locations = takeDelimitedList<DirectiveLocationNode>(
+          "|",
+          { type: "NAME", value: "on" },
+          (delimiterComments) => {
+            const name = takeToken("NAME");
+            const value = name.token.value as any;
+            const comments = [...delimiterComments, ...name.comments];
+            if (EXECUTABLE_DIRECTIVE_LOCATION.includes(value))
+              return { kind: "ExecutableDirectiveLocation", value, comments };
+            if (TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value))
+              return { kind: "TypeSystemDirectiveLocation", value, comments };
+            throw new Error(`Unexpected token "${value}"`);
+          }
+        );
+        const comments = [
+          ...keyword.comments,
+          ...at.comments,
+          ...name.comments,
+        ];
+        name.comments = [];
         return {
           kind: "DirectiveDefinition",
           description,
-          name:
-            (takeToken("NAME", "directive"), takePunctuator("@"), parseName()),
-          args: parseInputValueDefinitions("(", ")").items, // TODO: this returns comments
-          repeatable: isNext("NAME", "repeatable")
-            ? (tokens.take(), true)
-            : false,
-          locations: takeDelimitedList<DirectiveLocationNode>(
-            "|",
-            { type: "NAME", value: "on" },
-            (delimiterComments) => {
-              const name = takeToken("NAME");
-              const value = name.token.value as any;
-              const comments = [...delimiterComments, ...name.comments];
-              if (EXECUTABLE_DIRECTIVE_LOCATION.includes(value))
-                return { kind: "ExecutableDirectiveLocation", value, comments };
-              if (TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value))
-                return { kind: "TypeSystemDirectiveLocation", value, comments };
-              throw new Error(`Unexpected token "${value}"`);
-            }
-          ).items, // TODO: this returns comments
+          name,
+          args: args.items,
+          repeatable,
+          locations: locations.items,
+          comments,
+          commentsArgsOpeningBracket: args.commentsOpeningBracket,
+          commentsArgsClosingBracket: args.commentsClosingBracket,
+          commentsLocations: locations.initializerComments,
         };
       case "extend":
         if (description !== null) throw new Error("Unexpected token");
