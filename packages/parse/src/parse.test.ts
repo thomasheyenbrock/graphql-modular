@@ -1,4 +1,7 @@
-import { EXECUTABLE_DIRECTIVE_LOCATION } from "@graphql-modular/language";
+import {
+  EXECUTABLE_DIRECTIVE_LOCATION,
+  OperationDefinitionNode,
+} from "@graphql-modular/language";
 import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
 import path from "path";
@@ -25,6 +28,38 @@ it("parses all language features", () => {
   const ast = parse(LANGUAGE);
   stripComments(ast);
   expect(ast).toEqual(parseGql(LANGUAGE));
+});
+
+it("parses comments for variables", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    query Foo(
+      # comment before
+      $
+      # comment between
+      id # comment after
+      : ID
+    ) {
+      id
+    }
+  `);
+  const { variable } = (ast.definitions[0] as OperationDefinitionNode)
+    .variableDefinitions[0];
+  expect(variable.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "comment before",
+    },
+    {
+      kind: "BlockComment",
+      value: "comment between",
+    },
+    {
+      kind: "InlineComment",
+      value: "comment after",
+    },
+  ]);
+  expect(variable.name.comments).toEqual([]);
 });
 
 it.skip("timing", () => {

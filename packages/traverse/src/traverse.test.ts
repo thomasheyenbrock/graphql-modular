@@ -295,6 +295,7 @@ it("traverses with multiple layers of nesting", () => {
                                 "value": "fterfter",
                               },
                               "value": {
+                                "comments": [],
                                 "kind": "Variable",
                                 "name": {
                                   "comments": [],
@@ -315,6 +316,7 @@ it("traverses with multiple layers of nesting", () => {
                                     "value": "ff",
                                   },
                                   "value": {
+                                    "comments": [],
                                     "kind": "Variable",
                                     "name": {
                                       "comments": [],
@@ -396,6 +398,7 @@ it("traverses with multiple layers of nesting", () => {
                             "value": "nlessnless",
                           },
                           "value": {
+                            "comments": [],
                             "kind": "Variable",
                             "name": {
                               "comments": [],
@@ -466,6 +469,7 @@ it("traverses with multiple layers of nesting", () => {
                 },
               },
               "variable": {
+                "comments": [],
                 "kind": "Variable",
                 "name": {
                   "comments": [],
@@ -490,6 +494,7 @@ it("traverses with multiple layers of nesting", () => {
                 },
               },
               "variable": {
+                "comments": [],
                 "kind": "Variable",
                 "name": {
                   "comments": [],
@@ -625,6 +630,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "nputnput",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "Variable",
                     "name": {
                       "comments": [],
@@ -732,6 +738,7 @@ it("traverses with multiple layers of nesting", () => {
                 },
               },
               "variable": {
+                "comments": [],
                 "kind": "Variable",
                 "name": {
                   "comments": [],
@@ -772,6 +779,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "izeize",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "Variable",
                     "name": {
                       "comments": [],
@@ -788,6 +796,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "arar",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "Variable",
                     "name": {
                       "comments": [],

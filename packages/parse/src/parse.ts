@@ -217,9 +217,14 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseVariable(): VariableNode {
+    const { comments } = takePunctuator("$");
+    const name = parseName();
+    comments.push(...name.comments);
+    name.comments = [];
     return {
       kind: "Variable",
-      name: (takePunctuator("$"), parseName()),
+      name,
+      comments,
     };
   }
 

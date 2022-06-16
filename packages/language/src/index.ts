@@ -446,6 +446,7 @@ export type ObjectFieldConstNode = {
 
 export type VariableNode = {
   kind: "Variable";
+  comments: CommentNode[];
   name: NameNode;
 };
 
