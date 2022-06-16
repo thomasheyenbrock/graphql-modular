@@ -666,18 +666,18 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseUnionTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): UnionTypeDefinitionNode;
   function parseUnionTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): UnionTypeExtensionNode;
   function parseUnionTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): UnionTypeDefinitionNode | UnionTypeExtensionNode {
-    takeToken("NAME", "union");
+    const keyword = takeToken("NAME", "union");
     const name = parseName();
     const directives = parseDirectives(true);
     const types = takeDelimitedList<NamedTypeNode>(
@@ -688,11 +688,32 @@ export function parse(source: string): DocumentNode {
         type.comments.unshift(...comments);
         return type;
       }
-    ).items; // TODO: this returns comments
-    if (isExtension) assertCombinedListLength([directives, types], "=");
-    return isExtension
-      ? { kind: "UnionTypeExtension", name, directives, types }
-      : { kind: "UnionTypeDefinition", description, name, directives, types };
+    );
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    if (extendComments)
+      assertCombinedListLength([directives, types.items], "=");
+    return extendComments
+      ? {
+          kind: "UnionTypeExtension",
+          name,
+          directives,
+          types: types.items,
+          comments,
+          commentsTypes: types.initializerComments,
+        }
+      : {
+          kind: "UnionTypeDefinition",
+          description,
+          name,
+          directives,
+          types: types.items,
+          comments,
+          commentsTypes: types.initializerComments,
+        };
   }
 
   function parseEnumTypeDefinition(
@@ -821,7 +842,7 @@ export function parse(source: string): DocumentNode {
       case "interface":
         return parseInterfaceTypeDefinition(true);
       case "union":
-        return parseUnionTypeDefinition(true);
+        return parseUnionTypeDefinition(comments);
       case "enum":
         return parseEnumTypeDefinition(comments);
       case "input":
@@ -902,7 +923,7 @@ export function parse(source: string): DocumentNode {
       case "interface":
         return parseInterfaceTypeDefinition(false, description);
       case "union":
-        return parseUnionTypeDefinition(false, description);
+        return parseUnionTypeDefinition(null, description);
       case "enum":
         return parseEnumTypeDefinition(null, description);
       case "input":

@@ -221,6 +221,8 @@ export type InterfaceTypeExtensionNode = {
 
 export type UnionTypeDefinitionNode = {
   kind: "UnionTypeDefinition";
+  comments: CommentNode[];
+  commentsTypes: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
@@ -229,6 +231,8 @@ export type UnionTypeDefinitionNode = {
 
 export type UnionTypeExtensionNode = {
   kind: "UnionTypeExtension";
+  comments: CommentNode[];
+  commentsTypes: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
   types: NamedTypeNode[];

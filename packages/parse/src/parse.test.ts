@@ -18,6 +18,7 @@ import {
   OperationDefinitionNode,
   StringValueNode,
   UnionTypeDefinitionNode,
+  UnionTypeExtensionNode,
   VariableNode,
 } from "@graphql-modular/language";
 import fs from "fs";
@@ -1196,6 +1197,68 @@ it("parses comments for enum object type extensions", () => {
   ]);
 });
 
+it("parses comments for union type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    union # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment types before
+    = # comment types after
+      SomeType
+  `);
+  const definition = ast.definitions[0] as UnionTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsTypes).toEqual([
+    { kind: "BlockComment", value: "comment types before" },
+    { kind: "InlineComment", value: "comment types after" },
+  ]);
+});
+
+it("parses comments for enum object type extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    union # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment types before
+    = # comment types after
+      SomeType
+  `);
+  const definition = ast.definitions[0] as UnionTypeExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsTypes).toEqual([
+    { kind: "BlockComment", value: "comment types before" },
+    { kind: "InlineComment", value: "comment types after" },
+  ]);
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -1397,6 +1460,7 @@ function stripComments(obj: any) {
   delete obj.commentsFieldsClosingBracket;
   delete obj.commentsValuesOpeningBracket;
   delete obj.commentsValuesClosingBracket;
+  delete obj.commentsTypes;
   delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
 }
