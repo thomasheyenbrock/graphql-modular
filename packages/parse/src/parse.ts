@@ -151,25 +151,29 @@ export function parse(source: string): DocumentNode {
     initializer: Token,
     callback: () => T
   ) {
-    const types: T[] = [];
+    const items: T[] = [];
 
+    let initializerComments: CommentNode[] = [];
     try {
-      takeToken(initializer.type, initializer.value);
+      initializerComments = takeToken(
+        initializer.type,
+        initializer.value
+      ).comments;
     } catch {
-      return types;
+      return { items, initializerComments: [] };
     }
 
     try {
       takePunctuator(delimiter);
     } catch {}
 
-    types.push(callback());
+    items.push(callback());
 
     while (takeIfNextPunctuator(delimiter).token) {
-      types.push(callback());
+      items.push(callback());
     }
 
-    return types;
+    return { items, initializerComments };
   }
 
   function parseDescription(): StringValueNode | null {
@@ -425,7 +429,10 @@ export function parse(source: string): DocumentNode {
     return value;
   }
 
-  function parseInterfaces(): NamedTypeNode[] {
+  function parseInterfaces(): {
+    items: NamedTypeNode[];
+    initializerComments: CommentNode[];
+  } {
     return takeDelimitedList<NamedTypeNode>(
       "&",
       { type: "NAME", value: "implements" },
@@ -593,7 +600,7 @@ export function parse(source: string): DocumentNode {
   ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode {
     takeToken("NAME", "type");
     const name = parseName();
-    const interfaces = parseInterfaces();
+    const interfaces = parseInterfaces().items; // TODO: this return comments
     const directives = parseDirectives(true);
     const fields = parseFieldDefinitions().items; // TODO: this returns comments
     if (isExtension)
@@ -630,7 +637,7 @@ export function parse(source: string): DocumentNode {
   ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode {
     takeToken("NAME", "interface");
     const name = parseName();
-    const interfaces = parseInterfaces();
+    const interfaces = parseInterfaces().items; // TODO: this returns comments
     const directives = parseDirectives(true);
     const fields = parseFieldDefinitions().items; // TODO: this returns comments
     if (isExtension)
@@ -672,7 +679,7 @@ export function parse(source: string): DocumentNode {
       "|",
       { type: "PUNCTUATOR", value: "=" },
       () => parseNamedType()
-    );
+    ).items; // TODO: this returns comments
     if (isExtension) assertCombinedListLength([directives, types], "=");
     return isExtension
       ? { kind: "UnionTypeExtension", name, directives, types }
@@ -867,7 +874,7 @@ export function parse(source: string): DocumentNode {
                 return { kind: "TypeSystemDirectiveLocation", value };
               throw new Error(`Unexpected token "${value}"`);
             }
-          ),
+          ).items, // TODO: this returns comments
         };
       case "extend":
         if (description !== null) throw new Error("Unexpected token");
