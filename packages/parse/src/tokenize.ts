@@ -30,6 +30,7 @@ export function* tokenize(_source: string): IterableIterator<Token> {
       if ((match = source.match(r))) {
         source = source.substring(match[0].length);
         yield { type: t, value: v(match[0]) };
+        continue nextToken;
       }
     }
     for (const regex of IGNORED_TOKENS)
