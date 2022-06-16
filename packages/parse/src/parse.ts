@@ -125,15 +125,15 @@ export function parse(source: string): DocumentNode {
     endPunctuator: string,
     callback: () => T
   ) {
-    let commentsOpenBracket: CommentNode[] = [];
+    let commentsOpeningBracket: CommentNode[] = [];
     let commentsClosingBracket: CommentNode[] = [];
     try {
-      commentsOpenBracket = takePunctuator(startPunctuator).comments;
+      commentsOpeningBracket = takePunctuator(startPunctuator).comments;
     } catch (err) {
       if (isOptional)
         return {
           items: [],
-          commentsOpenBracket: [],
+          commentsOpeningBracket: [],
           commentsClosingBracket: [],
         };
       throw err;
@@ -143,7 +143,7 @@ export function parse(source: string): DocumentNode {
       if (token) commentsClosingBracket = comments;
       return !token;
     }, callback);
-    return { items, commentsOpenBracket, commentsClosingBracket };
+    return { items, commentsOpeningBracket, commentsClosingBracket };
   }
 
   function takeDelimitedList<T>(
@@ -263,19 +263,19 @@ export function parse(source: string): DocumentNode {
   function parseValue(isConst: boolean): ValueNode | ValueConstNode {
     if (isNextPunctuator("$") && !isConst) return parseVariable();
     if (isNextPunctuator("[")) {
-      const { items, commentsOpenBracket, commentsClosingBracket } =
+      const { items, commentsOpeningBracket, commentsClosingBracket } =
         takeWrappedList<ValueNode | ValueConstNode>(false, "[", "]", () =>
           isConst ? parseValue(true) : parseValue(false)
         );
       return {
         kind: "ListValue",
         values: items,
-        commentsOpenBracket,
+        commentsOpeningBracket,
         commentsClosingBracket,
       };
     }
     if (isNextPunctuator("{")) {
-      const { items, commentsOpenBracket, commentsClosingBracket } =
+      const { items, commentsOpeningBracket, commentsClosingBracket } =
         takeWrappedList<ObjectFieldNode | ObjectFieldConstNode>(
           false,
           "{",
@@ -292,7 +292,7 @@ export function parse(source: string): DocumentNode {
       return {
         kind: "ObjectValue",
         fields: items,
-        commentsOpenBracket,
+        commentsOpeningBracket,
         commentsClosingBracket,
       };
     }
@@ -322,17 +322,17 @@ export function parse(source: string): DocumentNode {
 
   function parseArgs(isConst: false): {
     items: ArgumentNode[];
-    commentsOpenBracket: CommentNode[];
+    commentsOpeningBracket: CommentNode[];
     commentsClosingBracket: CommentNode[];
   };
   function parseArgs(isConst: true): {
     items: ArgumentConstNode[];
-    commentsOpenBracket: CommentNode[];
+    commentsOpeningBracket: CommentNode[];
     commentsClosingBracket: CommentNode[];
   };
   function parseArgs(isConst: boolean): {
     items: ArgumentNode[] | ArgumentConstNode[];
-    commentsOpenBracket: CommentNode[];
+    commentsOpeningBracket: CommentNode[];
     commentsClosingBracket: CommentNode[];
   } {
     return takeWrappedList<ArgumentNode | ArgumentConstNode>(
@@ -363,7 +363,7 @@ export function parse(source: string): DocumentNode {
         const comments = [
           ...at.comments,
           ...name.comments,
-          ...args.commentsOpenBracket,
+          ...args.commentsOpeningBracket,
           ...args.commentsClosingBracket,
         ];
         name.comments = [];
@@ -461,7 +461,7 @@ export function parse(source: string): DocumentNode {
     endPunctuator: string
   ): {
     items: InputValueDefinitionNode[];
-    commentsOpenBracket: CommentNode[];
+    commentsOpeningBracket: CommentNode[];
     commentsClosingBracket: CommentNode[];
   } {
     return takeWrappedList<InputValueDefinitionNode>(
@@ -492,7 +492,7 @@ export function parse(source: string): DocumentNode {
 
   function parseFieldDefinitions(): {
     items: FieldDefinitionNode[];
-    commentsOpenBracket: CommentNode[];
+    commentsOpeningBracket: CommentNode[];
     commentsClosingBracket: CommentNode[];
   } {
     return takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => {
@@ -505,7 +505,7 @@ export function parse(source: string): DocumentNode {
       const comments = [
         ...name.comments,
         ...colon.comments,
-        ...args.commentsOpenBracket,
+        ...args.commentsOpeningBracket,
         ...args.commentsClosingBracket,
       ];
       return {

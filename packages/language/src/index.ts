@@ -432,14 +432,14 @@ export type EnumValueNode = {
 
 export type ListValueNode = {
   kind: "ListValue";
-  commentsOpenBracket: CommentNode[];
+  commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
   values: ValueNode[];
 };
 
 export type ObjectValueNode = {
   kind: "ObjectValue";
-  commentsOpenBracket: CommentNode[];
+  commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
   fields: ObjectFieldNode[];
 };
@@ -453,14 +453,14 @@ export type ObjectFieldNode = {
 
 export type ListValueConstNode = {
   kind: "ListValue";
-  commentsOpenBracket: CommentNode[];
+  commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
   values: ValueConstNode[];
 };
 
 export type ObjectValueConstNode = {
   kind: "ObjectValue";
-  commentsOpenBracket: CommentNode[];
+  commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
   fields: ObjectFieldConstNode[];
 };

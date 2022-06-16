@@ -251,7 +251,7 @@ describe("parsing comments for values", () => {
       (ast.definitions[0] as OperationDefinitionNode)
         .selectionSet[0] as FieldNode
     ).args[0].value as ListValueNode;
-    expect(value.commentsOpenBracket).toEqual([
+    expect(value.commentsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment list open before" },
       { kind: "InlineComment", value: "comment list open after" },
     ]);
@@ -283,7 +283,7 @@ describe("parsing comments for values", () => {
       (ast.definitions[0] as OperationDefinitionNode)
         .selectionSet[0] as FieldNode
     ).args[0].value as ObjectValueNode;
-    expect(value.commentsOpenBracket).toEqual([
+    expect(value.commentsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment object open before" },
       { kind: "InlineComment", value: "comment object open after" },
     ]);
@@ -1150,7 +1150,7 @@ function stripComments(obj: any) {
   if (Array.isArray(obj)) return obj.forEach(stripComments);
   if (!obj || typeof obj !== "object") return;
   delete obj.comments;
-  delete obj.commentsOpenBracket;
+  delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
   Object.values(obj).forEach(stripComments);
 }
