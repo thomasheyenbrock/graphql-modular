@@ -236,6 +236,9 @@ export type UnionTypeExtensionNode = {
 
 export type EnumTypeDefinitionNode = {
   kind: "EnumTypeDefinition";
+  comments: CommentNode[];
+  commentsValuesOpeningBracket: CommentNode[];
+  commentsValuesClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
@@ -244,6 +247,9 @@ export type EnumTypeDefinitionNode = {
 
 export type EnumTypeExtensionNode = {
   kind: "EnumTypeExtension";
+  comments: CommentNode[];
+  commentsValuesOpeningBracket: CommentNode[];
+  commentsValuesClosingBracket: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
   values: EnumValueDefinitionNode[];

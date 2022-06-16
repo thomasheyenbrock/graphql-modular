@@ -2,6 +2,7 @@ import {
   BooleanValueNode,
   DirectiveDefinitionNode,
   EnumTypeDefinitionNode,
+  EnumTypeExtensionNode,
   EnumValueNode,
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
@@ -1047,7 +1048,7 @@ describe("parsing comments for directive definitions", () => {
   });
 });
 
-it("parses comments for input object definitions", () => {
+it("parses comments for input object type definitions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     # comment keyword before
@@ -1082,7 +1083,7 @@ it("parses comments for input object definitions", () => {
   ]);
 });
 
-it("parses comments for input object extensions", () => {
+it("parses comments for input object type extensions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     # comment extend before
@@ -1118,6 +1119,80 @@ it("parses comments for input object extensions", () => {
   expect(definition.commentsFieldsClosingBracket).toEqual([
     { kind: "BlockComment", value: "comment fields close before" },
     { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for enum type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    enum # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment values open before
+    { # comment values open after
+      ENUM_VALUE
+    # comment values close before
+    } # comment values close after
+  `);
+  const definition = ast.definitions[0] as EnumTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsValuesOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment values open before" },
+    { kind: "InlineComment", value: "comment values open after" },
+  ]);
+  expect(definition.commentsValuesClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment values close before" },
+    { kind: "InlineComment", value: "comment values close after" },
+  ]);
+});
+
+it("parses comments for enum object type extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    enum # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment values open before
+    { # comment values open after
+      ENUM_VALUE
+    # comment values close before
+    } # comment values close after
+  `);
+  const definition = ast.definitions[0] as EnumTypeExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsValuesOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment values open before" },
+    { kind: "InlineComment", value: "comment values open after" },
+  ]);
+  expect(definition.commentsValuesClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment values close before" },
+    { kind: "InlineComment", value: "comment values close after" },
   ]);
 });
 
@@ -1320,6 +1395,8 @@ function stripComments(obj: any) {
   delete obj.commentsArgsClosingBracket;
   delete obj.commentsFieldsOpeningBracket;
   delete obj.commentsFieldsClosingBracket;
+  delete obj.commentsValuesOpeningBracket;
+  delete obj.commentsValuesClosingBracket;
   delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
 }

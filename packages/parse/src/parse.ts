@@ -696,18 +696,18 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseEnumTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): EnumTypeDefinitionNode;
   function parseEnumTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): EnumTypeExtensionNode;
   function parseEnumTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): EnumTypeDefinitionNode | EnumTypeExtensionNode {
-    takeToken("NAME", "enum");
+    const keyword = takeToken("NAME", "enum");
     const name = parseName();
     const directives = parseDirectives(true);
     const values = takeWrappedList<EnumValueDefinitionNode>(
@@ -728,11 +728,35 @@ export function parse(source: string): DocumentNode {
           comments,
         };
       }
-    ).items; // TODO: this returns comments
-    if (isExtension) assertCombinedListLength([directives, values], "{");
-    return isExtension
-      ? { kind: "EnumTypeExtension", name, directives, values }
-      : { kind: "EnumTypeDefinition", description, name, directives, values };
+    );
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    name.comments = [];
+    if (extendComments)
+      assertCombinedListLength([directives, values.items], "{");
+    return extendComments
+      ? {
+          kind: "EnumTypeExtension",
+          name,
+          directives,
+          values: values.items,
+          comments,
+          commentsValuesOpeningBracket: values.commentsOpeningBracket,
+          commentsValuesClosingBracket: values.commentsClosingBracket,
+        }
+      : {
+          kind: "EnumTypeDefinition",
+          description,
+          name,
+          directives,
+          values: values.items,
+          comments,
+          commentsValuesOpeningBracket: values.commentsOpeningBracket,
+          commentsValuesClosingBracket: values.commentsClosingBracket,
+        };
   }
 
   function parseInputObjectTypeDefinition(
@@ -799,7 +823,7 @@ export function parse(source: string): DocumentNode {
       case "union":
         return parseUnionTypeDefinition(true);
       case "enum":
-        return parseEnumTypeDefinition(true);
+        return parseEnumTypeDefinition(comments);
       case "input":
         return parseInputObjectTypeDefinition(comments);
       default:
@@ -880,7 +904,7 @@ export function parse(source: string): DocumentNode {
       case "union":
         return parseUnionTypeDefinition(false, description);
       case "enum":
-        return parseEnumTypeDefinition(false, description);
+        return parseEnumTypeDefinition(null, description);
       case "input":
         return parseInputObjectTypeDefinition(null, description);
       case "directive":
