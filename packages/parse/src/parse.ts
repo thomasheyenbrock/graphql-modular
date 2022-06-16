@@ -314,9 +314,21 @@ export function parse(source: string): DocumentNode {
     return { kind: "EnumValue", value: token.value, comments };
   }
 
-  function parseArgs(isConst: false): ArgumentNode[];
-  function parseArgs(isConst: true): ArgumentConstNode[];
-  function parseArgs(isConst: boolean): ArgumentNode[] | ArgumentConstNode[] {
+  function parseArgs(isConst: false): {
+    items: ArgumentNode[];
+    commentsOpenBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  };
+  function parseArgs(isConst: true): {
+    items: ArgumentConstNode[];
+    commentsOpenBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  };
+  function parseArgs(isConst: boolean): {
+    items: ArgumentNode[] | ArgumentConstNode[];
+    commentsOpenBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  } {
     return takeWrappedList<ArgumentNode | ArgumentConstNode>(
       true,
       "(",
@@ -328,7 +340,7 @@ export function parse(source: string): DocumentNode {
         const comments = [...name.comments, ...colon.comments];
         return { kind: "Argument", name, value, comments };
       }
-    ).items;
+    );
   }
 
   function parseDirectives(isConst: false): DirectiveNode[];
@@ -337,13 +349,19 @@ export function parse(source: string): DocumentNode {
     isConst: boolean
   ): DirectiveNode[] | DirectiveConstNode[] {
     return takeList<DirectiveNode | DirectiveConstNode>(
-      () => !!takeIfNextPunctuator("@").token,
+      () => isNextPunctuator("@"),
       () => {
-        return {
-          kind: "Directive",
-          name: parseName(),
-          args: isConst ? parseArgs(true) : parseArgs(false),
-        };
+        const at = takePunctuator("@");
+        const name = parseName();
+        const args = isConst ? parseArgs(true) : parseArgs(false);
+        const comments = [
+          ...at.comments,
+          ...name.comments,
+          ...args.commentsOpenBracket,
+          ...args.commentsClosingBracket,
+        ];
+        name.comments = [];
+        return { kind: "Directive", name, args: args.items, comments };
       }
     );
   }
@@ -391,7 +409,7 @@ export function parse(source: string): DocumentNode {
         kind: "Field",
         alias,
         name,
-        args: parseArgs(false),
+        args: parseArgs(false).items, // TODO: this returns comments
         directives: parseDirectives(false),
         selectionSet: parseSelectionSet(true),
       };

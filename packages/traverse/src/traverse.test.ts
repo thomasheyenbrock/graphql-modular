@@ -162,6 +162,7 @@ it("traverses with multiple layers of nesting", () => {
           "directives": [
             {
               "args": [],
+              "comments": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -241,6 +242,7 @@ it("traverses with multiple layers of nesting", () => {
                   "directives": [
                     {
                       "args": [],
+                      "comments": [],
                       "kind": "Directive",
                       "name": {
                         "comments": [],
@@ -341,6 +343,7 @@ it("traverses with multiple layers of nesting", () => {
                                   },
                                 },
                               ],
+                              "comments": [],
                               "kind": "Directive",
                               "name": {
                                 "comments": [],
@@ -372,6 +375,7 @@ it("traverses with multiple layers of nesting", () => {
                               "directives": [
                                 {
                                   "args": [],
+                                  "comments": [],
                                   "kind": "Directive",
                                   "name": {
                                     "comments": [],
@@ -425,6 +429,7 @@ it("traverses with multiple layers of nesting", () => {
                           },
                         },
                       ],
+                      "comments": [],
                       "kind": "Directive",
                       "name": {
                         "comments": [],
@@ -529,6 +534,7 @@ it("traverses with multiple layers of nesting", () => {
           "directives": [
             {
               "args": [],
+              "comments": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -566,6 +572,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [
                 {
                   "args": [],
+                  "comments": [],
                   "kind": "Directive",
                   "name": {
                     "comments": [],
@@ -598,6 +605,7 @@ it("traverses with multiple layers of nesting", () => {
                       "directives": [
                         {
                           "args": [],
+                          "comments": [],
                           "kind": "Directive",
                           "name": {
                             "comments": [],
@@ -625,6 +633,7 @@ it("traverses with multiple layers of nesting", () => {
           "directives": [
             {
               "args": [],
+              "comments": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -743,6 +752,7 @@ it("traverses with multiple layers of nesting", () => {
               "directives": [
                 {
                   "args": [],
+                  "comments": [],
                   "kind": "Directive",
                   "name": {
                     "comments": [],
@@ -777,6 +787,7 @@ it("traverses with multiple layers of nesting", () => {
           "directives": [
             {
               "args": [],
+              "comments": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
