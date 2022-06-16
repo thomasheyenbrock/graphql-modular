@@ -115,6 +115,7 @@ export type FieldNode = {
 
 export type FragmentSpreadNode = {
   kind: "FragmentSpread";
+  comments: CommentNode[];
   name: NameNode;
   directives: DirectiveNode[];
 };

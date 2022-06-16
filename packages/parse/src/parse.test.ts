@@ -7,6 +7,7 @@ import {
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
   FloatValueNode,
+  FragmentSpreadNode,
   InlineFragmentNode,
   InputObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
@@ -1645,6 +1646,31 @@ describe("parsing comments for inline fragments", () => {
       { kind: "InlineComment", value: "comment selection set close after" },
     ]);
   });
+});
+
+it("parses comments for fragment spreads", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    {
+      # comment spread before
+      ... # comment spread after
+      # comment name before
+      SomeFragment # comment name after
+      # comment directive before
+      @foo # comment directive after
+    }
+  `);
+  expect(
+    (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FragmentSpreadNode
+    ).comments
+  ).toEqual([
+    { kind: "BlockComment", value: "comment spread before" },
+    { kind: "InlineComment", value: "comment spread after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
 });
 
 // TODO: add assertion functions to handle union types

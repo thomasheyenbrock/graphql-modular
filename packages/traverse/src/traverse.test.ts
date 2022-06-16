@@ -381,6 +381,7 @@ it("traverses with multiple layers of nesting", () => {
                               "selectionSet": [],
                             },
                             {
+                              "comments": [],
                               "directives": [
                                 {
                                   "args": [],

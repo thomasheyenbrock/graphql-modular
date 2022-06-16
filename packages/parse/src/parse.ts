@@ -404,11 +404,11 @@ export function parse(source: string): DocumentNode {
       if (spread.token) {
         const { token } = tokens.peek();
         if (token && token.type === "NAME" && token.value !== "on") {
-          return {
-            kind: "FragmentSpread",
-            name: parseName(),
-            directives: parseDirectives(false),
-          };
+          const name = parseName();
+          const directives = parseDirectives(false);
+          const comments = [...spread.comments, ...name.comments];
+          name.comments = [];
+          return { kind: "FragmentSpread", name, directives, comments };
         }
         const typeCondition = parseTypeCondition(true);
         const directives = parseDirectives(false);
