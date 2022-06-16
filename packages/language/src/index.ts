@@ -328,6 +328,7 @@ export type ArgumentConstNode = {
 
 export type FieldDefinitionNode = {
   kind: "FieldDefinition";
+  comments: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   args: InputValueDefinitionNode[];

@@ -427,7 +427,11 @@ export function parse(source: string): DocumentNode {
   function parseInputValueDefinitions(
     startPunctuator: string,
     endPunctuator: string
-  ): InputValueDefinitionNode[] {
+  ): {
+    items: InputValueDefinitionNode[];
+    commentsOpenBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  } {
     return takeWrappedList<InputValueDefinitionNode>(
       true,
       startPunctuator,
@@ -451,18 +455,33 @@ export function parse(source: string): DocumentNode {
           comments,
         };
       }
-    ).items;
+    );
   }
 
   function parseFieldDefinitions(): FieldDefinitionNode[] {
-    return takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => ({
-      kind: "FieldDefinition",
-      description: parseDescription(),
-      name: parseName(),
-      args: parseInputValueDefinitions("(", ")"),
-      type: (takePunctuator(":"), parseType()),
-      directives: parseDirectives(true),
-    })).items;
+    return takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => {
+      const description = parseDescription();
+      const name = parseName();
+      const args = parseInputValueDefinitions("(", ")");
+      const colon = takePunctuator(":");
+      const type = parseType();
+      const directives = parseDirectives(true);
+      const comments = [
+        ...name.comments,
+        ...colon.comments,
+        ...args.commentsOpenBracket,
+        ...args.commentsClosingBracket,
+      ];
+      return {
+        kind: "FieldDefinition",
+        description,
+        name,
+        args: args.items,
+        type,
+        directives,
+        comments,
+      };
+    }).items;
   }
 
   function parseEnumValue(): EnumValueNode {
@@ -684,21 +703,21 @@ export function parse(source: string): DocumentNode {
     takeToken("NAME", "input");
     const name = parseName();
     const directives = parseDirectives(true);
-    const fields = parseInputValueDefinitions("{", "}");
-    if (isExtension) assertCombinedListLength([directives, fields], "{");
+    const fields = parseInputValueDefinitions("{", "}"); // TODO: this returns comments
+    if (isExtension) assertCombinedListLength([directives, fields.items], "{");
     return isExtension
       ? {
           kind: "InputObjectTypeExtension",
           name,
           directives,
-          fields,
+          fields: fields.items,
         }
       : {
           kind: "InputObjectTypeDefinition",
           description,
           name,
           directives,
-          fields,
+          fields: fields.items,
         };
   }
 
@@ -800,7 +819,7 @@ export function parse(source: string): DocumentNode {
           description,
           name:
             (takeToken("NAME", "directive"), takePunctuator("@"), parseName()),
-          args: parseInputValueDefinitions("(", ")"),
+          args: parseInputValueDefinitions("(", ")").items, // TODO: this returns comments
           repeatable: isNext("NAME", "repeatable")
             ? (tokens.take(), true)
             : false,
