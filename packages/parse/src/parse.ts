@@ -629,39 +629,55 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseInterfaceTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): InterfaceTypeDefinitionNode;
   function parseInterfaceTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): InterfaceTypeExtensionNode;
   function parseInterfaceTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode {
-    takeToken("NAME", "interface");
+    const keyword = takeToken("NAME", "interface");
     const name = parseName();
-    const interfaces = parseInterfaces().items; // TODO: this returns comments
+    const interfaces = parseInterfaces();
     const directives = parseDirectives(true);
-    const fields = parseFieldDefinitions().items; // TODO: this returns comments
-    if (isExtension)
-      assertCombinedListLength([interfaces, directives, fields], "{");
-    return isExtension
+    const fields = parseFieldDefinitions();
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    if (extendComments)
+      assertCombinedListLength(
+        [interfaces.items, directives, fields.items],
+        "{"
+      );
+    return extendComments
       ? {
           kind: "InterfaceTypeExtension",
           name,
-          interfaces,
+          interfaces: interfaces.items,
           directives,
-          fields,
+          fields: fields.items,
+          comments,
+          commentsInterfaces: interfaces.initializerComments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         }
       : {
           kind: "InterfaceTypeDefinition",
           description,
           name,
-          interfaces,
+          interfaces: interfaces.items,
           directives,
-          fields,
+          fields: fields.items,
+          comments,
+          commentsInterfaces: interfaces.initializerComments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         };
   }
 
@@ -840,7 +856,7 @@ export function parse(source: string): DocumentNode {
       case "type":
         return parseObjectTypeDefinition(true);
       case "interface":
-        return parseInterfaceTypeDefinition(true);
+        return parseInterfaceTypeDefinition(comments);
       case "union":
         return parseUnionTypeDefinition(comments);
       case "enum":
@@ -921,7 +937,7 @@ export function parse(source: string): DocumentNode {
       case "type":
         return parseObjectTypeDefinition(false, description);
       case "interface":
-        return parseInterfaceTypeDefinition(false, description);
+        return parseInterfaceTypeDefinition(null, description);
       case "union":
         return parseUnionTypeDefinition(null, description);
       case "enum":

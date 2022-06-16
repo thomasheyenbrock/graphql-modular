@@ -204,6 +204,10 @@ export type ObjectTypeExtensionNode = {
 
 export type InterfaceTypeDefinitionNode = {
   kind: "InterfaceTypeDefinition";
+  comments: CommentNode[];
+  commentsInterfaces: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   interfaces: NamedTypeNode[];
@@ -213,6 +217,10 @@ export type InterfaceTypeDefinitionNode = {
 
 export type InterfaceTypeExtensionNode = {
   kind: "InterfaceTypeExtension";
+  comments: CommentNode[];
+  commentsInterfaces: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];

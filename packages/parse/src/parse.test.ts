@@ -8,6 +8,8 @@ import {
   FieldNode,
   FloatValueNode,
   InputObjectTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  InterfaceTypeExtensionNode,
   IntValueNode,
   ListTypeNode,
   ListValueNode,
@@ -1158,7 +1160,7 @@ it("parses comments for enum type definitions", () => {
   ]);
 });
 
-it("parses comments for enum object type extensions", () => {
+it("parses comments for enum type extensions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     # comment extend before
@@ -1226,7 +1228,7 @@ it("parses comments for union type definitions", () => {
   ]);
 });
 
-it("parses comments for enum object type extensions", () => {
+it("parses comments for union type extensions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     # comment extend before
@@ -1256,6 +1258,94 @@ it("parses comments for enum object type extensions", () => {
   expect(definition.commentsTypes).toEqual([
     { kind: "BlockComment", value: "comment types before" },
     { kind: "InlineComment", value: "comment types after" },
+  ]);
+});
+
+it("parses comments for interface type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    interface # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment implements before
+    implements # comment implements after
+      Bar
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as InterfaceTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsInterfaces).toEqual([
+    { kind: "BlockComment", value: "comment implements before" },
+    { kind: "InlineComment", value: "comment implements after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for interface type extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    interface # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment implements before
+    implements # comment implements after
+      Bar
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as InterfaceTypeExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsInterfaces).toEqual([
+    { kind: "BlockComment", value: "comment implements before" },
+    { kind: "InlineComment", value: "comment implements after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
   ]);
 });
 
@@ -1460,6 +1550,7 @@ function stripComments(obj: any) {
   delete obj.commentsFieldsClosingBracket;
   delete obj.commentsValuesOpeningBracket;
   delete obj.commentsValuesClosingBracket;
+  delete obj.commentsInterfaces;
   delete obj.commentsTypes;
   delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
