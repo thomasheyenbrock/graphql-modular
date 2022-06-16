@@ -16,6 +16,7 @@ import {
   NonNullTypeNode,
   NullValueNode,
   ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
   ObjectValueNode,
   OperationDefinitionNode,
   StringValueNode,
@@ -1324,6 +1325,94 @@ it("parses comments for interface type extensions", () => {
     } # comment fields close after
   `);
   const definition = ast.definitions[0] as InterfaceTypeExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsInterfaces).toEqual([
+    { kind: "BlockComment", value: "comment implements before" },
+    { kind: "InlineComment", value: "comment implements after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for object type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    type # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment implements before
+    implements # comment implements after
+      Bar
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as ObjectTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsInterfaces).toEqual([
+    { kind: "BlockComment", value: "comment implements before" },
+    { kind: "InlineComment", value: "comment implements after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for object type extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    type # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment implements before
+    implements # comment implements after
+      Bar
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as ObjectTypeExtensionNode;
   expect(definition.comments).toEqual([
     {
       kind: "BlockComment",

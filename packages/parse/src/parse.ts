@@ -592,39 +592,55 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseObjectTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): ObjectTypeDefinitionNode;
   function parseObjectTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): ObjectTypeExtensionNode;
   function parseObjectTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode {
-    takeToken("NAME", "type");
+    const keyword = takeToken("NAME", "type");
     const name = parseName();
-    const interfaces = parseInterfaces().items; // TODO: this return comments
+    const interfaces = parseInterfaces();
     const directives = parseDirectives(true);
-    const fields = parseFieldDefinitions().items; // TODO: this returns comments
-    if (isExtension)
-      assertCombinedListLength([interfaces, directives, fields], "{");
-    return isExtension
+    const fields = parseFieldDefinitions();
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    if (extendComments)
+      assertCombinedListLength(
+        [interfaces.items, directives, fields.items],
+        "{"
+      );
+    return extendComments
       ? {
           kind: "ObjectTypeExtension",
           name,
-          interfaces,
+          interfaces: interfaces.items,
           directives,
-          fields,
+          fields: fields.items,
+          comments,
+          commentsInterfaces: interfaces.initializerComments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         }
       : {
           kind: "ObjectTypeDefinition",
           description,
           name,
-          interfaces,
+          interfaces: interfaces.items,
           directives,
-          fields,
+          fields: fields.items,
+          comments,
+          commentsInterfaces: interfaces.initializerComments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         };
   }
 
@@ -854,7 +870,7 @@ export function parse(source: string): DocumentNode {
       case "scalar":
         return parseScalarTypeDefinition(true);
       case "type":
-        return parseObjectTypeDefinition(true);
+        return parseObjectTypeDefinition(comments);
       case "interface":
         return parseInterfaceTypeDefinition(comments);
       case "union":
@@ -935,7 +951,7 @@ export function parse(source: string): DocumentNode {
       case "scalar":
         return parseScalarTypeDefinition(false, description);
       case "type":
-        return parseObjectTypeDefinition(false, description);
+        return parseObjectTypeDefinition(null, description);
       case "interface":
         return parseInterfaceTypeDefinition(null, description);
       case "union":

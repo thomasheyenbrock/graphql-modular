@@ -187,6 +187,10 @@ export type ScalarTypeExtensionNode = {
 
 export type ObjectTypeDefinitionNode = {
   kind: "ObjectTypeDefinition";
+  comments: CommentNode[];
+  commentsInterfaces: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   interfaces: NamedTypeNode[];
@@ -196,6 +200,10 @@ export type ObjectTypeDefinitionNode = {
 
 export type ObjectTypeExtensionNode = {
   kind: "ObjectTypeExtension";
+  comments: CommentNode[];
+  commentsInterfaces: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];
