@@ -195,20 +195,21 @@ export function parse(source: string): DocumentNode {
     return null;
   }
 
-  function parseName(bad?: string): NameNode {
+  function parseName(bad?: string): {
+    node: NameNode;
+    comments: CommentNode[];
+  } {
     const {
       token: { value },
       comments,
     } = takeToken("NAME");
     if (bad && value === bad) throw new Error(`Unexpected token "${bad}"`);
-    return { kind: "Name", comments, value };
+    return { node: { kind: "Name", value }, comments };
   }
 
   function parseNamedType(): NamedTypeNode {
     const name = parseName();
-    const comments = name.comments;
-    name.comments = [];
-    return { kind: "NamedType", name, comments };
+    return { kind: "NamedType", name: name.node, comments: name.comments };
   }
 
   function parseType(): TypeNode {
@@ -250,12 +251,7 @@ export function parse(source: string): DocumentNode {
     const { comments } = takePunctuator("$");
     const name = parseName();
     comments.push(...name.comments);
-    name.comments = [];
-    return {
-      kind: "Variable",
-      name,
-      comments,
-    };
+    return { kind: "Variable", name: name.node, comments };
   }
 
   function parseValue(isConst: false): ValueNode;
@@ -285,8 +281,7 @@ export function parse(source: string): DocumentNode {
             const colon = takePunctuator(":");
             const value = isConst ? parseValue(true) : parseValue(false);
             const comments = [...name.comments, ...colon.comments];
-            name.comments = [];
-            return { kind: "ObjectField", name, value, comments };
+            return { kind: "ObjectField", name: name.node, value, comments };
           }
         );
       return {
@@ -344,7 +339,7 @@ export function parse(source: string): DocumentNode {
         const colon = takePunctuator(":");
         const value = isConst ? parseValue(true) : parseValue(false);
         const comments = [...name.comments, ...colon.comments];
-        return { kind: "Argument", name, value, comments };
+        return { kind: "Argument", name: name.node, value, comments };
       }
     );
   }
@@ -361,10 +356,9 @@ export function parse(source: string): DocumentNode {
         const name = parseName();
         const args = isConst ? parseArgs(true) : parseArgs(false);
         const comments = [...at.comments, ...name.comments];
-        name.comments = [];
         return {
           kind: "Directive",
-          name,
+          name: name.node,
           args: args.items,
           comments,
           commentsArgsOpeningBracket: args.commentsOpeningBracket,
@@ -407,8 +401,12 @@ export function parse(source: string): DocumentNode {
           const name = parseName();
           const directives = parseDirectives(false);
           const comments = [...spread.comments, ...name.comments];
-          name.comments = [];
-          return { kind: "FragmentSpread", name, directives, comments };
+          return {
+            kind: "FragmentSpread",
+            name: name.node,
+            directives,
+            comments,
+          };
         }
         const typeCondition = parseTypeCondition(true);
         const directives = parseDirectives(false);
@@ -430,7 +428,7 @@ export function parse(source: string): DocumentNode {
         };
       }
 
-      let alias: NameNode | null = null;
+      let alias: { node: NameNode; comments: CommentNode[] } | null = null;
       let name = parseName();
 
       const colon = takeIfNextPunctuator(":");
@@ -451,8 +449,8 @@ export function parse(source: string): DocumentNode {
 
       return {
         kind: "Field",
-        alias,
-        name,
+        alias: alias ? alias.node : null,
+        name: name.node,
         args: args.items,
         directives,
         selectionSet: selectionSet.items,
@@ -523,11 +521,10 @@ export function parse(source: string): DocumentNode {
         const defaultValue = parseDefaultValue();
         const directives = parseDirectives(true);
         const comments = [...name.comments, ...colon.comments];
-        name.comments = [];
         return {
           kind: "InputValueDefinition",
           description,
-          name,
+          name: name.node,
           type,
           defaultValue,
           directives,
@@ -553,7 +550,7 @@ export function parse(source: string): DocumentNode {
       return {
         kind: "FieldDefinition",
         description,
-        name,
+        name: name.node,
         args: args.items,
         type,
         directives,
@@ -567,12 +564,16 @@ export function parse(source: string): DocumentNode {
   function parseEnumValue(): EnumValueNode {
     const name = parseName();
     if (
-      name.value === "null" ||
-      name.value === "true" ||
-      name.value === "false"
+      name.node.value === "null" ||
+      name.node.value === "true" ||
+      name.node.value === "false"
     )
-      throw new Error(`Unexpected token "${name.value}"`);
-    return { kind: "EnumValue", value: name.value, comments: name.comments };
+      throw new Error(`Unexpected token "${name.node.value}"`);
+    return {
+      kind: "EnumValue",
+      value: name.node.value,
+      comments: name.comments,
+    };
   }
 
   function parseSchemaDefinition(
@@ -652,19 +653,18 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments) assertCombinedListLength([directives], "@");
     return extendComments
       ? {
           kind: "ScalarTypeExtension",
-          name,
+          name: name.node,
           directives,
           comments,
         }
       : {
           kind: "ScalarTypeDefinition",
           description,
-          name,
+          name: name.node,
           directives,
           comments,
         };
@@ -692,7 +692,6 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
@@ -701,7 +700,7 @@ export function parse(source: string): DocumentNode {
     return extendComments
       ? {
           kind: "ObjectTypeExtension",
-          name,
+          name: name.node,
           interfaces: interfaces.items,
           directives,
           fields: fields.items,
@@ -713,7 +712,7 @@ export function parse(source: string): DocumentNode {
       : {
           kind: "ObjectTypeDefinition",
           description,
-          name,
+          name: name.node,
           interfaces: interfaces.items,
           directives,
           fields: fields.items,
@@ -746,7 +745,6 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments)
       assertCombinedListLength(
         [interfaces.items, directives, fields.items],
@@ -755,7 +753,7 @@ export function parse(source: string): DocumentNode {
     return extendComments
       ? {
           kind: "InterfaceTypeExtension",
-          name,
+          name: name.node,
           interfaces: interfaces.items,
           directives,
           fields: fields.items,
@@ -767,7 +765,7 @@ export function parse(source: string): DocumentNode {
       : {
           kind: "InterfaceTypeDefinition",
           description,
-          name,
+          name: name.node,
           interfaces: interfaces.items,
           directives,
           fields: fields.items,
@@ -807,13 +805,12 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments)
       assertCombinedListLength([directives, types.items], "=");
     return extendComments
       ? {
           kind: "UnionTypeExtension",
-          name,
+          name: name.node,
           directives,
           types: types.items,
           comments,
@@ -822,7 +819,7 @@ export function parse(source: string): DocumentNode {
       : {
           kind: "UnionTypeDefinition",
           description,
-          name,
+          name: name.node,
           directives,
           types: types.items,
           comments,
@@ -869,13 +866,12 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments)
       assertCombinedListLength([directives, values.items], "{");
     return extendComments
       ? {
           kind: "EnumTypeExtension",
-          name,
+          name: name.node,
           directives,
           values: values.items,
           comments,
@@ -885,7 +881,7 @@ export function parse(source: string): DocumentNode {
       : {
           kind: "EnumTypeDefinition",
           description,
-          name,
+          name: name.node,
           directives,
           values: values.items,
           comments,
@@ -915,13 +911,12 @@ export function parse(source: string): DocumentNode {
       ...keyword.comments,
       ...name.comments,
     ];
-    name.comments = [];
     if (extendComments)
       assertCombinedListLength([directives, fields.items], "{");
     return extendComments
       ? {
           kind: "InputObjectTypeExtension",
-          name,
+          name: name.node,
           directives,
           fields: fields.items,
           comments,
@@ -931,7 +926,7 @@ export function parse(source: string): DocumentNode {
       : {
           kind: "InputObjectTypeDefinition",
           description,
-          name,
+          name: name.node,
           directives,
           fields: fields.items,
           comments,
@@ -1028,7 +1023,7 @@ export function parse(source: string): DocumentNode {
         return {
           kind: "OperationDefinition",
           operation: operation.value,
-          name,
+          name: name ? name.node : null,
           variableDefinitions: variableDefinitions.items,
           directives,
           selectionSet: selectionSet.items,
@@ -1055,10 +1050,9 @@ export function parse(source: string): DocumentNode {
           ...name.comments,
           ...typeCondition.comments,
         ];
-        name.comments = [];
         return {
           kind: "FragmentDefinition",
-          name,
+          name: name.node,
           typeCondition: typeCondition.type,
           directives,
           selectionSet: selectionSet.items,
@@ -1110,11 +1104,10 @@ export function parse(source: string): DocumentNode {
           ...at.comments,
           ...name.comments,
         ];
-        name.comments = [];
         return {
           kind: "DirectiveDefinition",
           description,
-          name,
+          name: name.node,
           args: args.items,
           repeatable,
           locations: locations.items,

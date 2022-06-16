@@ -550,7 +550,6 @@ export type VariableNode = {
 
 export type NameNode = {
   kind: "Name";
-  comments: CommentNode[];
   value: string;
 };
 
