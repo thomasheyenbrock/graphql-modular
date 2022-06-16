@@ -2029,6 +2029,16 @@ describe("parsing comments in operation definitions", () => {
   });
 });
 
+it("parses comments at the end of the document", () => {
+  const ast = parse(/* GraphQL */ `
+    {
+      id
+    }
+    # comment
+  `);
+  expect(ast.comments).toEqual([{ kind: "BlockComment", value: "comment" }]);
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {

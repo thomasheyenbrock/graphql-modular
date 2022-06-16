@@ -72,6 +72,7 @@ export type AstNode = AstNodes[keyof AstNodes];
 
 export type DocumentNode = {
   kind: "Document";
+  comments: CommentNode[];
   definitions: DefinitionNode[];
 };
 

@@ -1137,7 +1137,7 @@ export function parse(source: string): DocumentNode {
     definitions.push(parseDefinition());
   }
 
-  return { kind: "Document", definitions };
+  return { kind: "Document", definitions, comments: tokens.peek().comments };
 }
 
 class TokenStream {

@@ -157,6 +157,7 @@ it("traverses with multiple layers of nesting", () => {
     })
   ).toMatchInlineSnapshot(`
     {
+      "comments": [],
       "definitions": [
         {
           "comments": [],
