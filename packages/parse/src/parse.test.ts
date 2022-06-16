@@ -1,5 +1,6 @@
 import {
   BooleanValueNode,
+  DirectiveDefinitionNode,
   EnumTypeDefinitionNode,
   EnumValueNode,
   EXECUTABLE_DIRECTIVE_LOCATION,
@@ -865,6 +866,93 @@ describe("parsing comments for union type members", () => {
       { kind: "InlineComment", value: "comment delimiter 3 after" },
       { kind: "BlockComment", value: "comment name 3 before" },
       { kind: "InlineComment", value: "comment name 3 after" },
+    ]);
+  });
+});
+
+describe("parsing comments for directive locations", () => {
+  it("parses comments for a single directive location", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      directive @foo on
+      # comment before
+      QUERY # comment after
+    `);
+    expect(
+      (ast.definitions[0] as DirectiveDefinitionNode).locations[0].comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment before" },
+      { kind: "InlineComment", value: "comment after" },
+    ]);
+  });
+  it("parses comments for multiple directive locations", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      directive @foo on
+      # comment location 1 before
+      QUERY # comment location 1 after
+      # comment delimiter 2 before
+      | # comment delimiter 2 after
+      # comment location 2 before
+      MUTATION # comment location 2 after
+      # comment delimiter 3 before
+      | # comment delimiter 3 after
+      # comment location 3 before
+      SUBSCRIPTION # comment location 3 after
+    `);
+    const { locations } = ast.definitions[0] as DirectiveDefinitionNode;
+    expect(locations[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment location 1 before" },
+      { kind: "InlineComment", value: "comment location 1 after" },
+    ]);
+    expect(locations[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment location 2 before" },
+      { kind: "InlineComment", value: "comment location 2 after" },
+    ]);
+    expect(locations[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment location 3 before" },
+      { kind: "InlineComment", value: "comment location 3 after" },
+    ]);
+  });
+  it("parses comments for multiple directive locations with leading delimiter", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      directive @foo on
+      # comment delimiter 1 before
+      | # comment delimiter 1 after
+      # comment location 1 before
+      QUERY # comment location 1 after
+      # comment delimiter 2 before
+      | # comment delimiter 2 after
+      # comment location 2 before
+      MUTATION # comment location 2 after
+      # comment delimiter 3 before
+      | # comment delimiter 3 after
+      # comment location 3 before
+      SUBSCRIPTION # comment location 3 after
+    `);
+    const { locations } = ast.definitions[0] as DirectiveDefinitionNode;
+    expect(locations[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 1 before" },
+      { kind: "InlineComment", value: "comment delimiter 1 after" },
+      { kind: "BlockComment", value: "comment location 1 before" },
+      { kind: "InlineComment", value: "comment location 1 after" },
+    ]);
+    expect(locations[1].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 2 before" },
+      { kind: "InlineComment", value: "comment delimiter 2 after" },
+      { kind: "BlockComment", value: "comment location 2 before" },
+      { kind: "InlineComment", value: "comment location 2 after" },
+    ]);
+    expect(locations[2].comments).toEqual([
+      { kind: "BlockComment", value: "comment delimiter 3 before" },
+      { kind: "InlineComment", value: "comment delimiter 3 after" },
+      { kind: "BlockComment", value: "comment location 3 before" },
+      { kind: "InlineComment", value: "comment location 3 after" },
     ]);
   });
 });

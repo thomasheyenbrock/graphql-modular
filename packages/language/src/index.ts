@@ -286,11 +286,13 @@ export type DirectiveLocationNode =
 
 export type ExecutableDirectiveLocationNode = {
   kind: "ExecutableDirectiveLocation";
+  comments: CommentNode[];
   value: typeof EXECUTABLE_DIRECTIVE_LOCATION[number];
 };
 
 export type TypeSystemDirectiveLocationNode = {
   kind: "TypeSystemDirectiveLocation";
+  comments: CommentNode[];
   value: typeof TYPE_SYSTEM_DIRECTIVE_LOCATION[number];
 };
 

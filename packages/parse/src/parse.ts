@@ -876,12 +876,14 @@ export function parse(source: string): DocumentNode {
           locations: takeDelimitedList<DirectiveLocationNode>(
             "|",
             { type: "NAME", value: "on" },
-            () => {
-              const value = takeToken("NAME").token.value as any;
+            (delimiterComments) => {
+              const name = takeToken("NAME");
+              const value = name.token.value as any;
+              const comments = [...delimiterComments, ...name.comments];
               if (EXECUTABLE_DIRECTIVE_LOCATION.includes(value))
-                return { kind: "ExecutableDirectiveLocation", value };
+                return { kind: "ExecutableDirectiveLocation", value, comments };
               if (TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value))
-                return { kind: "TypeSystemDirectiveLocation", value };
+                return { kind: "TypeSystemDirectiveLocation", value, comments };
               throw new Error(`Unexpected token "${value}"`);
             }
           ).items, // TODO: this returns comments
