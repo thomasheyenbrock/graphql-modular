@@ -479,6 +479,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "variableDefinitions": [
             {
+              "comments": [],
               "defaultValue": null,
               "directives": [],
               "kind": "VariableDefinition",
@@ -502,6 +503,7 @@ it("traverses with multiple layers of nesting", () => {
               },
             },
             {
+              "comments": [],
               "defaultValue": {
                 "comments": [],
                 "kind": "EnumValue",
@@ -748,6 +750,7 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "variableDefinitions": [
             {
+              "comments": [],
               "defaultValue": null,
               "directives": [
                 {

@@ -15,6 +15,7 @@ import {
   ObjectValueNode,
   OperationDefinitionNode,
   StringValueNode,
+  VariableNode,
 } from "@graphql-modular/language";
 import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
@@ -44,27 +45,51 @@ it("parses all language features", () => {
   expect(ast).toEqual(parseGql(LANGUAGE));
 });
 
-it("parses comments for variables", () => {
-  const ast = parse(/* GraphQL */ `
-    # prettier-ignore
-    query Foo(
-      # comment before
-      $
-      # comment between
-      id # comment after
-      : ID
-    ) {
-      id
-    }
-  `);
-  const { variable } = (ast.definitions[0] as OperationDefinitionNode)
-    .variableDefinitions[0];
-  expect(variable.comments).toEqual([
-    { kind: "BlockComment", value: "comment before" },
-    { kind: "BlockComment", value: "comment between" },
-    { kind: "InlineComment", value: "comment after" },
-  ]);
-  expect(variable.name.comments).toEqual([]);
+it("parsing comments for variables", () => {
+  it("parses comments for variables in values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        id(
+          arg:
+          # comment dollar before
+          $ # comment dollar after
+          # comment name before
+          someVariable # comment name after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as VariableNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment dollar before" },
+      { kind: "InlineComment", value: "comment dollar after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+  });
+  it("parses no comments for variables in variable definitions", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo(
+        # comment dollar before
+        $ # comment dollar after
+        # comment name before
+        id # comment name after
+        : ID
+      ) {
+        id
+      }
+    `);
+    const { variable } = (ast.definitions[0] as OperationDefinitionNode)
+      .variableDefinitions[0];
+    expect(variable.comments).toEqual([]);
+  });
 });
 
 describe("parsing comments for values", () => {

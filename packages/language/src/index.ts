@@ -296,6 +296,7 @@ export type TypeSystemDirectiveLocationNode = {
 
 export type VariableDefinitionNode = {
   kind: "VariableDefinition";
+  comments: CommentNode[];
   variable: VariableNode;
   type: TypeNode;
   defaultValue: ValueConstNode | null;

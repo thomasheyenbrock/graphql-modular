@@ -413,7 +413,7 @@ export function parse(source: string): DocumentNode {
         directives: parseDirectives(false),
         selectionSet: parseSelectionSet(true),
       };
-    }).items;
+    }).items; // TODO: this returns comments
   }
 
   function parseOperationType(): OperationType {
@@ -500,7 +500,7 @@ export function parse(source: string): DocumentNode {
         directives,
         comments,
       };
-    }).items;
+    }).items; // TODO: this returns comments
   }
 
   function parseEnumValue(): EnumValueNode {
@@ -537,7 +537,7 @@ export function parse(source: string): DocumentNode {
         operation: parseOperationType(),
         type: (takePunctuator(":"), parseNamedType()),
       })
-    ).items;
+    ).items; // TODO: this returns comments
     if (isExtension)
       assertCombinedListLength([directives, operationTypes], "{");
     return isExtension
@@ -700,7 +700,7 @@ export function parse(source: string): DocumentNode {
         name: parseEnumValue(),
         directives: parseDirectives(true),
       })
-    ).items;
+    ).items; // TODO: this returns comments
     if (isExtension) assertCombinedListLength([directives, values], "{");
     return isExtension
       ? { kind: "EnumTypeExtension", name, directives, values }
@@ -797,14 +797,24 @@ export function parse(source: string): DocumentNode {
             true,
             "(",
             ")",
-            () => ({
-              kind: "VariableDefinition",
-              variable: parseVariable(),
-              type: (takePunctuator(":"), parseType()),
-              defaultValue: parseDefaultValue(),
-              directives: parseDirectives(true),
-            })
-          ).items,
+            () => {
+              const variable = parseVariable();
+              const colon = takePunctuator(":");
+              const type = parseType();
+              const defaultValue = parseDefaultValue();
+              const directives = parseDirectives(true);
+              const comments = [...variable.comments, ...colon.comments];
+              variable.comments = [];
+              return {
+                kind: "VariableDefinition",
+                variable,
+                type,
+                defaultValue,
+                directives,
+                comments,
+              };
+            }
+          ).items, // TODO: this returns comments
           directives: parseDirectives(false),
           selectionSet: parseSelectionSet(false),
         };
