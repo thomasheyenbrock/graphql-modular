@@ -22,6 +22,7 @@ import {
   ScalarTypeDefinitionNode,
   ScalarTypeExtensionNode,
   SchemaDefinitionNode,
+  SchemaExtensionNode,
   StringValueNode,
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
@@ -1510,6 +1511,72 @@ it("parses comments for operation type definitions", () => {
   ]);
 });
 
+it("parses comments for schema definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    schema # comment keyword after
+    # comment directive before
+    @foo # comment directive after
+    # comment operation types open before
+    { # comment operation types open after
+      query: Root
+    # comment operation types close before
+    } # comment operation types close after
+  `);
+  const definition = ast.definitions[0] as SchemaDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+  ]);
+  expect(definition.commentsOperationTypesOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types open before" },
+    { kind: "InlineComment", value: "comment operation types open after" },
+  ]);
+  expect(definition.commentsOperationTypesClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types close before" },
+    { kind: "InlineComment", value: "comment operation types close after" },
+  ]);
+});
+
+it("parses comments for schema extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    schema # comment keyword after
+    # comment directive before
+    @foo # comment directive after
+    # comment operation types open before
+    { # comment operation types open after
+      query: Root
+    # comment operation types close before
+    } # comment operation types close after
+  `);
+  const definition = ast.definitions[0] as SchemaExtensionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+  ]);
+  expect(definition.commentsOperationTypesOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types open before" },
+    { kind: "InlineComment", value: "comment operation types open after" },
+  ]);
+  expect(definition.commentsOperationTypesClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types close before" },
+    { kind: "InlineComment", value: "comment operation types close after" },
+  ]);
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -1711,6 +1778,8 @@ function stripComments(obj: any) {
   delete obj.commentsFieldsClosingBracket;
   delete obj.commentsValuesOpeningBracket;
   delete obj.commentsValuesClosingBracket;
+  delete obj.commentsOperationTypesOpeningBracket;
+  delete obj.commentsOperationTypesClosingBracket;
   delete obj.commentsInterfaces;
   delete obj.commentsTypes;
   delete obj.commentsLocations;

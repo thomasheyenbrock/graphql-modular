@@ -155,6 +155,9 @@ export type TypeExtensionNode =
 
 export type SchemaDefinitionNode = {
   kind: "SchemaDefinition";
+  comments: CommentNode[];
+  commentsOperationTypesOpeningBracket: CommentNode[];
+  commentsOperationTypesClosingBracket: CommentNode[];
   description: StringValueNode | null;
   directives: DirectiveConstNode[];
   operationTypes: OperationTypeDefinitionNode[];
@@ -169,6 +172,9 @@ export type OperationTypeDefinitionNode = {
 
 export type SchemaExtensionNode = {
   kind: "SchemaExtension";
+  comments: CommentNode[];
+  commentsOperationTypesOpeningBracket: CommentNode[];
+  commentsOperationTypesClosingBracket: CommentNode[];
   directives: DirectiveConstNode[];
   operationTypes: OperationTypeDefinitionNode[];
 };

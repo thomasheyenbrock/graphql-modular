@@ -531,18 +531,18 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseSchemaDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): SchemaDefinitionNode;
   function parseSchemaDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): SchemaExtensionNode;
   function parseSchemaDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): SchemaDefinitionNode | SchemaExtensionNode {
-    takeToken("NAME", "schema");
+    const keyword = takeToken("NAME", "schema");
     const directives = parseDirectives(true);
     const operationTypes = takeWrappedList<OperationTypeDefinitionNode>(
       true,
@@ -559,20 +559,31 @@ export function parse(source: string): DocumentNode {
           comments: colon.comments,
         };
       }
-    ).items; // TODO: this returns comments
-    if (isExtension)
-      assertCombinedListLength([directives, operationTypes], "{");
-    return isExtension
+    );
+    const comments = [...(extendComments || []), ...keyword.comments];
+    if (extendComments)
+      assertCombinedListLength([directives, operationTypes.items], "{");
+    return extendComments
       ? {
           kind: "SchemaExtension",
           directives,
-          operationTypes,
+          operationTypes: operationTypes.items,
+          comments,
+          commentsOperationTypesOpeningBracket:
+            operationTypes.commentsOpeningBracket,
+          commentsOperationTypesClosingBracket:
+            operationTypes.commentsClosingBracket,
         }
       : {
           kind: "SchemaDefinition",
           description,
           directives,
-          operationTypes,
+          operationTypes: operationTypes.items,
+          comments,
+          commentsOperationTypesOpeningBracket:
+            operationTypes.commentsOpeningBracket,
+          commentsOperationTypesClosingBracket:
+            operationTypes.commentsClosingBracket,
         };
   }
 
@@ -892,7 +903,7 @@ export function parse(source: string): DocumentNode {
     } = assertToken("NAME");
     switch (value) {
       case "schema":
-        return parseSchemaDefinition(true);
+        return parseSchemaDefinition(comments);
       case "scalar":
         return parseScalarTypeDefinition(comments);
       case "type":
@@ -973,7 +984,7 @@ export function parse(source: string): DocumentNode {
           selectionSet: parseSelectionSet(false),
         };
       case "schema":
-        return parseSchemaDefinition(false, description);
+        return parseSchemaDefinition(null, description);
       case "scalar":
         return parseScalarTypeDefinition(null, description);
       case "type":
