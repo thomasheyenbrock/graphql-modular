@@ -504,12 +504,7 @@ export function parse(source: string): DocumentNode {
       const colon = takePunctuator(":");
       const type = parseType();
       const directives = parseDirectives(true);
-      const comments = [
-        ...name.comments,
-        ...colon.comments,
-        ...args.commentsOpeningBracket,
-        ...args.commentsClosingBracket,
-      ];
+      const comments = [...name.comments, ...colon.comments];
       return {
         kind: "FieldDefinition",
         description,
@@ -518,6 +513,8 @@ export function parse(source: string): DocumentNode {
         type,
         directives,
         comments,
+        commentsArgsOpeningBracket: args.commentsOpeningBracket,
+        commentsArgsClosingBracket: args.commentsClosingBracket,
       };
     });
   }
