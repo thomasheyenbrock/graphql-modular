@@ -119,11 +119,9 @@ export type SelectionNode = FieldNode | FragmentSpreadNode | InlineFragmentNode;
 export type FieldNode = {
   kind: "Field";
   comments: CommentNode[];
-  commentsArgsOpeningBracket: CommentNode[];
-  commentsArgsClosingBracket: CommentNode[];
   alias: NameNode | null;
   name: NameNode;
-  args: ArgumentNode[];
+  argumentSet: ArgumentSetNode | null;
   directives: DirectiveNode[];
   selectionSet: SelectionSetNode | null;
 };
@@ -378,9 +376,14 @@ export type VariableDefinitionNode = {
 export type DirectiveNode = {
   kind: "Directive";
   comments: CommentNode[];
-  commentsArgsOpeningBracket: CommentNode[];
-  commentsArgsClosingBracket: CommentNode[];
   name: NameNode;
+  argumentSet: ArgumentSetNode | null;
+};
+
+export type ArgumentSetNode = {
+  kind: "ArgumentSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   args: ArgumentNode[];
 };
 
@@ -394,9 +397,14 @@ export type ArgumentNode = {
 export type DirectiveConstNode = {
   kind: "Directive";
   comments: CommentNode[];
-  commentsArgsOpeningBracket: CommentNode[];
-  commentsArgsClosingBracket: CommentNode[];
   name: NameNode;
+  argumentSet: ArgumentSetConstNode | null;
+};
+
+export type ArgumentSetConstNode = {
+  kind: "ArgumentSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   args: ArgumentConstNode[];
 };
 

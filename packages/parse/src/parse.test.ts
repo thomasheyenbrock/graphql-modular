@@ -78,7 +78,7 @@ it("parsing comments for variables", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as VariableNode
+        ).argumentSet?.args[0].value as VariableNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment dollar before" },
@@ -124,7 +124,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as IntValueNode
+        ).argumentSet?.args[0].value as IntValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment int before" },
@@ -147,7 +147,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as FloatValueNode
+        ).argumentSet?.args[0].value as FloatValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment float before" },
@@ -170,7 +170,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as StringValueNode
+        ).argumentSet?.args[0].value as StringValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment string before" },
@@ -193,7 +193,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as BooleanValueNode
+        ).argumentSet?.args[0].value as BooleanValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment boolean before" },
@@ -216,7 +216,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as NullValueNode
+        ).argumentSet?.args[0].value as NullValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment null before" },
@@ -239,7 +239,7 @@ describe("parsing comments for values", () => {
         (
           (ast.definitions[0] as OperationDefinitionNode).selectionSet
             .selections[0] as FieldNode
-        ).args[0].value as EnumValueNode
+        ).argumentSet?.args[0].value as EnumValueNode
       ).comments
     ).toEqual([
       { kind: "BlockComment", value: "comment enum before" },
@@ -263,7 +263,7 @@ describe("parsing comments for values", () => {
     const value = (
       (ast.definitions[0] as OperationDefinitionNode).selectionSet
         .selections[0] as FieldNode
-    ).args[0].value as ListValueNode;
+    ).argumentSet?.args[0].value as ListValueNode;
     expect(value.commentsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment list open before" },
       { kind: "InlineComment", value: "comment list open after" },
@@ -295,7 +295,7 @@ describe("parsing comments for values", () => {
     const value = (
       (ast.definitions[0] as OperationDefinitionNode).selectionSet
         .selections[0] as FieldNode
-    ).args[0].value as ObjectValueNode;
+    ).argumentSet?.args[0].value as ObjectValueNode;
     expect(value.commentsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment object open before" },
       { kind: "InlineComment", value: "comment object open after" },
@@ -620,29 +620,49 @@ describe("parsing comments for field definitions", () => {
   });
 });
 
+it("parses comments for argument sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    {
+      field 
+      # comment args open before
+      ( # comment args open after
+        argName: 42
+      # comment args close before
+      ) # comment args close after
+    }
+  `);
+  const { argumentSet } = (ast.definitions[0] as OperationDefinitionNode)
+    .selectionSet.selections[0] as FieldNode;
+  expect(argumentSet?.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment args open before" },
+    { kind: "InlineComment", value: "comment args open after" },
+  ]);
+  expect(argumentSet?.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment args close before" },
+    { kind: "InlineComment", value: "comment args close after" },
+  ]);
+});
+
 it("parses comments for arguments", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     {
-      # comment field before
-      field # comment field after
-      # comment args open before
-      ( # comment args open after
+      field(
         # comment arg name before
         argName # comment arg name after
         # comment colon before
         : # comment colon after
         # comment arg value before
         42 # comment arg value after
-      # comment args close before
-      ) # comment args close after
+      )
     }
   `);
   expect(
     (
       (ast.definitions[0] as OperationDefinitionNode).selectionSet
         .selections[0] as FieldNode
-    ).args[0].comments
+    ).argumentSet?.args[0].comments
   ).toEqual([
     { kind: "BlockComment", value: "comment arg name before" },
     { kind: "InlineComment", value: "comment arg name after" },
@@ -651,72 +671,27 @@ it("parses comments for arguments", () => {
   ]);
 });
 
-describe("parsing comments for directives", () => {
-  it("parses comments for directives without arguments", () => {
-    const ast = parse(/* GraphQL */ `
-      # prettier-ignore
-      {
-        field
-        # comment at before
-        @ # comment at after
-        # comment directive before
-        someOtherDirective # comment directive after
-      }
-    `);
-    const directive = (
-      (ast.definitions[0] as OperationDefinitionNode).selectionSet
-        .selections[0] as FieldNode
-    ).directives[0];
-    expect(directive.comments).toEqual([
-      { kind: "BlockComment", value: "comment at before" },
-      { kind: "InlineComment", value: "comment at after" },
-      { kind: "BlockComment", value: "comment directive before" },
-      { kind: "InlineComment", value: "comment directive after" },
-    ]);
-    expect(directive.commentsArgsOpeningBracket).toEqual([]);
-    expect(directive.commentsArgsClosingBracket).toEqual([]);
-  });
-  it("parses comments for directives with arguments", () => {
-    const ast = parse(/* GraphQL */ `
-      # prettier-ignore
-      {
-        # comment field before
-        field # comment field after
-        # comment at before
-        @ # comment at after
-        # comment directive before
-        someDirective # comment directive after
-        # comment args open before
-        ( # comment args open after
-          # comment arg name before
-          arg # comment arg name before
-          # comment colon before
-          : # comment colon before
-          # comment arg type before
-          Int # comment arg type before
-        # comment args close before
-        ) # comment args close after
-      }
-    `);
-    const directive = (
-      (ast.definitions[0] as OperationDefinitionNode).selectionSet
-        .selections[0] as FieldNode
-    ).directives[0];
-    expect(directive.comments).toEqual([
-      { kind: "BlockComment", value: "comment at before" },
-      { kind: "InlineComment", value: "comment at after" },
-      { kind: "BlockComment", value: "comment directive before" },
-      { kind: "InlineComment", value: "comment directive after" },
-    ]);
-    expect(directive.commentsArgsOpeningBracket).toEqual([
-      { kind: "BlockComment", value: "comment args open before" },
-      { kind: "InlineComment", value: "comment args open after" },
-    ]);
-    expect(directive.commentsArgsClosingBracket).toEqual([
-      { kind: "BlockComment", value: "comment args close before" },
-      { kind: "InlineComment", value: "comment args close after" },
-    ]);
-  });
+it("parses comments for directives", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    {
+      field
+      # comment at before
+      @ # comment at after
+      # comment directive before
+      someOtherDirective # comment directive after
+    }
+  `);
+  const directive = (
+    (ast.definitions[0] as OperationDefinitionNode).selectionSet
+      .selections[0] as FieldNode
+  ).directives[0];
+  expect(directive.comments).toEqual([
+    { kind: "BlockComment", value: "comment at before" },
+    { kind: "InlineComment", value: "comment at after" },
+    { kind: "BlockComment", value: "comment directive before" },
+    { kind: "InlineComment", value: "comment directive after" },
+  ]);
 });
 
 describe("parsing comments for interface implementations", () => {
@@ -1675,7 +1650,7 @@ it("parses comments for fragment spreads", () => {
 });
 
 describe("parsing comments for fields", () => {
-  it("parses comments for fields without arguments", () => {
+  it("parses comments for fields without alias", () => {
     const ast = parse(/* GraphQL */ `
       # prettier-ignore
       {
@@ -1690,38 +1665,6 @@ describe("parsing comments for fields", () => {
     expect(field.comments).toEqual([
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
-    ]);
-    expect(field.commentsArgsOpeningBracket).toEqual([]);
-    expect(field.commentsArgsClosingBracket).toEqual([]);
-  });
-  it("parses comments for fields with arguments", () => {
-    const ast = parse(/* GraphQL */ `
-      # prettier-ignore
-      {
-        # comment name before
-        field # comment name after
-        # comment args open before
-        ( # comment args open after
-          arg: 42
-        # comment args close before
-        ) # comment args close after
-        # comment directive before
-        @foo # comment directive after
-      }
-    `);
-    const field = (ast.definitions[0] as OperationDefinitionNode).selectionSet
-      .selections[0] as FieldNode;
-    expect(field.comments).toEqual([
-      { kind: "BlockComment", value: "comment name before" },
-      { kind: "InlineComment", value: "comment name after" },
-    ]);
-    expect(field.commentsArgsOpeningBracket).toEqual([
-      { kind: "BlockComment", value: "comment args open before" },
-      { kind: "InlineComment", value: "comment args open after" },
-    ]);
-    expect(field.commentsArgsClosingBracket).toEqual([
-      { kind: "BlockComment", value: "comment args close before" },
-      { kind: "InlineComment", value: "comment args close after" },
     ]);
   });
   it("parses comments for fields with alias", () => {
@@ -1748,8 +1691,6 @@ describe("parsing comments for fields", () => {
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
     ]);
-    expect(field.commentsArgsOpeningBracket).toEqual([]);
-    expect(field.commentsArgsClosingBracket).toEqual([]);
   });
 });
 
@@ -1895,8 +1836,12 @@ function parseGql(source: string): DocumentNode {
   return visit(ast, {
     Directive: {
       leave({ arguments: args, ...restNode }) {
-        /** we always use "args" as key instead of "arguments" */
-        return { args, ...restNode };
+        return {
+          /** argument set instead of plain list */
+          argumentSet:
+            !args || args.length === 0 ? null : { kind: "ArgumentSet", args },
+          ...restNode,
+        };
       },
     },
     DirectiveDefinition: {
@@ -1946,8 +1891,9 @@ function parseGql(source: string): DocumentNode {
           ...restNode,
           /** null instead of undefined */
           alias: alias ?? null,
-          /** we always use "args" as key instead of "arguments" */
-          args,
+          /** argument set instead of plain list */
+          argumentSet:
+            !args || args.length === 0 ? null : { kind: "ArgumentSet", args },
           /** null instead of undefined */
           selectionSet: selectionSet ?? null,
         };
@@ -2019,9 +1965,9 @@ function parseGql(source: string): DocumentNode {
           name: restNode.name ?? null,
           /** variable definition set instead of plain list */
           variableDefinitionSet:
-            variableDefinitions?.length > 0
-              ? { kind: "VariableDefinitionSet", variableDefinitions }
-              : null,
+            variableDefinitions?.length === 0
+              ? null
+              : { kind: "VariableDefinitionSet", variableDefinitions },
         };
       },
     },

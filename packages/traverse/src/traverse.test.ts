@@ -157,10 +157,8 @@ it("traverses with multiple layers of nesting", () => {
           "comments": [],
           "directives": [
             {
-              "args": [],
+              "argumentSet": null,
               "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "kind": "Name",
@@ -184,36 +182,39 @@ it("traverses with multiple layers of nesting", () => {
                   "kind": "Name",
                   "value": "hoever123ishoever123is",
                 },
-                "args": [
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "dd",
+                "argumentSet": {
+                  "args": [
+                    {
+                      "comments": [],
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "dd",
+                      },
+                      "value": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "ListValue",
+                        "values": [
+                          {
+                            "comments": [],
+                            "kind": "IntValue",
+                            "value": "123",
+                          },
+                          {
+                            "comments": [],
+                            "kind": "IntValue",
+                            "value": "456",
+                          },
+                        ],
+                      },
                     },
-                    "value": {
-                      "commentsClosingBracket": [],
-                      "commentsOpeningBracket": [],
-                      "kind": "ListValue",
-                      "values": [
-                        {
-                          "comments": [],
-                          "kind": "IntValue",
-                          "value": "123",
-                        },
-                        {
-                          "comments": [],
-                          "kind": "IntValue",
-                          "value": "456",
-                        },
-                      ],
-                    },
-                  },
-                ],
+                  ],
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "ArgumentSet",
+                },
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {
@@ -227,15 +228,13 @@ it("traverses with multiple layers of nesting", () => {
                   "selections": [
                     {
                       "alias": null,
-                      "args": [],
+                      "argumentSet": null,
                       "comments": [
                         {
                           "kind": "BlockComment",
                           "value": "field block comment",
                         },
                       ],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -248,10 +247,8 @@ it("traverses with multiple layers of nesting", () => {
                       "comments": [],
                       "directives": [
                         {
-                          "args": [],
+                          "argumentSet": null,
                           "comments": [],
-                          "commentsArgsClosingBracket": [],
-                          "commentsArgsOpeningBracket": [],
                           "kind": "Directive",
                           "name": {
                             "kind": "Name",
@@ -267,10 +264,8 @@ it("traverses with multiple layers of nesting", () => {
                         "selections": [
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [],
                             "kind": "Field",
                             "name": {
@@ -284,15 +279,13 @@ it("traverses with multiple layers of nesting", () => {
                               "selections": [
                                 {
                                   "alias": null,
-                                  "args": [],
+                                  "argumentSet": null,
                                   "comments": [
                                     {
                                       "kind": "InlineComment",
                                       "value": "field inline comment",
                                     },
                                   ],
-                                  "commentsArgsClosingBracket": [],
-                                  "commentsArgsOpeningBracket": [],
                                   "directives": [],
                                   "kind": "Field",
                                   "name": {
@@ -306,63 +299,69 @@ it("traverses with multiple layers of nesting", () => {
                                     "kind": "Name",
                                     "value": "liaslias",
                                   },
-                                  "args": [
-                                    {
-                                      "comments": [],
-                                      "kind": "Argument",
-                                      "name": {
-                                        "kind": "Name",
-                                        "value": "irstirst",
-                                      },
-                                      "value": {
+                                  "argumentSet": {
+                                    "args": [
+                                      {
                                         "comments": [],
-                                        "kind": "IntValue",
-                                        "value": "10",
-                                      },
-                                    },
-                                    {
-                                      "comments": [],
-                                      "kind": "Argument",
-                                      "name": {
-                                        "kind": "Name",
-                                        "value": "fterfter",
-                                      },
-                                      "value": {
-                                        "comments": [],
-                                        "kind": "Variable",
+                                        "kind": "Argument",
                                         "name": {
                                           "kind": "Name",
-                                          "value": "oooo",
+                                          "value": "irstirst",
+                                        },
+                                        "value": {
+                                          "comments": [],
+                                          "kind": "IntValue",
+                                          "value": "10",
                                         },
                                       },
-                                    },
-                                  ],
-                                  "comments": [],
-                                  "commentsArgsClosingBracket": [],
-                                  "commentsArgsOpeningBracket": [],
-                                  "directives": [
-                                    {
-                                      "args": [
-                                        {
+                                      {
+                                        "comments": [],
+                                        "kind": "Argument",
+                                        "name": {
+                                          "kind": "Name",
+                                          "value": "fterfter",
+                                        },
+                                        "value": {
                                           "comments": [],
-                                          "kind": "Argument",
+                                          "kind": "Variable",
                                           "name": {
                                             "kind": "Name",
-                                            "value": "ff",
-                                          },
-                                          "value": {
-                                            "comments": [],
-                                            "kind": "Variable",
-                                            "name": {
-                                              "kind": "Name",
-                                              "value": "oooo",
-                                            },
+                                            "value": "oooo",
                                           },
                                         },
-                                      ],
+                                      },
+                                    ],
+                                    "commentsClosingBracket": [],
+                                    "commentsOpeningBracket": [],
+                                    "kind": "ArgumentSet",
+                                  },
+                                  "comments": [],
+                                  "directives": [
+                                    {
+                                      "argumentSet": {
+                                        "args": [
+                                          {
+                                            "comments": [],
+                                            "kind": "Argument",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "ff",
+                                            },
+                                            "value": {
+                                              "comments": [],
+                                              "kind": "Variable",
+                                              "name": {
+                                                "kind": "Name",
+                                                "value": "oooo",
+                                              },
+                                            },
+                                          },
+                                        ],
+                                        "commentsClosingBracket": [],
+                                        "commentsOpeningBracket": [],
+                                        "kind": "ArgumentSet",
+                                      },
                                       "comments": [],
-                                      "commentsArgsClosingBracket": [],
-                                      "commentsArgsOpeningBracket": [],
                                       "kind": "Directive",
                                       "name": {
                                         "kind": "Name",
@@ -382,10 +381,8 @@ it("traverses with multiple layers of nesting", () => {
                                     "selections": [
                                       {
                                         "alias": null,
-                                        "args": [],
+                                        "argumentSet": null,
                                         "comments": [],
-                                        "commentsArgsClosingBracket": [],
-                                        "commentsArgsOpeningBracket": [],
                                         "directives": [],
                                         "kind": "Field",
                                         "name": {
@@ -398,10 +395,8 @@ it("traverses with multiple layers of nesting", () => {
                                         "comments": [],
                                         "directives": [
                                           {
-                                            "args": [],
+                                            "argumentSet": null,
                                             "comments": [],
-                                            "commentsArgsClosingBracket": [],
-                                            "commentsArgsOpeningBracket": [],
                                             "kind": "Directive",
                                             "name": {
                                               "kind": "Name",
@@ -436,27 +431,30 @@ it("traverses with multiple layers of nesting", () => {
                       "comments": [],
                       "directives": [
                         {
-                          "args": [
-                            {
-                              "comments": [],
-                              "kind": "Argument",
-                              "name": {
-                                "kind": "Name",
-                                "value": "nlessnless",
-                              },
-                              "value": {
+                          "argumentSet": {
+                            "args": [
+                              {
                                 "comments": [],
-                                "kind": "Variable",
+                                "kind": "Argument",
                                 "name": {
                                   "kind": "Name",
-                                  "value": "oooo",
+                                  "value": "nlessnless",
+                                },
+                                "value": {
+                                  "comments": [],
+                                  "kind": "Variable",
+                                  "name": {
+                                    "kind": "Name",
+                                    "value": "oooo",
+                                  },
                                 },
                               },
-                            },
-                          ],
+                            ],
+                            "commentsClosingBracket": [],
+                            "commentsOpeningBracket": [],
+                            "kind": "ArgumentSet",
+                          },
                           "comments": [],
-                          "commentsArgsClosingBracket": [],
-                          "commentsArgsOpeningBracket": [],
                           "kind": "Directive",
                           "name": {
                             "kind": "Name",
@@ -472,10 +470,8 @@ it("traverses with multiple layers of nesting", () => {
                         "selections": [
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [],
                             "kind": "Field",
                             "name": {
@@ -499,10 +495,8 @@ it("traverses with multiple layers of nesting", () => {
                         "selections": [
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [],
                             "kind": "Field",
                             "name": {
@@ -590,10 +584,8 @@ it("traverses with multiple layers of nesting", () => {
           ],
           "directives": [
             {
-              "args": [],
+              "argumentSet": null,
               "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "kind": "Name",
@@ -614,30 +606,31 @@ it("traverses with multiple layers of nesting", () => {
             "selections": [
               {
                 "alias": null,
-                "args": [
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "torytory",
-                    },
-                    "value": {
+                "argumentSet": {
+                  "args": [
+                    {
                       "comments": [],
-                      "kind": "IntValue",
-                      "value": "123",
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "torytory",
+                      },
+                      "value": {
+                        "comments": [],
+                        "kind": "IntValue",
+                        "value": "123",
+                      },
                     },
-                  },
-                ],
+                  ],
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "ArgumentSet",
+                },
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [
                   {
-                    "args": [],
+                    "argumentSet": null,
                     "comments": [],
-                    "commentsArgsClosingBracket": [],
-                    "commentsArgsOpeningBracket": [],
                     "kind": "Directive",
                     "name": {
                       "kind": "Name",
@@ -657,10 +650,8 @@ it("traverses with multiple layers of nesting", () => {
                   "selections": [
                     {
                       "alias": null,
-                      "args": [],
+                      "argumentSet": null,
                       "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -674,16 +665,12 @@ it("traverses with multiple layers of nesting", () => {
                         "selections": [
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [
                               {
-                                "args": [],
+                                "argumentSet": null,
                                 "comments": [],
-                                "commentsArgsClosingBracket": [],
-                                "commentsArgsOpeningBracket": [],
                                 "kind": "Directive",
                                 "name": {
                                   "kind": "Name",
@@ -712,10 +699,8 @@ it("traverses with multiple layers of nesting", () => {
           "comments": [],
           "directives": [
             {
-              "args": [],
+              "argumentSet": null,
               "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "kind": "Name",
@@ -736,27 +721,30 @@ it("traverses with multiple layers of nesting", () => {
             "selections": [
               {
                 "alias": null,
-                "args": [
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "nputnput",
-                    },
-                    "value": {
+                "argumentSet": {
+                  "args": [
+                    {
                       "comments": [],
-                      "kind": "Variable",
+                      "kind": "Argument",
                       "name": {
                         "kind": "Name",
                         "value": "nputnput",
                       },
+                      "value": {
+                        "comments": [],
+                        "kind": "Variable",
+                        "name": {
+                          "kind": "Name",
+                          "value": "nputnput",
+                        },
+                      },
                     },
-                  },
-                ],
+                  ],
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "ArgumentSet",
+                },
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {
@@ -770,10 +758,8 @@ it("traverses with multiple layers of nesting", () => {
                   "selections": [
                     {
                       "alias": null,
-                      "args": [],
+                      "argumentSet": null,
                       "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -787,10 +773,8 @@ it("traverses with multiple layers of nesting", () => {
                         "selections": [
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [],
                             "kind": "Field",
                             "name": {
@@ -804,10 +788,8 @@ it("traverses with multiple layers of nesting", () => {
                               "selections": [
                                 {
                                   "alias": null,
-                                  "args": [],
+                                  "argumentSet": null,
                                   "comments": [],
-                                  "commentsArgsClosingBracket": [],
-                                  "commentsArgsOpeningBracket": [],
                                   "directives": [],
                                   "kind": "Field",
                                   "name": {
@@ -821,10 +803,8 @@ it("traverses with multiple layers of nesting", () => {
                           },
                           {
                             "alias": null,
-                            "args": [],
+                            "argumentSet": null,
                             "comments": [],
-                            "commentsArgsClosingBracket": [],
-                            "commentsArgsOpeningBracket": [],
                             "directives": [],
                             "kind": "Field",
                             "name": {
@@ -838,10 +818,8 @@ it("traverses with multiple layers of nesting", () => {
                               "selections": [
                                 {
                                   "alias": null,
-                                  "args": [],
+                                  "argumentSet": null,
                                   "comments": [],
-                                  "commentsArgsClosingBracket": [],
-                                  "commentsArgsOpeningBracket": [],
                                   "directives": [],
                                   "kind": "Field",
                                   "name": {
@@ -871,10 +849,8 @@ it("traverses with multiple layers of nesting", () => {
                 "defaultValue": null,
                 "directives": [
                   {
-                    "args": [],
+                    "argumentSet": null,
                     "comments": [],
-                    "commentsArgsClosingBracket": [],
-                    "commentsArgsOpeningBracket": [],
                     "kind": "Directive",
                     "name": {
                       "kind": "Name",
@@ -907,10 +883,8 @@ it("traverses with multiple layers of nesting", () => {
           "comments": [],
           "directives": [
             {
-              "args": [],
+              "argumentSet": null,
               "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "kind": "Name",
@@ -930,86 +904,89 @@ it("traverses with multiple layers of nesting", () => {
             "selections": [
               {
                 "alias": null,
-                "args": [
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "izeize",
-                    },
-                    "value": {
+                "argumentSet": {
+                  "args": [
+                    {
                       "comments": [],
-                      "kind": "Variable",
+                      "kind": "Argument",
                       "name": {
                         "kind": "Name",
                         "value": "izeize",
                       },
-                    },
-                  },
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "arar",
-                    },
-                    "value": {
-                      "comments": [],
-                      "kind": "Variable",
-                      "name": {
-                        "kind": "Name",
-                        "value": "",
+                      "value": {
+                        "comments": [],
+                        "kind": "Variable",
+                        "name": {
+                          "kind": "Name",
+                          "value": "izeize",
+                        },
                       },
                     },
-                  },
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "bjbj",
-                    },
-                    "value": {
-                      "commentsClosingBracket": [],
-                      "commentsOpeningBracket": [],
-                      "fields": [
-                        {
-                          "comments": [],
-                          "kind": "ObjectField",
-                          "name": {
-                            "kind": "Name",
-                            "value": "eyey",
-                          },
-                          "value": {
-                            "block": false,
-                            "comments": [],
-                            "kind": "StringValue",
-                            "value": "value",
-                          },
+                    {
+                      "comments": [],
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "arar",
+                      },
+                      "value": {
+                        "comments": [],
+                        "kind": "Variable",
+                        "name": {
+                          "kind": "Name",
+                          "value": "",
                         },
-                        {
-                          "comments": [],
-                          "kind": "ObjectField",
-                          "name": {
-                            "kind": "Name",
-                            "value": "locklock",
-                          },
-                          "value": {
-                            "block": true,
-                            "comments": [],
-                            "kind": "StringValue",
-                            "value": "block string uses \\"\\"\\"",
-                          },
-                        },
-                      ],
-                      "kind": "ObjectValue",
+                      },
                     },
-                  },
-                ],
+                    {
+                      "comments": [],
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "bjbj",
+                      },
+                      "value": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "fields": [
+                          {
+                            "comments": [],
+                            "kind": "ObjectField",
+                            "name": {
+                              "kind": "Name",
+                              "value": "eyey",
+                            },
+                            "value": {
+                              "block": false,
+                              "comments": [],
+                              "kind": "StringValue",
+                              "value": "value",
+                            },
+                          },
+                          {
+                            "comments": [],
+                            "kind": "ObjectField",
+                            "name": {
+                              "kind": "Name",
+                              "value": "locklock",
+                            },
+                            "value": {
+                              "block": true,
+                              "comments": [],
+                              "kind": "StringValue",
+                              "value": "block string uses \\"\\"\\"",
+                            },
+                          },
+                        ],
+                        "kind": "ObjectValue",
+                      },
+                    },
+                  ],
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "ArgumentSet",
+                },
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {
@@ -1042,49 +1019,52 @@ it("traverses with multiple layers of nesting", () => {
             "selections": [
               {
                 "alias": null,
-                "args": [
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "ruthyruthy",
-                    },
-                    "value": {
+                "argumentSet": {
+                  "args": [
+                    {
                       "comments": [],
-                      "kind": "BooleanValue",
-                      "value": true,
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "ruthyruthy",
+                      },
+                      "value": {
+                        "comments": [],
+                        "kind": "BooleanValue",
+                        "value": true,
+                      },
                     },
-                  },
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "alsyalsy",
-                    },
-                    "value": {
+                    {
                       "comments": [],
-                      "kind": "BooleanValue",
-                      "value": false,
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "alsyalsy",
+                      },
+                      "value": {
+                        "comments": [],
+                        "kind": "BooleanValue",
+                        "value": false,
+                      },
                     },
-                  },
-                  {
-                    "comments": [],
-                    "kind": "Argument",
-                    "name": {
-                      "kind": "Name",
-                      "value": "ullishullish",
-                    },
-                    "value": {
+                    {
                       "comments": [],
-                      "kind": "NullValue",
+                      "kind": "Argument",
+                      "name": {
+                        "kind": "Name",
+                        "value": "ullishullish",
+                      },
+                      "value": {
+                        "comments": [],
+                        "kind": "NullValue",
+                      },
                     },
-                  },
-                ],
+                  ],
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "ArgumentSet",
+                },
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {
@@ -1095,10 +1075,8 @@ it("traverses with multiple layers of nesting", () => {
               },
               {
                 "alias": null,
-                "args": [],
+                "argumentSet": null,
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {
@@ -1124,10 +1102,8 @@ it("traverses with multiple layers of nesting", () => {
             "selections": [
               {
                 "alias": null,
-                "args": [],
+                "argumentSet": null,
                 "comments": [],
-                "commentsArgsClosingBracket": [],
-                "commentsArgsOpeningBracket": [],
                 "directives": [],
                 "kind": "Field",
                 "name": {

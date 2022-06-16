@@ -1,6 +1,7 @@
 import {
   ArgumentConstNode,
   ArgumentNode,
+  ArgumentSetNode,
   CommentNode,
   DirectiveConstNode,
   DirectiveLocationNode,
@@ -316,33 +317,25 @@ export function parse(source: string): DocumentNode {
     return { kind: "EnumValue", value: token.value, comments };
   }
 
-  function parseArgs(isConst: false): {
-    items: ArgumentNode[];
-    commentsOpeningBracket: CommentNode[];
-    commentsClosingBracket: CommentNode[];
-  };
-  function parseArgs(isConst: true): {
-    items: ArgumentConstNode[];
-    commentsOpeningBracket: CommentNode[];
-    commentsClosingBracket: CommentNode[];
-  };
-  function parseArgs(isConst: boolean): {
-    items: ArgumentNode[] | ArgumentConstNode[];
-    commentsOpeningBracket: CommentNode[];
-    commentsClosingBracket: CommentNode[];
-  } {
-    return takeWrappedList<ArgumentNode | ArgumentConstNode>(
-      true,
-      "(",
-      ")",
-      () => {
+  function parseArgumentSet(isConst: false): ArgumentSetNode | null;
+  function parseArgumentSet(isConst: true): ArgumentSetNode | null;
+  function parseArgumentSet(isConst: boolean): ArgumentSetNode | null {
+    const { items, commentsOpeningBracket, commentsClosingBracket } =
+      takeWrappedList<ArgumentNode | ArgumentConstNode>(true, "(", ")", () => {
         const name = parseName();
         const colon = takePunctuator(":");
         const value = isConst ? parseValue(true) : parseValue(false);
         const comments = [...name.comments, ...colon.comments];
         return { kind: "Argument", name: name.node, value, comments };
-      }
-    );
+      });
+    return items.length === 0
+      ? null
+      : {
+          kind: "ArgumentSet",
+          args: items,
+          commentsOpeningBracket,
+          commentsClosingBracket,
+        };
   }
 
   function parseDirectives(isConst: false): DirectiveNode[];
@@ -355,16 +348,11 @@ export function parse(source: string): DocumentNode {
       () => {
         const at = takePunctuator("@");
         const name = parseName();
-        const args = isConst ? parseArgs(true) : parseArgs(false);
+        const argumentSet = isConst
+          ? parseArgumentSet(true)
+          : parseArgumentSet(false);
         const comments = [...at.comments, ...name.comments];
-        return {
-          kind: "Directive",
-          name: name.node,
-          args: args.items,
-          comments,
-          commentsArgsOpeningBracket: args.commentsOpeningBracket,
-          commentsArgsClosingBracket: args.commentsClosingBracket,
-        };
+        return { kind: "Directive", name: name.node, argumentSet, comments };
       }
     );
   }
@@ -433,7 +421,7 @@ export function parse(source: string): DocumentNode {
           name = parseName();
         }
 
-        const args = parseArgs(false);
+        const argumentSet = parseArgumentSet(false);
         const directives = parseDirectives(false);
         const selectionSet = parseSelectionSet(true);
 
@@ -447,12 +435,10 @@ export function parse(source: string): DocumentNode {
           kind: "Field",
           alias: alias ? alias.node : null,
           name: name.node,
-          args: args.items,
+          argumentSet,
           directives,
           selectionSet,
           comments,
-          commentsArgsOpeningBracket: args.commentsOpeningBracket,
-          commentsArgsClosingBracket: args.commentsClosingBracket,
         };
       });
     return items.length === 0
