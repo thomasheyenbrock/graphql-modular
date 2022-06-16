@@ -308,6 +308,8 @@ export type VariableDefinitionNode = {
 export type DirectiveNode = {
   kind: "Directive";
   comments: CommentNode[];
+  commentsArgsOpeningBracket: CommentNode[];
+  commentsArgsClosingBracket: CommentNode[];
   name: NameNode;
   args: ArgumentNode[];
 };
@@ -322,6 +324,8 @@ export type ArgumentNode = {
 export type DirectiveConstNode = {
   kind: "Directive";
   comments: CommentNode[];
+  commentsArgsOpeningBracket: CommentNode[];
+  commentsArgsClosingBracket: CommentNode[];
   name: NameNode;
   args: ArgumentConstNode[];
 };

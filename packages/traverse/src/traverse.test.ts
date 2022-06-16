@@ -163,6 +163,8 @@ it("traverses with multiple layers of nesting", () => {
             {
               "args": [],
               "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -243,6 +245,8 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "args": [],
                       "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
                       "kind": "Directive",
                       "name": {
                         "comments": [],
@@ -344,6 +348,8 @@ it("traverses with multiple layers of nesting", () => {
                                 },
                               ],
                               "comments": [],
+                              "commentsArgsClosingBracket": [],
+                              "commentsArgsOpeningBracket": [],
                               "kind": "Directive",
                               "name": {
                                 "comments": [],
@@ -376,6 +382,8 @@ it("traverses with multiple layers of nesting", () => {
                                 {
                                   "args": [],
                                   "comments": [],
+                                  "commentsArgsClosingBracket": [],
+                                  "commentsArgsOpeningBracket": [],
                                   "kind": "Directive",
                                   "name": {
                                     "comments": [],
@@ -430,6 +438,8 @@ it("traverses with multiple layers of nesting", () => {
                         },
                       ],
                       "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
                       "kind": "Directive",
                       "name": {
                         "comments": [],
@@ -537,6 +547,8 @@ it("traverses with multiple layers of nesting", () => {
             {
               "args": [],
               "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -575,6 +587,8 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "args": [],
                   "comments": [],
+                  "commentsArgsClosingBracket": [],
+                  "commentsArgsOpeningBracket": [],
                   "kind": "Directive",
                   "name": {
                     "comments": [],
@@ -608,6 +622,8 @@ it("traverses with multiple layers of nesting", () => {
                         {
                           "args": [],
                           "comments": [],
+                          "commentsArgsClosingBracket": [],
+                          "commentsArgsOpeningBracket": [],
                           "kind": "Directive",
                           "name": {
                             "comments": [],
@@ -636,6 +652,8 @@ it("traverses with multiple layers of nesting", () => {
             {
               "args": [],
               "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "comments": [],
@@ -756,6 +774,8 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "args": [],
                   "comments": [],
+                  "commentsArgsClosingBracket": [],
+                  "commentsArgsOpeningBracket": [],
                   "kind": "Directive",
                   "name": {
                     "comments": [],
@@ -791,6 +811,8 @@ it("traverses with multiple layers of nesting", () => {
             {
               "args": [],
               "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
               "kind": "Directive",
               "name": {
                 "comments": [],

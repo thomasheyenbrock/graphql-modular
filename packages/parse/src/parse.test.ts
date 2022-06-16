@@ -644,17 +644,18 @@ describe("parsing comments for directives", () => {
         someOtherDirective # comment directive after
       }
     `);
-    expect(
-      (
-        (ast.definitions[0] as OperationDefinitionNode)
-          .selectionSet[0] as FieldNode
-      ).directives[0].comments
-    ).toEqual([
+    const directive = (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FieldNode
+    ).directives[0];
+    expect(directive.comments).toEqual([
       { kind: "BlockComment", value: "comment at before" },
       { kind: "InlineComment", value: "comment at after" },
       { kind: "BlockComment", value: "comment directive before" },
       { kind: "InlineComment", value: "comment directive after" },
     ]);
+    expect(directive.commentsArgsOpeningBracket).toEqual([]);
+    expect(directive.commentsArgsClosingBracket).toEqual([]);
   });
   it("parses comments for directives with arguments", () => {
     const ast = parse(/* GraphQL */ `
@@ -678,18 +679,21 @@ describe("parsing comments for directives", () => {
         ) # comment args close after
       }
     `);
-    expect(
-      (
-        (ast.definitions[0] as OperationDefinitionNode)
-          .selectionSet[0] as FieldNode
-      ).directives[0].comments
-    ).toEqual([
+    const directive = (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FieldNode
+    ).directives[0];
+    expect(directive.comments).toEqual([
       { kind: "BlockComment", value: "comment at before" },
       { kind: "InlineComment", value: "comment at after" },
       { kind: "BlockComment", value: "comment directive before" },
       { kind: "InlineComment", value: "comment directive after" },
+    ]);
+    expect(directive.commentsArgsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment args open before" },
       { kind: "InlineComment", value: "comment args open after" },
+    ]);
+    expect(directive.commentsArgsClosingBracket).toEqual([
       { kind: "BlockComment", value: "comment args close before" },
       { kind: "InlineComment", value: "comment args close after" },
     ]);
@@ -1152,5 +1156,7 @@ function stripComments(obj: any) {
   delete obj.comments;
   delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
+  delete obj.commentsArgsOpeningBracket;
+  delete obj.commentsArgsClosingBracket;
   Object.values(obj).forEach(stripComments);
 }

@@ -360,14 +360,16 @@ export function parse(source: string): DocumentNode {
         const at = takePunctuator("@");
         const name = parseName();
         const args = isConst ? parseArgs(true) : parseArgs(false);
-        const comments = [
-          ...at.comments,
-          ...name.comments,
-          ...args.commentsOpeningBracket,
-          ...args.commentsClosingBracket,
-        ];
+        const comments = [...at.comments, ...name.comments];
         name.comments = [];
-        return { kind: "Directive", name, args: args.items, comments };
+        return {
+          kind: "Directive",
+          name,
+          args: args.items,
+          comments,
+          commentsArgsOpeningBracket: args.commentsOpeningBracket,
+          commentsArgsClosingBracket: args.commentsClosingBracket,
+        };
       }
     );
   }
