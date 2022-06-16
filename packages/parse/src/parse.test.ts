@@ -66,97 +66,210 @@ it("parses comments for variables", () => {
   expect(variable.name.comments).toEqual([]);
 });
 
-it("parses comments for values", () => {
-  const ast = parse(/* GraphQL */ `
-    # prettier-ignore
-    query Foo {
-      id(
-        intArg: 
-        # comment int before
-        42 # comment int after
-        floatArg:
-        # comment float before
-        42.43e44 # comment float after
-        stringArg:
-        # comment string before
-        "some string" # comment string after
-        booleanArg:
-        # comment boolean before
-        true # comment boolean after
-        nullArg:
-        # comment null before
-        null # comment null after
-        enumArg:
-        # comment enum before
-        SOME_ENUM # comment enum after
-        listArg:
-        # comment list open before
-        [ # comment list open after
-          1,2,3
-        # comment list close before
-        ] # comment list close after
-        objectArg:
-        # comment object open before
-        { # comment object open after
-          # comment object field before
-          someField # comment object field after
-          # comment colon before
-          : # comment colon after
-          # comment value before
-          42 # comment value after
-        # comment object close before
-        } # comment object close after
-      )
-    }
-  `);
-  const { args } = (ast.definitions[0] as OperationDefinitionNode)
-    .selectionSet[0] as FieldNode;
-  expect((args[0].value as IntValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment int before" },
-    { kind: "InlineComment", value: "comment int after" },
-  ]);
-  expect((args[1].value as FloatValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment float before" },
-    { kind: "InlineComment", value: "comment float after" },
-  ]);
-  expect((args[2].value as StringValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment string before" },
-    { kind: "InlineComment", value: "comment string after" },
-  ]);
-  expect((args[3].value as BooleanValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment boolean before" },
-    { kind: "InlineComment", value: "comment boolean after" },
-  ]);
-  expect((args[4].value as NullValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment null before" },
-    { kind: "InlineComment", value: "comment null after" },
-  ]);
-  expect((args[5].value as EnumValueNode).comments).toEqual([
-    { kind: "BlockComment", value: "comment enum before" },
-    { kind: "InlineComment", value: "comment enum after" },
-  ]);
-  expect((args[6].value as ListValueNode).commentsOpenBracket).toEqual([
-    { kind: "BlockComment", value: "comment list open before" },
-    { kind: "InlineComment", value: "comment list open after" },
-  ]);
-  expect((args[6].value as ListValueNode).commentsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment list close before" },
-    { kind: "InlineComment", value: "comment list close after" },
-  ]);
-  expect((args[7].value as ObjectValueNode).commentsOpenBracket).toEqual([
-    { kind: "BlockComment", value: "comment object open before" },
-    { kind: "InlineComment", value: "comment object open after" },
-  ]);
-  expect((args[7].value as ObjectValueNode).commentsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment object close before" },
-    { kind: "InlineComment", value: "comment object close after" },
-  ]);
-  expect((args[7].value as ObjectValueNode).fields[0].comments).toEqual([
-    { kind: "BlockComment", value: "comment object field before" },
-    { kind: "InlineComment", value: "comment object field after" },
-    { kind: "BlockComment", value: "comment colon before" },
-    { kind: "InlineComment", value: "comment colon after" },
-  ]);
+describe("parsing comments for values", () => {
+  it("parses comments for int values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          intArg: 
+          # comment int before
+          42 # comment int after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as IntValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment int before" },
+      { kind: "InlineComment", value: "comment int after" },
+    ]);
+  });
+  it("parses comments for float values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          floatArg:
+          # comment float before
+          42.43e44 # comment float after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as FloatValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment float before" },
+      { kind: "InlineComment", value: "comment float after" },
+    ]);
+  });
+  it("parses comments for string values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          stringArg:
+          # comment string before
+          "some string" # comment string after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as StringValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment string before" },
+      { kind: "InlineComment", value: "comment string after" },
+    ]);
+  });
+  it("parses comments for boolean values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          booleanArg:
+          # comment boolean before
+          true # comment boolean after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as BooleanValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment boolean before" },
+      { kind: "InlineComment", value: "comment boolean after" },
+    ]);
+  });
+  it("parses comments for null values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          nullArg:
+          # comment null before
+          null # comment null after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as NullValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment null before" },
+      { kind: "InlineComment", value: "comment null after" },
+    ]);
+  });
+  it("parses comments for enum values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          enumArg:
+          # comment enum before
+          SOME_ENUM # comment enum after
+        )
+      }
+    `);
+    expect(
+      (
+        (
+          (ast.definitions[0] as OperationDefinitionNode)
+            .selectionSet[0] as FieldNode
+        ).args[0].value as EnumValueNode
+      ).comments
+    ).toEqual([
+      { kind: "BlockComment", value: "comment enum before" },
+      { kind: "InlineComment", value: "comment enum after" },
+    ]);
+  });
+  it("parses comments for list values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          listArg:
+          # comment list open before
+          [ # comment list open after
+            1,2,3
+          # comment list close before
+          ] # comment list close after
+        )
+      }
+    `);
+    const value = (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FieldNode
+    ).args[0].value as ListValueNode;
+    expect(value.commentsOpenBracket).toEqual([
+      { kind: "BlockComment", value: "comment list open before" },
+      { kind: "InlineComment", value: "comment list open after" },
+    ]);
+    expect(value.commentsClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment list close before" },
+      { kind: "InlineComment", value: "comment list close after" },
+    ]);
+  });
+  it("parses comments for object values", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      query Foo {
+        id(
+          objectArg:
+          # comment object open before
+          { # comment object open after
+            # comment object field before
+            someField # comment object field after
+            # comment colon before
+            : # comment colon after
+            # comment value before
+            42 # comment value after
+          # comment object close before
+          } # comment object close after
+        )
+      }
+    `);
+    const value = (
+      (ast.definitions[0] as OperationDefinitionNode)
+        .selectionSet[0] as FieldNode
+    ).args[0].value as ObjectValueNode;
+    expect(value.commentsOpenBracket).toEqual([
+      { kind: "BlockComment", value: "comment object open before" },
+      { kind: "InlineComment", value: "comment object open after" },
+    ]);
+    expect(value.commentsClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment object close before" },
+      { kind: "InlineComment", value: "comment object close after" },
+    ]);
+    expect(value.fields[0].comments).toEqual([
+      { kind: "BlockComment", value: "comment object field before" },
+      { kind: "InlineComment", value: "comment object field after" },
+      { kind: "BlockComment", value: "comment colon before" },
+      { kind: "InlineComment", value: "comment colon after" },
+    ]);
+  });
 });
 
 it("parses comments for descriptions", () => {
