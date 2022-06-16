@@ -27,6 +27,7 @@ export type AstNodes = {
   Document: DocumentNode;
   OperationDefinition: OperationDefinitionNode;
   FragmentDefinition: FragmentDefinitionNode;
+  SelectionSet: SelectionSetNode;
   Field: FieldNode;
   FragmentSpread: FragmentSpreadNode;
   InlineFragment: InlineFragmentNode;
@@ -88,27 +89,30 @@ export type ExecutableDefinitionNode =
 export type OperationDefinitionNode = {
   kind: "OperationDefinition";
   comments: CommentNode[];
-  commentsSelectionSetOpeningBracket: CommentNode[];
-  commentsSelectionSetClosingBracket: CommentNode[];
   operation: OperationType;
   name: NameNode | null;
   variableDefinitionSet: VariableDefinitionSetNode | null;
   directives: DirectiveNode[];
-  selectionSet: SelectionNode[];
+  selectionSet: SelectionSetNode;
 };
 
 export type FragmentDefinitionNode = {
   kind: "FragmentDefinition";
   comments: CommentNode[];
-  commentsSelectionSetOpeningBracket: CommentNode[];
-  commentsSelectionSetClosingBracket: CommentNode[];
   name: NameNode;
   typeCondition: NamedTypeNode;
   directives: DirectiveNode[];
-  selectionSet: SelectionNode[];
+  selectionSet: SelectionSetNode;
 };
 
 export type OperationType = "query" | "mutation" | "subscription";
+
+export type SelectionSetNode = {
+  kind: "SelectionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  selections: SelectionNode[];
+};
 
 export type SelectionNode = FieldNode | FragmentSpreadNode | InlineFragmentNode;
 
@@ -117,13 +121,11 @@ export type FieldNode = {
   comments: CommentNode[];
   commentsArgsOpeningBracket: CommentNode[];
   commentsArgsClosingBracket: CommentNode[];
-  commentsSelectionSetOpeningBracket: CommentNode[];
-  commentsSelectionSetClosingBracket: CommentNode[];
   alias: NameNode | null;
   name: NameNode;
   args: ArgumentNode[];
   directives: DirectiveNode[];
-  selectionSet: SelectionNode[];
+  selectionSet: SelectionSetNode | null;
 };
 
 export type FragmentSpreadNode = {
@@ -136,11 +138,9 @@ export type FragmentSpreadNode = {
 export type InlineFragmentNode = {
   kind: "InlineFragment";
   comments: CommentNode[];
-  commentsSelectionSetOpeningBracket: CommentNode[];
-  commentsSelectionSetClosingBracket: CommentNode[];
   typeCondition: NamedTypeNode | null;
   directives: DirectiveNode[];
-  selectionSet: SelectionNode[];
+  selectionSet: SelectionSetNode;
 };
 
 export type TypeSystemDefinitionOrExtensionNode =

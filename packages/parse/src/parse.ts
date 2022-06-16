@@ -30,6 +30,7 @@ import {
   SchemaDefinitionNode,
   SchemaExtensionNode,
   SelectionNode,
+  SelectionSetNode,
   TypeNode,
   TypeSystemExtensionNode,
   TYPE_SYSTEM_DIRECTIVE_LOCATION,
@@ -388,79 +389,80 @@ export function parse(source: string): DocumentNode {
     return { type: parseNamedType(), comments };
   }
 
-  function parseSelectionSet(isOptional: boolean): {
-    items: SelectionNode[];
-    commentsOpeningBracket: CommentNode[];
-    commentsClosingBracket: CommentNode[];
-  } {
-    return takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
-      const spread = takeIfNextPunctuator("...");
-      if (spread.token) {
-        const { token } = tokens.peek();
-        if (token && token.type === "NAME" && token.value !== "on") {
-          const name = parseName();
+  function parseSelectionSet(isOptional: false): SelectionSetNode;
+  function parseSelectionSet(isOptional: true): SelectionSetNode | null;
+  function parseSelectionSet(isOptional: boolean): SelectionSetNode | null {
+    const { items, commentsOpeningBracket, commentsClosingBracket } =
+      takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
+        const spread = takeIfNextPunctuator("...");
+        if (spread.token) {
+          const { token } = tokens.peek();
+          if (token && token.type === "NAME" && token.value !== "on") {
+            const name = parseName();
+            const directives = parseDirectives(false);
+            const comments = [...spread.comments, ...name.comments];
+            return {
+              kind: "FragmentSpread",
+              name: name.node,
+              directives,
+              comments,
+            };
+          }
+          const typeCondition = parseTypeCondition(true);
           const directives = parseDirectives(false);
-          const comments = [...spread.comments, ...name.comments];
+          const selectionSet = parseSelectionSet(false);
+          const comments = [
+            ...spread.comments,
+            ...(typeCondition ? typeCondition.comments : []),
+          ];
           return {
-            kind: "FragmentSpread",
-            name: name.node,
+            kind: "InlineFragment",
+            typeCondition: typeCondition?.type || null,
             directives,
+            selectionSet,
             comments,
           };
         }
-        const typeCondition = parseTypeCondition(true);
+
+        let alias: { node: NameNode; comments: CommentNode[] } | null = null;
+        let name = parseName();
+
+        const colon = takeIfNextPunctuator(":");
+        if (colon.token) {
+          alias = name;
+          name = parseName();
+        }
+
+        const args = parseArgs(false);
         const directives = parseDirectives(false);
-        const selectionSet = parseSelectionSet(false);
+        const selectionSet = parseSelectionSet(true);
+
         const comments = [
-          ...spread.comments,
-          ...(typeCondition ? typeCondition.comments : []),
+          ...(alias ? alias.comments : []),
+          ...colon.comments,
+          ...name.comments,
         ];
+
         return {
-          kind: "InlineFragment",
-          typeCondition: typeCondition?.type || null,
+          kind: "Field",
+          alias: alias ? alias.node : null,
+          name: name.node,
+          args: args.items,
           directives,
-          selectionSet: selectionSet.items,
+          selectionSet,
           comments,
-          commentsSelectionSetOpeningBracket:
-            selectionSet.commentsOpeningBracket,
-          commentsSelectionSetClosingBracket:
-            selectionSet.commentsClosingBracket,
+          commentsArgsOpeningBracket: args.commentsOpeningBracket,
+          commentsArgsClosingBracket: args.commentsClosingBracket,
         };
-      }
-
-      let alias: { node: NameNode; comments: CommentNode[] } | null = null;
-      let name = parseName();
-
-      const colon = takeIfNextPunctuator(":");
-      if (colon.token) {
-        alias = name;
-        name = parseName();
-      }
-
-      const args = parseArgs(false);
-      const directives = parseDirectives(false);
-      const selectionSet = parseSelectionSet(true);
-
-      const comments = [
-        ...(alias ? alias.comments : []),
-        ...colon.comments,
-        ...name.comments,
-      ];
-
-      return {
-        kind: "Field",
-        alias: alias ? alias.node : null,
-        name: name.node,
-        args: args.items,
-        directives,
-        selectionSet: selectionSet.items,
-        comments,
-        commentsArgsOpeningBracket: args.commentsOpeningBracket,
-        commentsArgsClosingBracket: args.commentsClosingBracket,
-        commentsSelectionSetOpeningBracket: selectionSet.commentsOpeningBracket,
-        commentsSelectionSetClosingBracket: selectionSet.commentsClosingBracket,
-      };
-    });
+      });
+    return items.length === 0
+      ? null
+      : {
+          kind: "SelectionSet",
+          selections: items,
+          commentsOpeningBracket,
+          commentsClosingBracket,
+        };
   }
 
   function parseOperationType(): {
@@ -963,17 +965,14 @@ export function parse(source: string): DocumentNode {
 
   function parseDefinition(): DefinitionNode {
     if (isNextPunctuator("{")) {
-      const selectionSet = parseSelectionSet(false);
       return {
         kind: "OperationDefinition",
         operation: "query",
         name: null,
         variableDefinitionSet: null,
         directives: [],
-        selectionSet: selectionSet.items,
+        selectionSet: parseSelectionSet(false),
         comments: [],
-        commentsSelectionSetOpeningBracket: selectionSet.commentsOpeningBracket,
-        commentsSelectionSetClosingBracket: selectionSet.commentsClosingBracket,
       };
     }
 
@@ -1034,12 +1033,8 @@ export function parse(source: string): DocumentNode {
                 }
               : null,
           directives,
-          selectionSet: selectionSet.items,
+          selectionSet,
           comments,
-          commentsSelectionSetOpeningBracket:
-            selectionSet.commentsOpeningBracket,
-          commentsSelectionSetClosingBracket:
-            selectionSet.commentsClosingBracket,
         };
       case "fragment": {
         if (description !== null)
@@ -1059,12 +1054,8 @@ export function parse(source: string): DocumentNode {
           name: name.node,
           typeCondition: typeCondition.type,
           directives,
-          selectionSet: selectionSet.items,
+          selectionSet,
           comments,
-          commentsSelectionSetOpeningBracket:
-            selectionSet.commentsOpeningBracket,
-          commentsSelectionSetClosingBracket:
-            selectionSet.commentsClosingBracket,
         };
       }
       case "schema":

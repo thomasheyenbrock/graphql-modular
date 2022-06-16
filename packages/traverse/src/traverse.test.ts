@@ -155,8 +155,6 @@ it("traverses with multiple layers of nesting", () => {
       "definitions": [
         {
           "comments": [],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -176,152 +174,275 @@ it("traverses with multiple layers of nesting", () => {
             "value": "ueryNameueryName",
           },
           "operation": "query",
-          "selectionSet": [
-            {
-              "alias": {
-                "kind": "Name",
-                "value": "hoever123ishoever123is",
-              },
-              "args": [
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "dd",
-                  },
-                  "value": {
-                    "commentsClosingBracket": [],
-                    "commentsOpeningBracket": [],
-                    "kind": "ListValue",
-                    "values": [
-                      {
-                        "comments": [],
-                        "kind": "IntValue",
-                        "value": "123",
-                      },
-                      {
-                        "comments": [],
-                        "kind": "IntValue",
-                        "value": "456",
-                      },
-                    ],
-                  },
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": {
+                  "kind": "Name",
+                  "value": "hoever123ishoever123is",
                 },
-              ],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "odeode",
-              },
-              "selectionSet": [
-                {
-                  "alias": null,
-                  "args": [],
-                  "comments": [
-                    {
-                      "kind": "BlockComment",
-                      "value": "field block comment",
+                "args": [
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "dd",
                     },
-                  ],
-                  "commentsArgsClosingBracket": [],
-                  "commentsArgsOpeningBracket": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [],
-                  "kind": "Field",
-                  "name": {
-                    "kind": "Name",
-                    "value": "dd",
+                    "value": {
+                      "commentsClosingBracket": [],
+                      "commentsOpeningBracket": [],
+                      "kind": "ListValue",
+                      "values": [
+                        {
+                          "comments": [],
+                          "kind": "IntValue",
+                          "value": "123",
+                        },
+                        {
+                          "comments": [],
+                          "kind": "IntValue",
+                          "value": "456",
+                        },
+                      ],
+                    },
                   },
-                  "selectionSet": [],
+                ],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "odeode",
                 },
-                {
-                  "comments": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [
-                    {
-                      "args": [],
-                      "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
-                      "kind": "Directive",
-                      "name": {
-                        "kind": "Name",
-                        "value": "nInlineFragmentnInlineFragment",
-                      },
-                    },
-                  ],
-                  "kind": "InlineFragment",
-                  "selectionSet": [
+                "selectionSet": {
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "SelectionSet",
+                  "selections": [
                     {
                       "alias": null,
                       "args": [],
-                      "comments": [],
+                      "comments": [
+                        {
+                          "kind": "BlockComment",
+                          "value": "field block comment",
+                        },
+                      ],
                       "commentsArgsClosingBracket": [],
                       "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
                         "kind": "Name",
-                        "value": "ield2ield2",
+                        "value": "dd",
                       },
-                      "selectionSet": [
+                      "selectionSet": null,
+                    },
+                    {
+                      "comments": [],
+                      "directives": [
                         {
-                          "alias": null,
                           "args": [],
-                          "comments": [
-                            {
-                              "kind": "InlineComment",
-                              "value": "field inline comment",
-                            },
-                          ],
+                          "comments": [],
                           "commentsArgsClosingBracket": [],
                           "commentsArgsOpeningBracket": [],
-                          "commentsSelectionSetClosingBracket": [],
-                          "commentsSelectionSetOpeningBracket": [],
-                          "directives": [],
-                          "kind": "Field",
+                          "kind": "Directive",
                           "name": {
                             "kind": "Name",
-                            "value": "dd",
+                            "value": "nInlineFragmentnInlineFragment",
                           },
-                          "selectionSet": [],
                         },
-                        {
-                          "alias": {
-                            "kind": "Name",
-                            "value": "liaslias",
+                      ],
+                      "kind": "InlineFragment",
+                      "selectionSet": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": [],
+                            "comments": [],
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [],
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "ield2ield2",
+                            },
+                            "selectionSet": {
+                              "commentsClosingBracket": [],
+                              "commentsOpeningBracket": [],
+                              "kind": "SelectionSet",
+                              "selections": [
+                                {
+                                  "alias": null,
+                                  "args": [],
+                                  "comments": [
+                                    {
+                                      "kind": "InlineComment",
+                                      "value": "field inline comment",
+                                    },
+                                  ],
+                                  "commentsArgsClosingBracket": [],
+                                  "commentsArgsOpeningBracket": [],
+                                  "directives": [],
+                                  "kind": "Field",
+                                  "name": {
+                                    "kind": "Name",
+                                    "value": "dd",
+                                  },
+                                  "selectionSet": null,
+                                },
+                                {
+                                  "alias": {
+                                    "kind": "Name",
+                                    "value": "liaslias",
+                                  },
+                                  "args": [
+                                    {
+                                      "comments": [],
+                                      "kind": "Argument",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "irstirst",
+                                      },
+                                      "value": {
+                                        "comments": [],
+                                        "kind": "IntValue",
+                                        "value": "10",
+                                      },
+                                    },
+                                    {
+                                      "comments": [],
+                                      "kind": "Argument",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "fterfter",
+                                      },
+                                      "value": {
+                                        "comments": [],
+                                        "kind": "Variable",
+                                        "name": {
+                                          "kind": "Name",
+                                          "value": "oooo",
+                                        },
+                                      },
+                                    },
+                                  ],
+                                  "comments": [],
+                                  "commentsArgsClosingBracket": [],
+                                  "commentsArgsOpeningBracket": [],
+                                  "directives": [
+                                    {
+                                      "args": [
+                                        {
+                                          "comments": [],
+                                          "kind": "Argument",
+                                          "name": {
+                                            "kind": "Name",
+                                            "value": "ff",
+                                          },
+                                          "value": {
+                                            "comments": [],
+                                            "kind": "Variable",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "oooo",
+                                            },
+                                          },
+                                        },
+                                      ],
+                                      "comments": [],
+                                      "commentsArgsClosingBracket": [],
+                                      "commentsArgsOpeningBracket": [],
+                                      "kind": "Directive",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "ncludenclude",
+                                      },
+                                    },
+                                  ],
+                                  "kind": "Field",
+                                  "name": {
+                                    "kind": "Name",
+                                    "value": "ield1ield1",
+                                  },
+                                  "selectionSet": {
+                                    "commentsClosingBracket": [],
+                                    "commentsOpeningBracket": [],
+                                    "kind": "SelectionSet",
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": [],
+                                        "comments": [],
+                                        "commentsArgsClosingBracket": [],
+                                        "commentsArgsOpeningBracket": [],
+                                        "directives": [],
+                                        "kind": "Field",
+                                        "name": {
+                                          "kind": "Name",
+                                          "value": "dd",
+                                        },
+                                        "selectionSet": null,
+                                      },
+                                      {
+                                        "comments": [],
+                                        "directives": [
+                                          {
+                                            "args": [],
+                                            "comments": [],
+                                            "commentsArgsClosingBracket": [],
+                                            "commentsArgsOpeningBracket": [],
+                                            "kind": "Directive",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "nFragmentSpreadnFragmentSpread",
+                                            },
+                                          },
+                                        ],
+                                        "kind": "FragmentSpread",
+                                        "name": {
+                                          "kind": "Name",
+                                          "value": "ragrag",
+                                        },
+                                      },
+                                    ],
+                                  },
+                                },
+                              ],
+                            },
                           },
+                        ],
+                      },
+                      "typeCondition": {
+                        "comments": [],
+                        "kind": "NamedType",
+                        "name": {
+                          "kind": "Name",
+                          "value": "serser",
+                        },
+                      },
+                    },
+                    {
+                      "comments": [],
+                      "directives": [
+                        {
                           "args": [
                             {
                               "comments": [],
                               "kind": "Argument",
                               "name": {
                                 "kind": "Name",
-                                "value": "irstirst",
-                              },
-                              "value": {
-                                "comments": [],
-                                "kind": "IntValue",
-                                "value": "10",
-                              },
-                            },
-                            {
-                              "comments": [],
-                              "kind": "Argument",
-                              "name": {
-                                "kind": "Name",
-                                "value": "fterfter",
+                                "value": "nlessnless",
                               },
                               "value": {
                                 "comments": [],
@@ -336,179 +457,69 @@ it("traverses with multiple layers of nesting", () => {
                           "comments": [],
                           "commentsArgsClosingBracket": [],
                           "commentsArgsOpeningBracket": [],
-                          "commentsSelectionSetClosingBracket": [],
-                          "commentsSelectionSetOpeningBracket": [],
-                          "directives": [
-                            {
-                              "args": [
-                                {
-                                  "comments": [],
-                                  "kind": "Argument",
-                                  "name": {
-                                    "kind": "Name",
-                                    "value": "ff",
-                                  },
-                                  "value": {
-                                    "comments": [],
-                                    "kind": "Variable",
-                                    "name": {
-                                      "kind": "Name",
-                                      "value": "oooo",
-                                    },
-                                  },
-                                },
-                              ],
-                              "comments": [],
-                              "commentsArgsClosingBracket": [],
-                              "commentsArgsOpeningBracket": [],
-                              "kind": "Directive",
-                              "name": {
-                                "kind": "Name",
-                                "value": "ncludenclude",
-                              },
-                            },
-                          ],
-                          "kind": "Field",
+                          "kind": "Directive",
                           "name": {
                             "kind": "Name",
-                            "value": "ield1ield1",
+                            "value": "kipkip",
                           },
-                          "selectionSet": [
-                            {
-                              "alias": null,
-                              "args": [],
-                              "comments": [],
-                              "commentsArgsClosingBracket": [],
-                              "commentsArgsOpeningBracket": [],
-                              "commentsSelectionSetClosingBracket": [],
-                              "commentsSelectionSetOpeningBracket": [],
-                              "directives": [],
-                              "kind": "Field",
-                              "name": {
-                                "kind": "Name",
-                                "value": "dd",
-                              },
-                              "selectionSet": [],
-                            },
-                            {
-                              "comments": [],
-                              "directives": [
-                                {
-                                  "args": [],
-                                  "comments": [],
-                                  "commentsArgsClosingBracket": [],
-                                  "commentsArgsOpeningBracket": [],
-                                  "kind": "Directive",
-                                  "name": {
-                                    "kind": "Name",
-                                    "value": "nFragmentSpreadnFragmentSpread",
-                                  },
-                                },
-                              ],
-                              "kind": "FragmentSpread",
-                              "name": {
-                                "kind": "Name",
-                                "value": "ragrag",
-                              },
-                            },
-                          ],
                         },
                       ],
-                    },
-                  ],
-                  "typeCondition": {
-                    "comments": [],
-                    "kind": "NamedType",
-                    "name": {
-                      "kind": "Name",
-                      "value": "serser",
-                    },
-                  },
-                },
-                {
-                  "comments": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [
-                    {
-                      "args": [
-                        {
-                          "comments": [],
-                          "kind": "Argument",
-                          "name": {
-                            "kind": "Name",
-                            "value": "nlessnless",
-                          },
-                          "value": {
+                      "kind": "InlineFragment",
+                      "selectionSet": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": [],
                             "comments": [],
-                            "kind": "Variable",
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [],
+                            "kind": "Field",
                             "name": {
                               "kind": "Name",
-                              "value": "oooo",
+                              "value": "dd",
                             },
+                            "selectionSet": null,
                           },
-                        },
-                      ],
-                      "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
-                      "kind": "Directive",
-                      "name": {
-                        "kind": "Name",
-                        "value": "kipkip",
+                        ],
                       },
+                      "typeCondition": null,
                     },
-                  ],
-                  "kind": "InlineFragment",
-                  "selectionSet": [
                     {
-                      "alias": null,
-                      "args": [],
                       "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
-                      "kind": "Field",
-                      "name": {
-                        "kind": "Name",
-                        "value": "dd",
+                      "kind": "InlineFragment",
+                      "selectionSet": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": [],
+                            "comments": [],
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [],
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "dd",
+                            },
+                            "selectionSet": null,
+                          },
+                        ],
                       },
-                      "selectionSet": [],
+                      "typeCondition": null,
                     },
                   ],
-                  "typeCondition": null,
                 },
-                {
-                  "comments": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [],
-                  "kind": "InlineFragment",
-                  "selectionSet": [
-                    {
-                      "alias": null,
-                      "args": [],
-                      "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
-                      "directives": [],
-                      "kind": "Field",
-                      "name": {
-                        "kind": "Name",
-                        "value": "dd",
-                      },
-                      "selectionSet": [],
-                    },
-                  ],
-                  "typeCondition": null,
-                },
-              ],
-            },
-          ],
+              },
+            ],
+          },
           "variableDefinitionSet": {
             "commentsClosingBracket": [],
             "commentsOpeningBracket": [],
@@ -577,8 +588,6 @@ it("traverses with multiple layers of nesting", () => {
               "value": "this is a new comment",
             },
           ],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -598,102 +607,109 @@ it("traverses with multiple layers of nesting", () => {
             "value": "ikeStoryikeStory",
           },
           "operation": "mutation",
-          "selectionSet": [
-            {
-              "alias": null,
-              "args": [
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "torytory",
-                  },
-                  "value": {
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": null,
+                "args": [
+                  {
                     "comments": [],
-                    "kind": "IntValue",
-                    "value": "123",
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "torytory",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "IntValue",
+                      "value": "123",
+                    },
                   },
+                ],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [
+                  {
+                    "args": [],
+                    "comments": [],
+                    "commentsArgsClosingBracket": [],
+                    "commentsArgsOpeningBracket": [],
+                    "kind": "Directive",
+                    "name": {
+                      "kind": "Name",
+                      "value": "nFieldnField",
+                    },
+                  },
+                ],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "ikeike",
                 },
-              ],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [
-                {
-                  "args": [],
-                  "comments": [],
-                  "commentsArgsClosingBracket": [],
-                  "commentsArgsOpeningBracket": [],
-                  "kind": "Directive",
-                  "name": {
-                    "kind": "Name",
-                    "value": "nFieldnField",
-                  },
-                },
-              ],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "ikeike",
-              },
-              "selectionSet": [
-                {
-                  "alias": null,
-                  "args": [],
-                  "comments": [],
-                  "commentsArgsClosingBracket": [],
-                  "commentsArgsOpeningBracket": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [],
-                  "kind": "Field",
-                  "name": {
-                    "kind": "Name",
-                    "value": "torytory",
-                  },
-                  "selectionSet": [
+                "selectionSet": {
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "SelectionSet",
+                  "selections": [
                     {
                       "alias": null,
                       "args": [],
                       "comments": [],
                       "commentsArgsClosingBracket": [],
                       "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
-                      "directives": [
-                        {
-                          "args": [],
-                          "comments": [],
-                          "commentsArgsClosingBracket": [],
-                          "commentsArgsOpeningBracket": [],
-                          "kind": "Directive",
-                          "name": {
-                            "kind": "Name",
-                            "value": "nFieldnField",
-                          },
-                        },
-                      ],
+                      "directives": [],
                       "kind": "Field",
                       "name": {
                         "kind": "Name",
-                        "value": "dd",
+                        "value": "torytory",
                       },
-                      "selectionSet": [],
+                      "selectionSet": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": [],
+                            "comments": [],
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [
+                              {
+                                "args": [],
+                                "comments": [],
+                                "commentsArgsClosingBracket": [],
+                                "commentsArgsOpeningBracket": [],
+                                "kind": "Directive",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "nFieldnField",
+                                },
+                              },
+                            ],
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "dd",
+                            },
+                            "selectionSet": null,
+                          },
+                        ],
+                      },
                     },
                   ],
                 },
-              ],
-            },
-          ],
+              },
+            ],
+          },
           "variableDefinitionSet": null,
         },
         {
           "comments": [],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -713,125 +729,138 @@ it("traverses with multiple layers of nesting", () => {
             "value": "toryLikeSubscriptiontoryLikeSubscription",
           },
           "operation": "subscription",
-          "selectionSet": [
-            {
-              "alias": null,
-              "args": [
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "nputnput",
-                  },
-                  "value": {
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": null,
+                "args": [
+                  {
                     "comments": [],
-                    "kind": "Variable",
+                    "kind": "Argument",
                     "name": {
                       "kind": "Name",
                       "value": "nputnput",
                     },
-                  },
-                },
-              ],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "toryLikeSubscribetoryLikeSubscribe",
-              },
-              "selectionSet": [
-                {
-                  "alias": null,
-                  "args": [],
-                  "comments": [],
-                  "commentsArgsClosingBracket": [],
-                  "commentsArgsOpeningBracket": [],
-                  "commentsSelectionSetClosingBracket": [],
-                  "commentsSelectionSetOpeningBracket": [],
-                  "directives": [],
-                  "kind": "Field",
-                  "name": {
-                    "kind": "Name",
-                    "value": "torytory",
-                  },
-                  "selectionSet": [
-                    {
-                      "alias": null,
-                      "args": [],
+                    "value": {
                       "comments": [],
-                      "commentsArgsClosingBracket": [],
-                      "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
-                      "directives": [],
-                      "kind": "Field",
+                      "kind": "Variable",
                       "name": {
                         "kind": "Name",
-                        "value": "ikersikers",
+                        "value": "nputnput",
                       },
-                      "selectionSet": [
-                        {
-                          "alias": null,
-                          "args": [],
-                          "comments": [],
-                          "commentsArgsClosingBracket": [],
-                          "commentsArgsOpeningBracket": [],
-                          "commentsSelectionSetClosingBracket": [],
-                          "commentsSelectionSetOpeningBracket": [],
-                          "directives": [],
-                          "kind": "Field",
-                          "name": {
-                            "kind": "Name",
-                            "value": "ountount",
-                          },
-                          "selectionSet": [],
-                        },
-                      ],
                     },
+                  },
+                ],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "toryLikeSubscribetoryLikeSubscribe",
+                },
+                "selectionSet": {
+                  "commentsClosingBracket": [],
+                  "commentsOpeningBracket": [],
+                  "kind": "SelectionSet",
+                  "selections": [
                     {
                       "alias": null,
                       "args": [],
                       "comments": [],
                       "commentsArgsClosingBracket": [],
                       "commentsArgsOpeningBracket": [],
-                      "commentsSelectionSetClosingBracket": [],
-                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
                         "kind": "Name",
-                        "value": "ikeSentenceikeSentence",
+                        "value": "torytory",
                       },
-                      "selectionSet": [
-                        {
-                          "alias": null,
-                          "args": [],
-                          "comments": [],
-                          "commentsArgsClosingBracket": [],
-                          "commentsArgsOpeningBracket": [],
-                          "commentsSelectionSetClosingBracket": [],
-                          "commentsSelectionSetOpeningBracket": [],
-                          "directives": [],
-                          "kind": "Field",
-                          "name": {
-                            "kind": "Name",
-                            "value": "extext",
+                      "selectionSet": {
+                        "commentsClosingBracket": [],
+                        "commentsOpeningBracket": [],
+                        "kind": "SelectionSet",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": [],
+                            "comments": [],
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [],
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "ikersikers",
+                            },
+                            "selectionSet": {
+                              "commentsClosingBracket": [],
+                              "commentsOpeningBracket": [],
+                              "kind": "SelectionSet",
+                              "selections": [
+                                {
+                                  "alias": null,
+                                  "args": [],
+                                  "comments": [],
+                                  "commentsArgsClosingBracket": [],
+                                  "commentsArgsOpeningBracket": [],
+                                  "directives": [],
+                                  "kind": "Field",
+                                  "name": {
+                                    "kind": "Name",
+                                    "value": "ountount",
+                                  },
+                                  "selectionSet": null,
+                                },
+                              ],
+                            },
                           },
-                          "selectionSet": [],
-                        },
-                      ],
+                          {
+                            "alias": null,
+                            "args": [],
+                            "comments": [],
+                            "commentsArgsClosingBracket": [],
+                            "commentsArgsOpeningBracket": [],
+                            "directives": [],
+                            "kind": "Field",
+                            "name": {
+                              "kind": "Name",
+                              "value": "ikeSentenceikeSentence",
+                            },
+                            "selectionSet": {
+                              "commentsClosingBracket": [],
+                              "commentsOpeningBracket": [],
+                              "kind": "SelectionSet",
+                              "selections": [
+                                {
+                                  "alias": null,
+                                  "args": [],
+                                  "comments": [],
+                                  "commentsArgsClosingBracket": [],
+                                  "commentsArgsOpeningBracket": [],
+                                  "directives": [],
+                                  "kind": "Field",
+                                  "name": {
+                                    "kind": "Name",
+                                    "value": "extext",
+                                  },
+                                  "selectionSet": null,
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
                     },
                   ],
                 },
-              ],
-            },
-          ],
+              },
+            ],
+          },
           "variableDefinitionSet": {
             "commentsClosingBracket": [],
             "commentsOpeningBracket": [],
@@ -876,8 +905,6 @@ it("traverses with multiple layers of nesting", () => {
         },
         {
           "comments": [],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [
             {
               "args": [],
@@ -896,100 +923,103 @@ it("traverses with multiple layers of nesting", () => {
             "kind": "Name",
             "value": "ragrag",
           },
-          "selectionSet": [
-            {
-              "alias": null,
-              "args": [
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "izeize",
-                  },
-                  "value": {
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": null,
+                "args": [
+                  {
                     "comments": [],
-                    "kind": "Variable",
+                    "kind": "Argument",
                     "name": {
                       "kind": "Name",
                       "value": "izeize",
                     },
-                  },
-                },
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "arar",
-                  },
-                  "value": {
-                    "comments": [],
-                    "kind": "Variable",
-                    "name": {
-                      "kind": "Name",
-                      "value": "",
+                    "value": {
+                      "comments": [],
+                      "kind": "Variable",
+                      "name": {
+                        "kind": "Name",
+                        "value": "izeize",
+                      },
                     },
                   },
-                },
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "bjbj",
-                  },
-                  "value": {
-                    "commentsClosingBracket": [],
-                    "commentsOpeningBracket": [],
-                    "fields": [
-                      {
-                        "comments": [],
-                        "kind": "ObjectField",
-                        "name": {
-                          "kind": "Name",
-                          "value": "eyey",
-                        },
-                        "value": {
-                          "block": false,
-                          "comments": [],
-                          "kind": "StringValue",
-                          "value": "value",
-                        },
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "arar",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "Variable",
+                      "name": {
+                        "kind": "Name",
+                        "value": "",
                       },
-                      {
-                        "comments": [],
-                        "kind": "ObjectField",
-                        "name": {
-                          "kind": "Name",
-                          "value": "locklock",
-                        },
-                        "value": {
-                          "block": true,
-                          "comments": [],
-                          "kind": "StringValue",
-                          "value": "block string uses \\"\\"\\"",
-                        },
-                      },
-                    ],
-                    "kind": "ObjectValue",
+                    },
                   },
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "bjbj",
+                    },
+                    "value": {
+                      "commentsClosingBracket": [],
+                      "commentsOpeningBracket": [],
+                      "fields": [
+                        {
+                          "comments": [],
+                          "kind": "ObjectField",
+                          "name": {
+                            "kind": "Name",
+                            "value": "eyey",
+                          },
+                          "value": {
+                            "block": false,
+                            "comments": [],
+                            "kind": "StringValue",
+                            "value": "value",
+                          },
+                        },
+                        {
+                          "comments": [],
+                          "kind": "ObjectField",
+                          "name": {
+                            "kind": "Name",
+                            "value": "locklock",
+                          },
+                          "value": {
+                            "block": true,
+                            "comments": [],
+                            "kind": "StringValue",
+                            "value": "block string uses \\"\\"\\"",
+                          },
+                        },
+                      ],
+                      "kind": "ObjectValue",
+                    },
+                  },
+                ],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "oooo",
                 },
-              ],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "oooo",
+                "selectionSet": null,
               },
-              "selectionSet": [],
-            },
-          ],
+            ],
+          },
           "typeCondition": {
             "comments": [],
             "kind": "NamedType",
@@ -1001,113 +1031,113 @@ it("traverses with multiple layers of nesting", () => {
         },
         {
           "comments": [],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [],
           "kind": "OperationDefinition",
           "name": null,
           "operation": "query",
-          "selectionSet": [
-            {
-              "alias": null,
-              "args": [
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ruthyruthy",
-                  },
-                  "value": {
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": null,
+                "args": [
+                  {
                     "comments": [],
-                    "kind": "BooleanValue",
-                    "value": true,
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "ruthyruthy",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "BooleanValue",
+                      "value": true,
+                    },
                   },
-                },
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "alsyalsy",
-                  },
-                  "value": {
+                  {
                     "comments": [],
-                    "kind": "BooleanValue",
-                    "value": false,
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "alsyalsy",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "BooleanValue",
+                      "value": false,
+                    },
                   },
-                },
-                {
-                  "comments": [],
-                  "kind": "Argument",
-                  "name": {
-                    "kind": "Name",
-                    "value": "ullishullish",
-                  },
-                  "value": {
+                  {
                     "comments": [],
-                    "kind": "NullValue",
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "ullishullish",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "NullValue",
+                    },
                   },
+                ],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "nnamednnamed",
                 },
-              ],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "nnamednnamed",
+                "selectionSet": null,
               },
-              "selectionSet": [],
-            },
-            {
-              "alias": null,
-              "args": [],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "ueryuery",
+              {
+                "alias": null,
+                "args": [],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "ueryuery",
+                },
+                "selectionSet": null,
               },
-              "selectionSet": [],
-            },
-          ],
+            ],
+          },
           "variableDefinitionSet": null,
         },
         {
           "comments": [],
-          "commentsSelectionSetClosingBracket": [],
-          "commentsSelectionSetOpeningBracket": [],
           "directives": [],
           "kind": "OperationDefinition",
           "name": null,
           "operation": "query",
-          "selectionSet": [
-            {
-              "alias": null,
-              "args": [],
-              "comments": [],
-              "commentsArgsClosingBracket": [],
-              "commentsArgsOpeningBracket": [],
-              "commentsSelectionSetClosingBracket": [],
-              "commentsSelectionSetOpeningBracket": [],
-              "directives": [],
-              "kind": "Field",
-              "name": {
-                "kind": "Name",
-                "value": "_typename_typename",
+          "selectionSet": {
+            "commentsClosingBracket": [],
+            "commentsOpeningBracket": [],
+            "kind": "SelectionSet",
+            "selections": [
+              {
+                "alias": null,
+                "args": [],
+                "comments": [],
+                "commentsArgsClosingBracket": [],
+                "commentsArgsOpeningBracket": [],
+                "directives": [],
+                "kind": "Field",
+                "name": {
+                  "kind": "Name",
+                  "value": "_typename_typename",
+                },
+                "selectionSet": null,
               },
-              "selectionSet": [],
-            },
-          ],
+            ],
+          },
           "variableDefinitionSet": null,
         },
       ],
