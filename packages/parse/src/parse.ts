@@ -374,21 +374,34 @@ export function parse(source: string): DocumentNode {
     );
   }
 
-  function parseTypeCondition(isOptional: false): NamedTypeNode;
-  function parseTypeCondition(isOptional: true): NamedTypeNode | null;
-  function parseTypeCondition(isOptional: boolean): NamedTypeNode | null {
+  function parseTypeCondition(isOptional: false): {
+    type: NamedTypeNode;
+    comments: CommentNode[];
+  };
+  function parseTypeCondition(
+    isOptional: true
+  ): { type: NamedTypeNode; comments: CommentNode[] } | null;
+  function parseTypeCondition(
+    isOptional: boolean
+  ): { type: NamedTypeNode; comments: CommentNode[] } | null {
+    let comments: CommentNode[] = [];
     try {
-      takeToken("NAME", "on");
+      comments = takeToken("NAME", "on").comments;
     } catch (err) {
       if (!isOptional) throw err;
       return null;
     }
-    return parseNamedType();
+    return { type: parseNamedType(), comments };
   }
 
-  function parseSelectionSet(isOptional: boolean): SelectionNode[] {
+  function parseSelectionSet(isOptional: boolean): {
+    items: SelectionNode[];
+    commentsOpeningBracket: CommentNode[];
+    commentsClosingBracket: CommentNode[];
+  } {
     return takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
-      if (takeIfNextPunctuator("...").token) {
+      const spread = takeIfNextPunctuator("...");
+      if (spread.token) {
         const { token } = tokens.peek();
         if (token && token.type === "NAME" && token.value !== "on") {
           return {
@@ -397,11 +410,23 @@ export function parse(source: string): DocumentNode {
             directives: parseDirectives(false),
           };
         }
+        const typeCondition = parseTypeCondition(true);
+        const directives = parseDirectives(false);
+        const selectionSet = parseSelectionSet(false);
+        const comments = [
+          ...spread.comments,
+          ...(typeCondition ? typeCondition.comments : []),
+        ];
         return {
           kind: "InlineFragment",
-          typeCondition: parseTypeCondition(true),
-          directives: parseDirectives(false),
-          selectionSet: parseSelectionSet(false),
+          typeCondition: typeCondition?.type || null,
+          directives,
+          selectionSet: selectionSet.items,
+          comments,
+          commentsSelectionSetOpeningBracket:
+            selectionSet.commentsOpeningBracket,
+          commentsSelectionSetClosingBracket:
+            selectionSet.commentsClosingBracket,
         };
       }
 
@@ -419,9 +444,9 @@ export function parse(source: string): DocumentNode {
         name,
         args: parseArgs(false).items, // TODO: this returns comments
         directives: parseDirectives(false),
-        selectionSet: parseSelectionSet(true),
+        selectionSet: parseSelectionSet(true).items, // TODO: this returns comments
       };
-    }).items; // TODO: this returns comments
+    });
   }
 
   function parseOperationType(): OperationType {
@@ -929,7 +954,7 @@ export function parse(source: string): DocumentNode {
         name: null,
         variableDefinitions: [],
         directives: [],
-        selectionSet: parseSelectionSet(false),
+        selectionSet: parseSelectionSet(false).items, // TODO: this returns comments
       };
     }
 
@@ -971,7 +996,7 @@ export function parse(source: string): DocumentNode {
             }
           ).items, // TODO: this returns comments
           directives: parseDirectives(false),
-          selectionSet: parseSelectionSet(false),
+          selectionSet: parseSelectionSet(false).items, // TODO: this returns comments,
         };
       case "fragment":
         if (description !== null)
@@ -979,9 +1004,9 @@ export function parse(source: string): DocumentNode {
         return {
           kind: "FragmentDefinition",
           name: (takeToken("NAME", "fragment"), parseName("on")),
-          typeCondition: parseTypeCondition(false),
+          typeCondition: parseTypeCondition(false).type, // TODO: this returns comments
           directives: parseDirectives(false),
-          selectionSet: parseSelectionSet(false),
+          selectionSet: parseSelectionSet(false).items, // TODO: this returns comments
         };
       case "schema":
         return parseSchemaDefinition(null, description);

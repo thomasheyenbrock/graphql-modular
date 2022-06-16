@@ -121,6 +121,9 @@ export type FragmentSpreadNode = {
 
 export type InlineFragmentNode = {
   kind: "InlineFragment";
+  comments: CommentNode[];
+  commentsSelectionSetOpeningBracket: CommentNode[];
+  commentsSelectionSetClosingBracket: CommentNode[];
   typeCondition: NamedTypeNode | null;
   directives: DirectiveNode[];
   selectionSet: SelectionNode[];

@@ -241,6 +241,9 @@ it("traverses with multiple layers of nesting", () => {
                   "selectionSet": [],
                 },
                 {
+                  "comments": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [
                     {
                       "args": [],
@@ -415,6 +418,9 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
                 {
+                  "comments": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [
                     {
                       "args": [
@@ -466,6 +472,9 @@ it("traverses with multiple layers of nesting", () => {
                   "typeCondition": null,
                 },
                 {
+                  "comments": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [],
                   "kind": "InlineFragment",
                   "selectionSet": [

@@ -7,6 +7,7 @@ import {
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
   FloatValueNode,
+  InlineFragmentNode,
   InputObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
@@ -1577,6 +1578,75 @@ it("parses comments for schema extensions", () => {
   ]);
 });
 
+describe("parsing comments for inline fragments", () => {
+  it("parses comments for inline fragments without type condition", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment spread before
+        ... # comment spread after
+        # comment directive before
+        @foo # comment directive after
+        # comment selection set open before
+        { # comment selection set open after
+          id
+          # comment selection set close before
+        } # comment selection set close after
+      }
+    `);
+    const inlineFragment = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as InlineFragmentNode;
+    expect(inlineFragment.comments).toEqual([
+      { kind: "BlockComment", value: "comment spread before" },
+      { kind: "InlineComment", value: "comment spread after" },
+    ]);
+    expect(inlineFragment.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(inlineFragment.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for inline fragments without type condition", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment spread before
+        ... # comment spread after
+        # comment type condition before
+        on # comment type condition after
+        # comment type before
+        Foo # comment type after
+        # comment directive before
+        @foo # comment directive after
+        # comment selection set open before
+        { # comment selection set open after
+          id
+          # comment selection set close before
+        } # comment selection set close after
+      }
+    `);
+    const inlineFragment = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as InlineFragmentNode;
+    expect(inlineFragment.comments).toEqual([
+      { kind: "BlockComment", value: "comment spread before" },
+      { kind: "InlineComment", value: "comment spread after" },
+      { kind: "BlockComment", value: "comment type condition before" },
+      { kind: "InlineComment", value: "comment type condition after" },
+    ]);
+    expect(inlineFragment.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(inlineFragment.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -1772,6 +1842,8 @@ function stripComments(obj: any) {
   delete obj.comments;
   delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
+  delete obj.commentsSelectionSetOpeningBracket;
+  delete obj.commentsSelectionSetClosingBracket;
   delete obj.commentsArgsOpeningBracket;
   delete obj.commentsArgsClosingBracket;
   delete obj.commentsFieldsOpeningBracket;
