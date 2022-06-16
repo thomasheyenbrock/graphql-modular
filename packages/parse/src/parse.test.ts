@@ -1673,6 +1673,166 @@ it("parses comments for fragment spreads", () => {
   ]);
 });
 
+describe("parsing comments for fields", () => {
+  it("parses comments for leaf fields without arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment name before
+        field # comment name after
+        # comment directive before
+        @foo # comment directive after
+      }
+    `);
+    const field = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as FieldNode;
+    expect(field.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(field.commentsArgsOpeningBracket).toEqual([]);
+    expect(field.commentsArgsClosingBracket).toEqual([]);
+    expect(field.commentsSelectionSetOpeningBracket).toEqual([]);
+    expect(field.commentsSelectionSetClosingBracket).toEqual([]);
+  });
+  it("parses comments for leaf fields with arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment name before
+        field # comment name after
+        # comment args open before
+        ( # comment args open after
+          arg: 42
+        # comment args close before
+        ) # comment args close after
+        # comment directive before
+        @foo # comment directive after
+      }
+    `);
+    const field = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as FieldNode;
+    expect(field.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(field.commentsArgsOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment args open before" },
+      { kind: "InlineComment", value: "comment args open after" },
+    ]);
+    expect(field.commentsArgsClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment args close before" },
+      { kind: "InlineComment", value: "comment args close after" },
+    ]);
+    expect(field.commentsSelectionSetOpeningBracket).toEqual([]);
+    expect(field.commentsSelectionSetClosingBracket).toEqual([]);
+  });
+  it("parses comments for non-leaf fields without arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment name before
+        field # comment name after
+        # comment directive before
+        @foo # comment directive after
+        # comment selection set open before
+        { # comment selection set open after
+          subField
+        # comment selection set close before
+        } # comment selection set close after
+      }
+    `);
+    const field = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as FieldNode;
+    expect(field.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(field.commentsArgsOpeningBracket).toEqual([]);
+    expect(field.commentsArgsClosingBracket).toEqual([]);
+    expect(field.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(field.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for non-leaf fields with arguments", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment name before
+        field # comment name after
+        # comment args open before
+        ( # comment args open after
+          arg: 42
+        # comment args close before
+        ) # comment args close after
+        # comment directive before
+        @foo # comment directive after
+        # comment selection set open before
+        { # comment selection set open after
+          subField
+        # comment selection set close before
+        } # comment selection set close after
+      }
+    `);
+    const field = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as FieldNode;
+    expect(field.comments).toEqual([
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(field.commentsArgsOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment args open before" },
+      { kind: "InlineComment", value: "comment args open after" },
+    ]);
+    expect(field.commentsArgsClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment args close before" },
+      { kind: "InlineComment", value: "comment args close after" },
+    ]);
+    expect(field.commentsSelectionSetOpeningBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set open before" },
+      { kind: "InlineComment", value: "comment selection set open after" },
+    ]);
+    expect(field.commentsSelectionSetClosingBracket).toEqual([
+      { kind: "BlockComment", value: "comment selection set close before" },
+      { kind: "InlineComment", value: "comment selection set close after" },
+    ]);
+  });
+  it("parses comments for fields with alias", () => {
+    const ast = parse(/* GraphQL */ `
+      # prettier-ignore
+      {
+        # comment alias before
+        alias # comment alias after
+        # comment colon before
+        : # comment colon after
+        # comment name before
+        field # comment name after
+        # comment directive before
+        @foo # comment directive after
+      }
+    `);
+    const field = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet[0] as FieldNode;
+    expect(field.comments).toEqual([
+      { kind: "BlockComment", value: "comment alias before" },
+      { kind: "InlineComment", value: "comment alias after" },
+      { kind: "BlockComment", value: "comment colon before" },
+      { kind: "InlineComment", value: "comment colon after" },
+      { kind: "BlockComment", value: "comment name before" },
+      { kind: "InlineComment", value: "comment name after" },
+    ]);
+    expect(field.commentsArgsOpeningBracket).toEqual([]);
+    expect(field.commentsArgsClosingBracket).toEqual([]);
+    expect(field.commentsSelectionSetOpeningBracket).toEqual([]);
+    expect(field.commentsSelectionSetClosingBracket).toEqual([]);
+  });
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {

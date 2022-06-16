@@ -433,18 +433,34 @@ export function parse(source: string): DocumentNode {
       let alias: NameNode | null = null;
       let name = parseName();
 
-      if (takeIfNextPunctuator(":").token) {
+      const colon = takeIfNextPunctuator(":");
+      if (colon.token) {
         alias = name;
         name = parseName();
       }
+
+      const args = parseArgs(false);
+      const directives = parseDirectives(false);
+      const selectionSet = parseSelectionSet(true);
+
+      const comments = [
+        ...(alias ? alias.comments : []),
+        ...colon.comments,
+        ...name.comments,
+      ];
 
       return {
         kind: "Field",
         alias,
         name,
-        args: parseArgs(false).items, // TODO: this returns comments
-        directives: parseDirectives(false),
-        selectionSet: parseSelectionSet(true).items, // TODO: this returns comments
+        args: args.items,
+        directives,
+        selectionSet: selectionSet.items,
+        comments,
+        commentsArgsOpeningBracket: args.commentsOpeningBracket,
+        commentsArgsClosingBracket: args.commentsClosingBracket,
+        commentsSelectionSetOpeningBracket: selectionSet.commentsOpeningBracket,
+        commentsSelectionSetClosingBracket: selectionSet.commentsClosingBracket,
       };
     });
   }

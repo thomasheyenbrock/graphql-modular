@@ -106,6 +106,11 @@ export type SelectionNode = FieldNode | FragmentSpreadNode | InlineFragmentNode;
 
 export type FieldNode = {
   kind: "Field";
+  comments: CommentNode[];
+  commentsArgsOpeningBracket: CommentNode[];
+  commentsArgsClosingBracket: CommentNode[];
+  commentsSelectionSetOpeningBracket: CommentNode[];
+  commentsSelectionSetClosingBracket: CommentNode[];
   alias: NameNode | null;
   name: NameNode;
   args: ArgumentNode[];

@@ -215,6 +215,11 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
               ],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
@@ -226,6 +231,16 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "alias": null,
                   "args": [],
+                  "comments": [
+                    {
+                      "kind": "BlockComment",
+                      "value": "field block comment",
+                    },
+                  ],
+                  "commentsArgsClosingBracket": [],
+                  "commentsArgsOpeningBracket": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [],
                   "kind": "Field",
                   "name": {
@@ -263,6 +278,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -274,6 +294,16 @@ it("traverses with multiple layers of nesting", () => {
                         {
                           "alias": null,
                           "args": [],
+                          "comments": [
+                            {
+                              "kind": "InlineComment",
+                              "value": "field inline comment",
+                            },
+                          ],
+                          "commentsArgsClosingBracket": [],
+                          "commentsArgsOpeningBracket": [],
+                          "commentsSelectionSetClosingBracket": [],
+                          "commentsSelectionSetOpeningBracket": [],
                           "directives": [],
                           "kind": "Field",
                           "name": {
@@ -328,6 +358,11 @@ it("traverses with multiple layers of nesting", () => {
                               },
                             },
                           ],
+                          "comments": [],
+                          "commentsArgsClosingBracket": [],
+                          "commentsArgsOpeningBracket": [],
+                          "commentsSelectionSetClosingBracket": [],
+                          "commentsSelectionSetOpeningBracket": [],
                           "directives": [
                             {
                               "args": [
@@ -371,6 +406,11 @@ it("traverses with multiple layers of nesting", () => {
                             {
                               "alias": null,
                               "args": [],
+                              "comments": [],
+                              "commentsArgsClosingBracket": [],
+                              "commentsArgsOpeningBracket": [],
+                              "commentsSelectionSetClosingBracket": [],
+                              "commentsSelectionSetOpeningBracket": [],
                               "directives": [],
                               "kind": "Field",
                               "name": {
@@ -460,6 +500,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -482,6 +527,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -593,6 +643,11 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
               ],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [
                 {
                   "args": [],
@@ -617,6 +672,11 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "alias": null,
                   "args": [],
+                  "comments": [],
+                  "commentsArgsClosingBracket": [],
+                  "commentsArgsOpeningBracket": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [],
                   "kind": "Field",
                   "name": {
@@ -628,6 +688,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [
                         {
                           "args": [],
@@ -702,6 +767,11 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
               ],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
@@ -713,6 +783,11 @@ it("traverses with multiple layers of nesting", () => {
                 {
                   "alias": null,
                   "args": [],
+                  "comments": [],
+                  "commentsArgsClosingBracket": [],
+                  "commentsArgsOpeningBracket": [],
+                  "commentsSelectionSetClosingBracket": [],
+                  "commentsSelectionSetOpeningBracket": [],
                   "directives": [],
                   "kind": "Field",
                   "name": {
@@ -724,6 +799,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -735,6 +815,11 @@ it("traverses with multiple layers of nesting", () => {
                         {
                           "alias": null,
                           "args": [],
+                          "comments": [],
+                          "commentsArgsClosingBracket": [],
+                          "commentsArgsOpeningBracket": [],
+                          "commentsSelectionSetClosingBracket": [],
+                          "commentsSelectionSetOpeningBracket": [],
                           "directives": [],
                           "kind": "Field",
                           "name": {
@@ -749,6 +834,11 @@ it("traverses with multiple layers of nesting", () => {
                     {
                       "alias": null,
                       "args": [],
+                      "comments": [],
+                      "commentsArgsClosingBracket": [],
+                      "commentsArgsOpeningBracket": [],
+                      "commentsSelectionSetClosingBracket": [],
+                      "commentsSelectionSetOpeningBracket": [],
                       "directives": [],
                       "kind": "Field",
                       "name": {
@@ -760,6 +850,11 @@ it("traverses with multiple layers of nesting", () => {
                         {
                           "alias": null,
                           "args": [],
+                          "comments": [],
+                          "commentsArgsClosingBracket": [],
+                          "commentsArgsOpeningBracket": [],
+                          "commentsSelectionSetClosingBracket": [],
+                          "commentsSelectionSetOpeningBracket": [],
                           "directives": [],
                           "kind": "Field",
                           "name": {
@@ -924,6 +1019,11 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
               ],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
@@ -995,6 +1095,11 @@ it("traverses with multiple layers of nesting", () => {
                   },
                 },
               ],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
@@ -1007,6 +1112,11 @@ it("traverses with multiple layers of nesting", () => {
             {
               "alias": null,
               "args": [],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
@@ -1028,6 +1138,11 @@ it("traverses with multiple layers of nesting", () => {
             {
               "alias": null,
               "args": [],
+              "comments": [],
+              "commentsArgsClosingBracket": [],
+              "commentsArgsOpeningBracket": [],
+              "commentsSelectionSetClosingBracket": [],
+              "commentsSelectionSetOpeningBracket": [],
               "directives": [],
               "kind": "Field",
               "name": {
