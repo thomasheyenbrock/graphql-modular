@@ -728,28 +728,38 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseInputObjectTypeDefinition(
-    isExtension: false,
+    extendComments: null,
     description: StringValueNode | null
   ): InputObjectTypeDefinitionNode;
   function parseInputObjectTypeDefinition(
-    isExtension: true,
+    extendComments: CommentNode[],
     description?: undefined
   ): InputObjectTypeExtensionNode;
   function parseInputObjectTypeDefinition(
-    isExtension: boolean,
+    extendComments: CommentNode[] | null,
     description: StringValueNode | null = null
   ): InputObjectTypeDefinitionNode | InputObjectTypeExtensionNode {
-    takeToken("NAME", "input");
+    const keyword = takeToken("NAME", "input");
     const name = parseName();
     const directives = parseDirectives(true);
-    const fields = parseInputValueDefinitions("{", "}"); // TODO: this returns comments
-    if (isExtension) assertCombinedListLength([directives, fields.items], "{");
-    return isExtension
+    const fields = parseInputValueDefinitions("{", "}");
+    const comments = [
+      ...(extendComments || []),
+      ...keyword.comments,
+      ...name.comments,
+    ];
+    name.comments = [];
+    if (extendComments)
+      assertCombinedListLength([directives, fields.items], "{");
+    return extendComments
       ? {
           kind: "InputObjectTypeExtension",
           name,
           directives,
           fields: fields.items,
+          comments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         }
       : {
           kind: "InputObjectTypeDefinition",
@@ -757,11 +767,14 @@ export function parse(source: string): DocumentNode {
           name,
           directives,
           fields: fields.items,
+          comments,
+          commentsFieldsOpeningBracket: fields.commentsOpeningBracket,
+          commentsFieldsClosingBracket: fields.commentsClosingBracket,
         };
   }
 
   function parseTypeSystemExtension(): TypeSystemExtensionNode {
-    takeToken("NAME", "extend");
+    const { comments } = takeToken("NAME", "extend");
 
     const {
       token: { value },
@@ -780,7 +793,7 @@ export function parse(source: string): DocumentNode {
       case "enum":
         return parseEnumTypeDefinition(true);
       case "input":
-        return parseInputObjectTypeDefinition(true);
+        return parseInputObjectTypeDefinition(comments);
       default:
         throw new Error(`Unexpected token "${value}"`);
     }
@@ -861,7 +874,7 @@ export function parse(source: string): DocumentNode {
       case "enum":
         return parseEnumTypeDefinition(false, description);
       case "input":
-        return parseInputObjectTypeDefinition(false, description);
+        return parseInputObjectTypeDefinition(null, description);
       case "directive":
         const keyword = takeToken("NAME", "directive");
         const at = takePunctuator("@");

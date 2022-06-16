@@ -258,6 +258,9 @@ export type EnumValueDefinitionNode = {
 
 export type InputObjectTypeDefinitionNode = {
   kind: "InputObjectTypeDefinition";
+  comments: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
@@ -266,6 +269,9 @@ export type InputObjectTypeDefinitionNode = {
 
 export type InputObjectTypeExtensionNode = {
   kind: "InputObjectTypeExtension";
+  comments: CommentNode[];
+  commentsFieldsOpeningBracket: CommentNode[];
+  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
   fields: InputValueDefinitionNode[];

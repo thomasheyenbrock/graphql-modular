@@ -1046,6 +1046,80 @@ describe("parsing comments for directive definitions", () => {
   });
 });
 
+it("parses comments for input object definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    input # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as InputObjectTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment keyword before",
+    },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
+it("parses comments for input object extensions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment extend before
+    extend # comment extend after
+    # comment keyword before
+    input # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment directive before
+    @foo # comment directive after
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const definition = ast.definitions[0] as InputObjectTypeDefinitionNode;
+  expect(definition.comments).toEqual([
+    {
+      kind: "BlockComment",
+      value: "prettier-ignore\ncomment extend before",
+    },
+    { kind: "InlineComment", value: "comment extend after" },
+    { kind: "BlockComment", value: "comment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+  ]);
+  expect(definition.commentsFieldsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(definition.commentsFieldsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
 // TODO: add assertion functions to handle union types
 
 it.skip("timing", () => {
@@ -1243,6 +1317,8 @@ function stripComments(obj: any) {
   delete obj.commentsClosingBracket;
   delete obj.commentsArgsOpeningBracket;
   delete obj.commentsArgsClosingBracket;
+  delete obj.commentsFieldsOpeningBracket;
+  delete obj.commentsFieldsClosingBracket;
   delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
 }
