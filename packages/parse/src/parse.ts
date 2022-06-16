@@ -165,7 +165,7 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseDescription(): StringValueNode | null {
-    const { token } = tokens.peek();
+    const { token, comments } = tokens.peek();
     if (
       token &&
       (token.type === "STRING_VALUE" || token.type === "BLOCK_STRING_VALUE")
@@ -175,6 +175,7 @@ export function parse(source: string): DocumentNode {
         kind: "StringValue",
         value: token.value,
         block: token.type === "BLOCK_STRING_VALUE",
+        comments,
       };
     }
     return null;
@@ -260,24 +261,28 @@ export function parse(source: string): DocumentNode {
         ),
       };
     }
-    if (isNext("PUNCTUATOR")) throw new Error(`Unexpected token`);
 
-    const { token } = tokens.peek();
+    const { token, comments } = tokens.take();
     if (!token) throw new Error("Unexpected EOF");
-
-    tokens.take();
+    if (token.type === "PUNCTUATOR")
+      throw new Error(`Unexpected token: ${token.value}`);
     if (token.type === "INT_VALUE")
-      return { kind: "IntValue", value: token.value };
+      return { kind: "IntValue", value: token.value, comments };
     if (token.type === "FLOAT_VALUE")
-      return { kind: "FloatValue", value: token.value };
+      return { kind: "FloatValue", value: token.value, comments };
     if (token.type === "STRING_VALUE")
-      return { kind: "StringValue", value: token.value, block: false };
+      return {
+        kind: "StringValue",
+        value: token.value,
+        block: false,
+        comments,
+      };
     if (token.type === "BLOCK_STRING_VALUE")
-      return { kind: "StringValue", value: token.value, block: true };
+      return { kind: "StringValue", value: token.value, block: true, comments };
     if (token.value === "true" || token.value === "false")
-      return { kind: "BooleanValue", value: token.value === "true" };
-    if (token.value === "null") return { kind: "NullValue" };
-    return { kind: "EnumValue", value: token.value };
+      return { kind: "BooleanValue", value: token.value === "true", comments };
+    if (token.value === "null") return { kind: "NullValue", comments };
+    return { kind: "EnumValue", value: token.value, comments };
   }
 
   function parseArgs(isConst: false): ArgumentNode[];
@@ -428,7 +433,7 @@ export function parse(source: string): DocumentNode {
       name.value === "false"
     )
       throw new Error(`Unexpected token "${name.value}"`);
-    return { kind: "EnumValue", value: name.value };
+    return { kind: "EnumValue", value: name.value, comments: name.comments };
   }
 
   function parseSchemaDefinition(

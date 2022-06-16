@@ -384,31 +384,37 @@ export type ValueConstNode =
 
 export type IntValueNode = {
   kind: "IntValue";
+  comments: CommentNode[];
   value: string;
 };
 
 export type FloatValueNode = {
   kind: "FloatValue";
+  comments: CommentNode[];
   value: string;
 };
 
 export type StringValueNode = {
   kind: "StringValue";
+  comments: CommentNode[];
   value: string;
   block: boolean;
 };
 
 export type BooleanValueNode = {
   kind: "BooleanValue";
+  comments: CommentNode[];
   value: boolean;
 };
 
 export type NullValueNode = {
   kind: "NullValue";
+  comments: CommentNode[];
 };
 
 export type EnumValueNode = {
   kind: "EnumValue";
+  comments: CommentNode[];
   value: string;
 };
 

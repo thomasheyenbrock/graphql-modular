@@ -190,10 +190,12 @@ it("traverses with multiple layers of nesting", () => {
                     "kind": "ListValue",
                     "values": [
                       {
+                        "comments": [],
                         "kind": "IntValue",
                         "value": "123",
                       },
                       {
+                        "comments": [],
                         "kind": "IntValue",
                         "value": "456",
                       },
@@ -283,6 +285,7 @@ it("traverses with multiple layers of nesting", () => {
                                 "value": "irstirst",
                               },
                               "value": {
+                                "comments": [],
                                 "kind": "IntValue",
                                 "value": "10",
                               },
@@ -480,6 +483,7 @@ it("traverses with multiple layers of nesting", () => {
             },
             {
               "defaultValue": {
+                "comments": [],
                 "kind": "EnumValue",
                 "value": "MOBILE",
               },
@@ -536,6 +540,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "torytory",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "IntValue",
                     "value": "123",
                   },
@@ -823,6 +828,7 @@ it("traverses with multiple layers of nesting", () => {
                         },
                         "value": {
                           "block": false,
+                          "comments": [],
                           "kind": "StringValue",
                           "value": "value",
                         },
@@ -836,6 +842,7 @@ it("traverses with multiple layers of nesting", () => {
                         },
                         "value": {
                           "block": true,
+                          "comments": [],
                           "kind": "StringValue",
                           "value": "block string uses \\"\\"\\"",
                         },
@@ -881,6 +888,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "ruthyruthy",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "BooleanValue",
                     "value": true,
                   },
@@ -893,6 +901,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "alsyalsy",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "BooleanValue",
                     "value": false,
                   },
@@ -905,6 +914,7 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "ullishullish",
                   },
                   "value": {
+                    "comments": [],
                     "kind": "NullValue",
                   },
                 },

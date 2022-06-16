@@ -1,6 +1,15 @@
 import {
+  BooleanValueNode,
+  EnumTypeDefinitionNode,
+  EnumValueNode,
   EXECUTABLE_DIRECTIVE_LOCATION,
+  FieldNode,
+  FloatValueNode,
+  IntValueNode,
+  NullValueNode,
+  ObjectTypeDefinitionNode,
   OperationDefinitionNode,
+  StringValueNode,
 } from "@graphql-modular/language";
 import fs from "fs";
 import { DocumentNode, parse as _parseGql, visit } from "graphql";
@@ -46,20 +55,96 @@ it("parses comments for variables", () => {
   const { variable } = (ast.definitions[0] as OperationDefinitionNode)
     .variableDefinitions[0];
   expect(variable.comments).toEqual([
-    {
-      kind: "BlockComment",
-      value: "comment before",
-    },
-    {
-      kind: "BlockComment",
-      value: "comment between",
-    },
-    {
-      kind: "InlineComment",
-      value: "comment after",
-    },
+    { kind: "BlockComment", value: "comment before" },
+    { kind: "BlockComment", value: "comment between" },
+    { kind: "InlineComment", value: "comment after" },
   ]);
   expect(variable.name.comments).toEqual([]);
+});
+
+it("parses comments for value nodes", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    query Foo {
+      id(
+        intArg: 
+        # comment int before
+        42 # comment int after
+        floatArg:
+        # comment float before
+        42.43e44 # comment float after
+        stringArg:
+        # comment string before
+        "some string" # comment string after
+        booleanArg:
+        # comment boolean before
+        true # comment boolean after
+        nullArg:
+        # comment null before
+        null # comment null after
+        enumArg:
+        # comment enum before
+        SOME_ENUM # comment enum after
+      )
+    }
+  `);
+  const { args } = (ast.definitions[0] as OperationDefinitionNode)
+    .selectionSet[0] as FieldNode;
+  expect((args[0].value as IntValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment int before" },
+    { kind: "InlineComment", value: "comment int after" },
+  ]);
+  expect((args[1].value as FloatValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment float before" },
+    { kind: "InlineComment", value: "comment float after" },
+  ]);
+  expect((args[2].value as StringValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment string before" },
+    { kind: "InlineComment", value: "comment string after" },
+  ]);
+  expect((args[3].value as BooleanValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment boolean before" },
+    { kind: "InlineComment", value: "comment boolean after" },
+  ]);
+  expect((args[4].value as NullValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment null before" },
+    { kind: "InlineComment", value: "comment null after" },
+  ]);
+  expect((args[5].value as EnumValueNode).comments).toEqual([
+    { kind: "BlockComment", value: "comment enum before" },
+    { kind: "InlineComment", value: "comment enum after" },
+  ]);
+});
+
+it("parses comments for descriptions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment before
+    "some description" # comment after
+    type Foo {
+      id: ID
+    }
+  `);
+  const { description } = ast.definitions[0] as ObjectTypeDefinitionNode;
+  expect(description.comments).toEqual([
+    { kind: "BlockComment", value: "prettier-ignore\ncomment before" },
+    { kind: "InlineComment", value: "comment after" },
+  ]);
+});
+
+it("parses comments for enum values", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    enum Foo {
+      # comment before
+      ABC # comment after
+    }
+  `);
+  const { name } = (ast.definitions[0] as EnumTypeDefinitionNode).values[0];
+  expect(name.comments).toEqual([
+    { kind: "BlockComment", value: "comment before" },
+    { kind: "InlineComment", value: "comment after" },
+  ]);
 });
 
 it.skip("timing", () => {
