@@ -5,6 +5,7 @@ import {
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
   FloatValueNode,
+  InputObjectTypeDefinitionNode,
   IntValueNode,
   ListTypeNode,
   ListValueNode,
@@ -483,6 +484,37 @@ describe("comments for types", () => {
     ]);
     expect((type as ListTypeNode).type.comments).toEqual([]);
   });
+});
+
+it("parses comments for input value definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    input Foo {
+      # comment description before
+      "some description" # comment description after
+      # comment name before
+      field # comment name after
+      # comment colon before
+      : # comment colon after
+      # comment type before
+      ID # comment type after
+      # comment equal sign before
+      = # comment equal sign after
+      # comment value before
+      "unique-id" # comment value after
+      # comment directive 1 before
+      @someDirective # comment directive 1 after
+      # comment directive 2 before
+      @someOtherDirective # comment directive 2 after
+    }
+  `);
+  const field = (ast.definitions[0] as InputObjectTypeDefinitionNode).fields[0];
+  expect(field.comments).toEqual([
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+    { kind: "BlockComment", value: "comment colon before" },
+    { kind: "InlineComment", value: "comment colon after" },
+  ]);
 });
 
 // TODO: add assertion functions to handle union types

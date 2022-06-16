@@ -432,14 +432,25 @@ export function parse(source: string): DocumentNode {
       true,
       startPunctuator,
       endPunctuator,
-      () => ({
-        kind: "InputValueDefinition",
-        description: parseDescription(),
-        name: parseName(),
-        type: (takePunctuator(":"), parseType()),
-        defaultValue: parseDefaultValue(),
-        directives: parseDirectives(true),
-      })
+      () => {
+        const description = parseDescription();
+        const name = parseName();
+        const colon = takePunctuator(":");
+        const type = parseType();
+        const defaultValue = parseDefaultValue();
+        const directives = parseDirectives(true);
+        const comments = [...name.comments, ...colon.comments];
+        name.comments = [];
+        return {
+          kind: "InputValueDefinition",
+          description,
+          name,
+          type,
+          defaultValue,
+          directives,
+          comments,
+        };
+      }
     ).items;
   }
 

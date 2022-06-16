@@ -337,6 +337,7 @@ export type FieldDefinitionNode = {
 
 export type InputValueDefinitionNode = {
   kind: "InputValueDefinition";
+  comments: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   type: TypeNode;
