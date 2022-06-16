@@ -6,6 +6,7 @@ import {
   FieldNode,
   FloatValueNode,
   IntValueNode,
+  ListValueNode,
   NullValueNode,
   ObjectTypeDefinitionNode,
   OperationDefinitionNode,
@@ -85,6 +86,12 @@ it("parses comments for value nodes", () => {
         enumArg:
         # comment enum before
         SOME_ENUM # comment enum after
+        listArg:
+        # comment list open before
+        [ # comment list open after
+          1,2,3
+        # comment list close before
+        ] # comment list close after
       )
     }
   `);
@@ -113,6 +120,14 @@ it("parses comments for value nodes", () => {
   expect((args[5].value as EnumValueNode).comments).toEqual([
     { kind: "BlockComment", value: "comment enum before" },
     { kind: "InlineComment", value: "comment enum after" },
+  ]);
+  expect((args[6].value as ListValueNode).commentsOpenBracket).toEqual([
+    { kind: "BlockComment", value: "comment list open before" },
+    { kind: "InlineComment", value: "comment list open after" },
+  ]);
+  expect((args[6].value as ListValueNode).commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment list close before" },
+    { kind: "InlineComment", value: "comment list close after" },
   ]);
 });
 
@@ -338,5 +353,7 @@ function stripComments(obj: any) {
   if (Array.isArray(obj)) return obj.forEach(stripComments);
   if (!obj || typeof obj !== "object") return;
   delete obj.comments;
+  delete obj.commentsOpenBracket;
+  delete obj.commentsClosingBracket;
   Object.values(obj).forEach(stripComments);
 }

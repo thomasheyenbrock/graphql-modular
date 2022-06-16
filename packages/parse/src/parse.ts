@@ -125,17 +125,25 @@ export function parse(source: string): DocumentNode {
     endPunctuator: string,
     callback: () => T
   ) {
+    let commentsOpenBracket: CommentNode[] = [];
+    let commentsClosingBracket: CommentNode[] = [];
     try {
-      takePunctuator(startPunctuator);
+      commentsOpenBracket = takePunctuator(startPunctuator).comments;
     } catch (err) {
-      if (isOptional) return [];
+      if (isOptional)
+        return {
+          items: [],
+          commentsOpenBracket: [],
+          commentsClosingBracket: [],
+        };
       throw err;
     }
-    const items = takeList(
-      () => !takeIfNextPunctuator(endPunctuator).token,
-      callback
-    );
-    return items;
+    const items = takeList(() => {
+      const { token, comments } = takeIfNextPunctuator(endPunctuator);
+      if (token) commentsClosingBracket = comments;
+      return !token;
+    }, callback);
+    return { items, commentsOpenBracket, commentsClosingBracket };
   }
 
   function takeDelimitedList<T>(
@@ -234,14 +242,15 @@ export function parse(source: string): DocumentNode {
   function parseValue(isConst: boolean): ValueNode | ValueConstNode {
     if (isNextPunctuator("$") && !isConst) return parseVariable();
     if (isNextPunctuator("[")) {
+      const { items, commentsOpenBracket, commentsClosingBracket } =
+        takeWrappedList<ValueNode | ValueConstNode>(false, "[", "]", () =>
+          isConst ? parseValue(true) : parseValue(false)
+        );
       return {
         kind: "ListValue",
-        values: takeWrappedList<ValueNode | ValueConstNode>(
-          false,
-          "[",
-          "]",
-          () => (isConst ? parseValue(true) : parseValue(false))
-        ),
+        values: items,
+        commentsOpenBracket,
+        commentsClosingBracket,
       };
     }
     if (isNextPunctuator("{")) {
@@ -258,7 +267,7 @@ export function parse(source: string): DocumentNode {
               (takePunctuator(":"),
               isConst ? parseValue(true) : parseValue(false)),
           })
-        ),
+        ).items,
       };
     }
 
@@ -298,7 +307,7 @@ export function parse(source: string): DocumentNode {
         value:
           (takePunctuator(":"), isConst ? parseValue(true) : parseValue(false)),
       })
-    );
+    ).items;
   }
 
   function parseDirectives(isConst: false): DirectiveNode[];
@@ -365,7 +374,7 @@ export function parse(source: string): DocumentNode {
         directives: parseDirectives(false),
         selectionSet: parseSelectionSet(true),
       };
-    });
+    }).items;
   }
 
   function parseOperationType(): OperationType {
@@ -411,7 +420,7 @@ export function parse(source: string): DocumentNode {
         defaultValue: parseDefaultValue(),
         directives: parseDirectives(true),
       })
-    );
+    ).items;
   }
 
   function parseFieldDefinitions(): FieldDefinitionNode[] {
@@ -422,7 +431,7 @@ export function parse(source: string): DocumentNode {
       args: parseInputValueDefinitions("(", ")"),
       type: (takePunctuator(":"), parseType()),
       directives: parseDirectives(true),
-    }));
+    })).items;
   }
 
   function parseEnumValue(): EnumValueNode {
@@ -459,7 +468,7 @@ export function parse(source: string): DocumentNode {
         operation: parseOperationType(),
         type: (takePunctuator(":"), parseNamedType()),
       })
-    );
+    ).items;
     if (isExtension)
       assertCombinedListLength([directives, operationTypes], "{");
     return isExtension
@@ -622,7 +631,7 @@ export function parse(source: string): DocumentNode {
         name: parseEnumValue(),
         directives: parseDirectives(true),
       })
-    );
+    ).items;
     if (isExtension) assertCombinedListLength([directives, values], "{");
     return isExtension
       ? { kind: "EnumTypeExtension", name, directives, values }
@@ -726,7 +735,7 @@ export function parse(source: string): DocumentNode {
               defaultValue: parseDefaultValue(),
               directives: parseDirectives(true),
             })
-          ),
+          ).items,
           directives: parseDirectives(false),
           selectionSet: parseSelectionSet(false),
         };

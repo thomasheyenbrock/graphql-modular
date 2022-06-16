@@ -420,6 +420,8 @@ export type EnumValueNode = {
 
 export type ListValueNode = {
   kind: "ListValue";
+  commentsOpenBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   values: ValueNode[];
 };
 
@@ -436,6 +438,8 @@ export type ObjectFieldNode = {
 
 export type ListValueConstNode = {
   kind: "ListValue";
+  commentsOpenBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
   values: ValueConstNode[];
 };
 

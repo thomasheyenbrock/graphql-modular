@@ -187,6 +187,8 @@ it("traverses with multiple layers of nesting", () => {
                     "value": "dd",
                   },
                   "value": {
+                    "commentsClosingBracket": [],
+                    "commentsOpenBracket": [],
                     "kind": "ListValue",
                     "values": [
                       {
