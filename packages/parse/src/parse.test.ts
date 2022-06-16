@@ -21,6 +21,7 @@ import {
   OperationDefinitionNode,
   ScalarTypeDefinitionNode,
   ScalarTypeExtensionNode,
+  SchemaDefinitionNode,
   StringValueNode,
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
@@ -1486,6 +1487,26 @@ it("parses comments for scalar type extensions", () => {
     { kind: "InlineComment", value: "comment keyword after" },
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
+  ]);
+});
+
+it("parses comments for operation type definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    schema {
+      # comment operation type before
+      query # comment operation type after
+      # comment colon before
+      : # comment colon after
+      # comment type before
+      Root # comment type after
+    }
+  `);
+  expect(
+    (ast.definitions[0] as SchemaDefinitionNode).operationTypes[0].comments
+  ).toEqual([
+    { kind: "BlockComment", value: "comment colon before" },
+    { kind: "InlineComment", value: "comment colon after" },
   ]);
 });
 

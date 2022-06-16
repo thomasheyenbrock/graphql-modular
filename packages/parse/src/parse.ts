@@ -548,11 +548,17 @@ export function parse(source: string): DocumentNode {
       true,
       "{",
       "}",
-      () => ({
-        kind: "OperationTypeDefinition",
-        operation: parseOperationType(),
-        type: (takePunctuator(":"), parseNamedType()),
-      })
+      () => {
+        const operation = parseOperationType();
+        const colon = takePunctuator(":");
+        const type = parseNamedType();
+        return {
+          kind: "OperationTypeDefinition",
+          operation,
+          type,
+          comments: colon.comments,
+        };
+      }
     ).items; // TODO: this returns comments
     if (isExtension)
       assertCombinedListLength([directives, operationTypes], "{");

@@ -162,6 +162,7 @@ export type SchemaDefinitionNode = {
 
 export type OperationTypeDefinitionNode = {
   kind: "OperationTypeDefinition";
+  comments: CommentNode[];
   operation: OperationType;
   type: NamedTypeNode;
 };
