@@ -1014,16 +1014,33 @@ export function parse(source: string): DocumentNode {
           directives: parseDirectives(false),
           selectionSet: parseSelectionSet(false).items, // TODO: this returns comments,
         };
-      case "fragment":
+      case "fragment": {
         if (description !== null)
           throw new Error(`Unexpected token "${description}"`);
+        const keyword = takeToken("NAME", "fragment");
+        const name = parseName("on");
+        const typeCondition = parseTypeCondition(false);
+        const directives = parseDirectives(false);
+        const selectionSet = parseSelectionSet(false);
+        const comments = [
+          ...keyword.comments,
+          ...name.comments,
+          ...typeCondition.comments,
+        ];
+        name.comments = [];
         return {
           kind: "FragmentDefinition",
-          name: (takeToken("NAME", "fragment"), parseName("on")),
-          typeCondition: parseTypeCondition(false).type, // TODO: this returns comments
-          directives: parseDirectives(false),
-          selectionSet: parseSelectionSet(false).items, // TODO: this returns comments
+          name,
+          typeCondition: typeCondition.type,
+          directives,
+          selectionSet: selectionSet.items,
+          comments,
+          commentsSelectionSetOpeningBracket:
+            selectionSet.commentsOpeningBracket,
+          commentsSelectionSetClosingBracket:
+            selectionSet.commentsClosingBracket,
         };
+      }
       case "schema":
         return parseSchemaDefinition(null, description);
       case "scalar":
@@ -1038,7 +1055,7 @@ export function parse(source: string): DocumentNode {
         return parseEnumTypeDefinition(null, description);
       case "input":
         return parseInputObjectTypeDefinition(null, description);
-      case "directive":
+      case "directive": {
         const keyword = takeToken("NAME", "directive");
         const at = takePunctuator("@");
         const name = parseName();
@@ -1078,6 +1095,7 @@ export function parse(source: string): DocumentNode {
           commentsArgsClosingBracket: args.commentsClosingBracket,
           commentsLocations: locations.initializerComments,
         };
+      }
       case "extend":
         if (description !== null) throw new Error("Unexpected token");
         return parseTypeSystemExtension();

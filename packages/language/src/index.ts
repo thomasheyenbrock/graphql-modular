@@ -94,6 +94,9 @@ export type OperationDefinitionNode = {
 
 export type FragmentDefinitionNode = {
   kind: "FragmentDefinition";
+  comments: CommentNode[];
+  commentsSelectionSetOpeningBracket: CommentNode[];
+  commentsSelectionSetClosingBracket: CommentNode[];
   name: NameNode;
   typeCondition: NamedTypeNode;
   directives: DirectiveNode[];

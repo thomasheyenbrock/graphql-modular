@@ -7,6 +7,7 @@ import {
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
   FloatValueNode,
+  FragmentDefinitionNode,
   FragmentSpreadNode,
   InlineFragmentNode,
   InputObjectTypeDefinitionNode,
@@ -1831,6 +1832,44 @@ describe("parsing comments for fields", () => {
     expect(field.commentsSelectionSetOpeningBracket).toEqual([]);
     expect(field.commentsSelectionSetClosingBracket).toEqual([]);
   });
+});
+
+it("parses comments for fragment definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    fragment # comment keyword after
+    # comment name before
+    Foo # comment name after
+    # comment on before
+    on # comment on after
+    # comment type before
+    Bar # comment type after
+    # comment directive before
+    @foo # comment directive after
+    # comment selection set open before
+    { # comment selection set open after
+      id
+    # comment selection set close before
+    } # comment selection set close after
+  `);
+  const definition = ast.definitions[0] as FragmentDefinitionNode;
+  expect(definition.comments).toEqual([
+    { kind: "BlockComment", value: "prettier-ignore\ncomment keyword before" },
+    { kind: "InlineComment", value: "comment keyword after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+    { kind: "BlockComment", value: "comment on before" },
+    { kind: "InlineComment", value: "comment on after" },
+  ]);
+  expect(definition.commentsSelectionSetOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment selection set open before" },
+    { kind: "InlineComment", value: "comment selection set open after" },
+  ]);
+  expect(definition.commentsSelectionSetClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment selection set close before" },
+    { kind: "InlineComment", value: "comment selection set close after" },
+  ]);
 });
 
 // TODO: add assertion functions to handle union types
