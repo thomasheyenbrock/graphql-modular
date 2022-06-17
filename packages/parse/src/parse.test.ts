@@ -337,12 +337,13 @@ it("parses comments for enum value definitions", () => {
       ABC # comment after
     }
   `);
-  const value = (ast.definitions[0] as EnumTypeDefinitionNode).values[0];
-  expect(value.comments).toEqual([
+  const value = (ast.definitions[0] as EnumTypeDefinitionNode)
+    .valueDefinitionSet?.definitions[0];
+  expect(value?.comments).toEqual([
     { kind: "BlockComment", value: "comment before" },
     { kind: "InlineComment", value: "comment after" },
   ]);
-  expect(value.name.comments).toEqual([]);
+  expect(value?.name.comments).toEqual([]);
 });
 
 describe("comments for types", () => {
@@ -1037,6 +1038,27 @@ it("parses comments for input object type extensions", () => {
   ]);
 });
 
+it("parses comments for enum value definition sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    enum Foo
+    # comment values open before
+    { # comment values open after
+      ENUM_VALUE
+    # comment values close before
+    } # comment values close after
+  `);
+  const { valueDefinitionSet } = ast.definitions[0] as EnumTypeDefinitionNode;
+  expect(valueDefinitionSet?.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment values open before" },
+    { kind: "InlineComment", value: "comment values open after" },
+  ]);
+  expect(valueDefinitionSet?.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment values close before" },
+    { kind: "InlineComment", value: "comment values close after" },
+  ]);
+});
+
 it("parses comments for enum type definitions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
@@ -1046,11 +1068,7 @@ it("parses comments for enum type definitions", () => {
     Foo # comment name after
     # comment directive before
     @foo # comment directive after
-    # comment values open before
-    { # comment values open after
-      ENUM_VALUE
-    # comment values close before
-    } # comment values close after
+    { ENUM_VALUE }
   `);
   const definition = ast.definitions[0] as EnumTypeDefinitionNode;
   expect(definition.comments).toEqual([
@@ -1061,14 +1079,6 @@ it("parses comments for enum type definitions", () => {
     { kind: "InlineComment", value: "comment keyword after" },
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
-  ]);
-  expect(definition.commentsValuesOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment values open before" },
-    { kind: "InlineComment", value: "comment values open after" },
-  ]);
-  expect(definition.commentsValuesClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment values close before" },
-    { kind: "InlineComment", value: "comment values close after" },
   ]);
 });
 
@@ -1083,11 +1093,7 @@ it("parses comments for enum type extensions", () => {
     Foo # comment name after
     # comment directive before
     @foo # comment directive after
-    # comment values open before
-    { # comment values open after
-      ENUM_VALUE
-    # comment values close before
-    } # comment values close after
+    { ENUM_VALUE }
   `);
   const definition = ast.definitions[0] as EnumTypeExtensionNode;
   expect(definition.comments).toEqual([
@@ -1100,14 +1106,6 @@ it("parses comments for enum type extensions", () => {
     { kind: "InlineComment", value: "comment keyword after" },
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
-  ]);
-  expect(definition.commentsValuesOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment values open before" },
-    { kind: "InlineComment", value: "comment values open after" },
-  ]);
-  expect(definition.commentsValuesClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment values close before" },
-    { kind: "InlineComment", value: "comment values close after" },
   ]);
 });
 
@@ -1802,11 +1800,28 @@ function parseGql(source: string): DocumentNode {
       },
     },
     EnumTypeDefinition: {
-      leave(node) {
+      leave({ description, values, ...restNode }) {
         return {
-          ...node,
+          ...restNode,
           /** null instead of undefined */
-          description: node.description ?? null,
+          description: description ?? null,
+          /** value definition set instead of plain values list */
+          valueDefinitionSet:
+            !values || values.length === 0
+              ? null
+              : { kind: "EnumValueDefinitionSet", definitions: values },
+        };
+      },
+    },
+    EnumTypeExtension: {
+      leave({ values, ...restNode }) {
+        return {
+          ...restNode,
+          /** value definition set instead of plain values list */
+          valueDefinitionSet:
+            !values || values.length === 0
+              ? null
+              : { kind: "EnumValueDefinitionSet", definitions: values },
         };
       },
     },
@@ -2015,8 +2030,6 @@ function stripComments(obj: any) {
   delete obj.comments;
   delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
-  delete obj.commentsValuesOpeningBracket;
-  delete obj.commentsValuesClosingBracket;
   delete obj.commentsOperationTypesOpeningBracket;
   delete obj.commentsOperationTypesClosingBracket;
   delete obj.commentsInterfaces;

@@ -44,6 +44,7 @@ export type AstNodes = {
   UnionTypeExtension: UnionTypeExtensionNode;
   EnumTypeDefinition: EnumTypeDefinitionNode;
   EnumTypeExtension: EnumTypeExtensionNode;
+  EnumValueDefinitionSet: EnumValueDefinitionSetNode;
   EnumValueDefinition: EnumValueDefinitionNode;
   InputObjectTypeDefinition: InputObjectTypeDefinitionNode;
   InputObjectTypeExtension: InputObjectTypeExtensionNode;
@@ -275,22 +276,25 @@ export type UnionTypeExtensionNode = {
 export type EnumTypeDefinitionNode = {
   kind: "EnumTypeDefinition";
   comments: CommentNode[];
-  commentsValuesOpeningBracket: CommentNode[];
-  commentsValuesClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
-  values: EnumValueDefinitionNode[];
+  valueDefinitionSet: EnumValueDefinitionSetNode | null;
 };
 
 export type EnumTypeExtensionNode = {
   kind: "EnumTypeExtension";
   comments: CommentNode[];
-  commentsValuesOpeningBracket: CommentNode[];
-  commentsValuesClosingBracket: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
-  values: EnumValueDefinitionNode[];
+  valueDefinitionSet: EnumValueDefinitionSetNode | null;
+};
+
+export type EnumValueDefinitionSetNode = {
+  kind: "EnumValueDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  definitions: EnumValueDefinitionNode[];
 };
 
 export type EnumValueDefinitionNode = {

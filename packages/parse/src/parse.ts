@@ -9,6 +9,7 @@ import {
   EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueDefinitionNode,
+  EnumValueDefinitionSetNode,
   EnumValueNode,
   EXECUTABLE_DIRECTIVE_LOCATION,
   FieldDefinitionNode,
@@ -857,6 +858,15 @@ export function parse(source: string): DocumentNode {
         };
       }
     );
+    const valueDefinitionSet: EnumValueDefinitionSetNode | null =
+      values.items.length === 0
+        ? null
+        : {
+            kind: "EnumValueDefinitionSet",
+            definitions: values.items,
+            commentsOpeningBracket: values.commentsOpeningBracket,
+            commentsClosingBracket: values.commentsClosingBracket,
+          };
     const comments = [
       ...(extendComments || []),
       ...keyword.comments,
@@ -869,20 +879,16 @@ export function parse(source: string): DocumentNode {
           kind: "EnumTypeExtension",
           name: name.node,
           directives,
-          values: values.items,
+          valueDefinitionSet,
           comments,
-          commentsValuesOpeningBracket: values.commentsOpeningBracket,
-          commentsValuesClosingBracket: values.commentsClosingBracket,
         }
       : {
           kind: "EnumTypeDefinition",
           description,
           name: name.node,
           directives,
-          values: values.items,
+          valueDefinitionSet,
           comments,
-          commentsValuesOpeningBracket: values.commentsOpeningBracket,
-          commentsValuesClosingBracket: values.commentsClosingBracket,
         };
   }
 
