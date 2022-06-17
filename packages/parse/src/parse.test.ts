@@ -102,7 +102,7 @@ it("parsing comments for variables", () => {
     `);
     expect(
       (ast.definitions[0] as OperationDefinitionNode).variableDefinitionSet
-        ?.variableDefinitions[0].variable.comments
+        ?.definitions[0].variable.comments
     ).toEqual([]);
   });
 });
@@ -357,7 +357,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
@@ -375,7 +375,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
@@ -398,7 +398,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
@@ -425,7 +425,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
@@ -454,7 +454,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
@@ -485,7 +485,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
@@ -518,7 +518,7 @@ describe("comments for types", () => {
       }
     `);
     const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
-      .fieldDefinitionSet?.fieldDefinitions[0].type;
+      .fieldDefinitionSet?.definitions[0].type;
     expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open outer before" },
       { kind: "InlineComment", value: "comment open outer after" },
@@ -559,7 +559,7 @@ it("parses comments for input value definitions", () => {
   `);
   expect(
     (ast.definitions[0] as InputObjectTypeDefinitionNode)
-      .inputValueDefinitionSet?.inputValueDefinitions[0].comments
+      .inputValueDefinitionSet?.definitions[0].comments
   ).toEqual([
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
@@ -583,7 +583,7 @@ it("parses comments for input value definition sets", () => {
   `);
   const inputValueDefinitionSet = (
     ast.definitions[0] as ObjectTypeDefinitionNode
-  ).fieldDefinitionSet?.fieldDefinitions[0].inputValueDefinitionSet;
+  ).fieldDefinitionSet?.definitions[0].inputValueDefinitionSet;
   expect(inputValueDefinitionSet?.commentsOpeningBracket).toEqual([
     { kind: "BlockComment", value: "comment open before" },
     { kind: "InlineComment", value: "comment open after" },
@@ -610,7 +610,7 @@ it("parses comments for field definitions", () => {
   `);
   expect(
     (ast.definitions[0] as ObjectTypeDefinitionNode).fieldDefinitionSet
-      ?.fieldDefinitions[0].comments
+      ?.definitions[0].comments
   ).toEqual([
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
@@ -1637,7 +1637,7 @@ it("parses comments in variable definitions", () => {
   `);
   expect(
     (ast.definitions[0] as OperationDefinitionNode).variableDefinitionSet
-      ?.variableDefinitions[0].comments
+      ?.definitions[0].comments
   ).toEqual([
     { kind: "BlockComment", value: "comment dollar before" },
     { kind: "InlineComment", value: "comment dollar after" },
@@ -1786,10 +1786,7 @@ function parseGql(source: string): DocumentNode {
           inputValueDefinitionSet:
             !args || args.length === 0
               ? null
-              : {
-                  kind: "InputValueDefinitionSet",
-                  inputValueDefinitions: args,
-                },
+              : { kind: "InputValueDefinitionSet", definitions: args },
           locations: locations.map((location) => ({
             kind: EXECUTABLE_DIRECTIVE_LOCATION.includes(location.value as any)
               ? "ExecutableDirectiveLocation"
@@ -1860,10 +1857,7 @@ function parseGql(source: string): DocumentNode {
           inputValueDefinitionSet:
             !args || args.length === 0
               ? null
-              : {
-                  kind: "InputValueDefinitionSet",
-                  inputValueDefinitions: args,
-                },
+              : { kind: "InputValueDefinitionSet", definitions: args },
         };
       },
     },
@@ -1886,10 +1880,7 @@ function parseGql(source: string): DocumentNode {
           inputValueDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : {
-                  kind: "InputValueDefinitionSet",
-                  inputValueDefinitions: fields,
-                },
+              : { kind: "InputValueDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1901,10 +1892,7 @@ function parseGql(source: string): DocumentNode {
           inputValueDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : {
-                  kind: "InputValueDefinitionSet",
-                  inputValueDefinitions: fields,
-                },
+              : { kind: "InputValueDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1929,7 +1917,7 @@ function parseGql(source: string): DocumentNode {
           fieldDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+              : { kind: "FieldDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1941,7 +1929,7 @@ function parseGql(source: string): DocumentNode {
           fieldDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+              : { kind: "FieldDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1955,7 +1943,7 @@ function parseGql(source: string): DocumentNode {
           fieldDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+              : { kind: "FieldDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1967,7 +1955,7 @@ function parseGql(source: string): DocumentNode {
           fieldDefinitionSet:
             !fields || fields.length === 0
               ? null
-              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+              : { kind: "FieldDefinitionSet", definitions: fields },
         };
       },
     },
@@ -1981,7 +1969,10 @@ function parseGql(source: string): DocumentNode {
           variableDefinitionSet:
             variableDefinitions?.length === 0
               ? null
-              : { kind: "VariableDefinitionSet", variableDefinitions },
+              : {
+                  kind: "VariableDefinitionSet",
+                  definitions: variableDefinitions,
+                },
         };
       },
     },

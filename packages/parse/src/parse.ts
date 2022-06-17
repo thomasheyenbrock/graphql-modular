@@ -528,7 +528,7 @@ export function parse(source: string): DocumentNode {
       ? null
       : {
           kind: "InputValueDefinitionSet",
-          inputValueDefinitions: items,
+          definitions: items,
           commentsOpeningBracket,
           commentsClosingBracket,
         };
@@ -558,7 +558,7 @@ export function parse(source: string): DocumentNode {
       ? null
       : {
           kind: "FieldDefinitionSet",
-          fieldDefinitions: items,
+          definitions: items,
           commentsOpeningBracket,
           commentsClosingBracket,
         };
@@ -985,7 +985,7 @@ export function parse(source: string): DocumentNode {
           throw new Error(`Unexpected token "${description}"`);
         const operation = parseOperationType();
         const name = isNext("NAME") ? parseName() : null;
-        const variableDefinitions = takeWrappedList<VariableDefinitionNode>(
+        const definitions = takeWrappedList<VariableDefinitionNode>(
           true,
           "(",
           ")",
@@ -1018,14 +1018,12 @@ export function parse(source: string): DocumentNode {
           operation: operation.value,
           name: name ? name.node : null,
           variableDefinitionSet:
-            variableDefinitions.items.length > 0
+            definitions.items.length > 0
               ? {
                   kind: "VariableDefinitionSet",
-                  variableDefinitions: variableDefinitions.items,
-                  commentsOpeningBracket:
-                    variableDefinitions.commentsOpeningBracket,
-                  commentsClosingBracket:
-                    variableDefinitions.commentsClosingBracket,
+                  definitions: definitions.items,
+                  commentsOpeningBracket: definitions.commentsOpeningBracket,
+                  commentsClosingBracket: definitions.commentsClosingBracket,
                 }
               : null,
           directives,

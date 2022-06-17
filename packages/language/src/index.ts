@@ -353,7 +353,7 @@ export type VariableDefinitionSetNode = {
   kind: "VariableDefinitionSet";
   commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
-  variableDefinitions: VariableDefinitionNode[];
+  definitions: VariableDefinitionNode[];
 };
 
 export type VariableDefinitionNode = {
@@ -411,7 +411,7 @@ export type FieldDefinitionSetNode = {
   kind: "FieldDefinitionSet";
   commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
-  fieldDefinitions: FieldDefinitionNode[];
+  definitions: FieldDefinitionNode[];
 };
 
 export type FieldDefinitionNode = {
@@ -428,7 +428,7 @@ export type InputValueDefinitionSetNode = {
   kind: "InputValueDefinitionSet";
   commentsOpeningBracket: CommentNode[];
   commentsClosingBracket: CommentNode[];
-  inputValueDefinitions: InputValueDefinitionNode[];
+  definitions: InputValueDefinitionNode[];
 };
 
 export type InputValueDefinitionNode = {

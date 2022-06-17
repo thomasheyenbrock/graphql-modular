@@ -517,8 +517,7 @@ it("traverses with multiple layers of nesting", () => {
           "variableDefinitionSet": {
             "commentsClosingBracket": [],
             "commentsOpeningBracket": [],
-            "kind": "VariableDefinitionSet",
-            "variableDefinitions": [
+            "definitions": [
               {
                 "comments": [],
                 "defaultValue": null,
@@ -568,6 +567,7 @@ it("traverses with multiple layers of nesting", () => {
                 },
               },
             ],
+            "kind": "VariableDefinitionSet",
           },
         },
         {
@@ -842,8 +842,7 @@ it("traverses with multiple layers of nesting", () => {
           "variableDefinitionSet": {
             "commentsClosingBracket": [],
             "commentsOpeningBracket": [],
-            "kind": "VariableDefinitionSet",
-            "variableDefinitions": [
+            "definitions": [
               {
                 "comments": [],
                 "defaultValue": null,
@@ -877,6 +876,7 @@ it("traverses with multiple layers of nesting", () => {
                 },
               },
             ],
+            "kind": "VariableDefinitionSet",
           },
         },
         {
