@@ -355,8 +355,9 @@ describe("comments for types", () => {
         ID # comment name after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
     ]);
@@ -372,8 +373,9 @@ describe("comments for types", () => {
         ! # comment bang after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment name before" },
       { kind: "InlineComment", value: "comment name after" },
       { kind: "BlockComment", value: "comment bang before" },
@@ -394,8 +396,9 @@ describe("comments for types", () => {
         ] # comment close after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
       { kind: "BlockComment", value: "comment name before" },
@@ -420,8 +423,9 @@ describe("comments for types", () => {
         ] # comment close after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
       { kind: "BlockComment", value: "comment name before" },
@@ -448,8 +452,9 @@ describe("comments for types", () => {
         ! # comment bang after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
       { kind: "BlockComment", value: "comment name before" },
@@ -478,8 +483,9 @@ describe("comments for types", () => {
         ! # comment bang after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open before" },
       { kind: "InlineComment", value: "comment open after" },
       { kind: "BlockComment", value: "comment name before" },
@@ -510,8 +516,9 @@ describe("comments for types", () => {
         ] # comment close outer after
       }
     `);
-    const { type } = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-    expect(type.comments).toEqual([
+    const type = (ast.definitions[0] as ObjectTypeDefinitionNode)
+      .fieldDefinitionSet?.fieldDefinitions[0].type;
+    expect(type?.comments).toEqual([
       { kind: "BlockComment", value: "comment open outer before" },
       { kind: "InlineComment", value: "comment open outer after" },
       { kind: "BlockComment", value: "comment open inner before" },
@@ -549,9 +556,10 @@ it("parses comments for input value definitions", () => {
       @someOtherDirective # comment directive 2 after
     }
   `);
-  const field = (ast.definitions[0] as InputObjectTypeDefinitionNode)
-    .inputValueDefinitionSet?.inputValueDefinitions[0];
-  expect(field.comments).toEqual([
+  expect(
+    (ast.definitions[0] as InputObjectTypeDefinitionNode)
+      .inputValueDefinitionSet?.inputValueDefinitions[0].comments
+  ).toEqual([
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
     { kind: "BlockComment", value: "comment colon before" },
@@ -572,14 +580,14 @@ it("parses comments for input value definition sets", () => {
       : ID
     }
   `);
-  const { inputValueDefinitionSet } = (
+  const inputValueDefinitionSet = (
     ast.definitions[0] as ObjectTypeDefinitionNode
-  ).fields[0];
-  expect(inputValueDefinitionSet.commentsOpeningBracket).toEqual([
+  ).fieldDefinitionSet?.fieldDefinitions[0].inputValueDefinitionSet;
+  expect(inputValueDefinitionSet?.commentsOpeningBracket).toEqual([
     { kind: "BlockComment", value: "comment open before" },
     { kind: "InlineComment", value: "comment open after" },
   ]);
-  expect(inputValueDefinitionSet.commentsClosingBracket).toEqual([
+  expect(inputValueDefinitionSet?.commentsClosingBracket).toEqual([
     { kind: "BlockComment", value: "comment close before" },
     { kind: "InlineComment", value: "comment close after" },
   ]);
@@ -599,36 +607,14 @@ it("parses comments for field definitions", () => {
       ID # comment type after
     }
   `);
-  const field = (ast.definitions[0] as ObjectTypeDefinitionNode).fields[0];
-  expect(field.comments).toEqual([
+  expect(
+    (ast.definitions[0] as ObjectTypeDefinitionNode).fieldDefinitionSet
+      ?.fieldDefinitions[0].comments
+  ).toEqual([
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
     { kind: "BlockComment", value: "comment colon before" },
     { kind: "InlineComment", value: "comment colon after" },
-  ]);
-});
-
-it("parses comments for argument sets", () => {
-  const ast = parse(/* GraphQL */ `
-    # prettier-ignore
-    {
-      field 
-      # comment args open before
-      ( # comment args open after
-        argName: 42
-      # comment args close before
-      ) # comment args close after
-    }
-  `);
-  const { argumentSet } = (ast.definitions[0] as OperationDefinitionNode)
-    .selectionSet.selections[0] as FieldNode;
-  expect(argumentSet?.commentsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment args open before" },
-    { kind: "InlineComment", value: "comment args open after" },
-  ]);
-  expect(argumentSet?.commentsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment args close before" },
-    { kind: "InlineComment", value: "comment args close after" },
   ]);
 });
 
@@ -656,6 +642,30 @@ it("parses comments for arguments", () => {
     { kind: "InlineComment", value: "comment arg name after" },
     { kind: "BlockComment", value: "comment colon before" },
     { kind: "InlineComment", value: "comment colon after" },
+  ]);
+});
+
+it("parses comments for argument sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    {
+      field 
+      # comment args open before
+      ( # comment args open after
+        argName: 42
+      # comment args close before
+      ) # comment args close after
+    }
+  `);
+  const { argumentSet } = (ast.definitions[0] as OperationDefinitionNode)
+    .selectionSet.selections[0] as FieldNode;
+  expect(argumentSet?.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment args open before" },
+    { kind: "InlineComment", value: "comment args open after" },
+  ]);
+  expect(argumentSet?.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment args close before" },
+    { kind: "InlineComment", value: "comment args close after" },
   ]);
 });
 
@@ -1163,6 +1173,28 @@ it("parses comments for union type extensions", () => {
   ]);
 });
 
+it("parses comments for field definition sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    type Foo
+    # comment fields open before
+    { # comment fields open after
+      foo: Int
+    # comment fields close before
+    } # comment fields close after
+  `);
+  const { fieldDefinitionSet } = ast
+    .definitions[0] as InterfaceTypeDefinitionNode;
+  expect(fieldDefinitionSet?.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields open before" },
+    { kind: "InlineComment", value: "comment fields open after" },
+  ]);
+  expect(fieldDefinitionSet?.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment fields close before" },
+    { kind: "InlineComment", value: "comment fields close after" },
+  ]);
+});
+
 it("parses comments for interface type definitions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
@@ -1175,11 +1207,7 @@ it("parses comments for interface type definitions", () => {
       Bar
     # comment directive before
     @foo # comment directive after
-    # comment fields open before
-    { # comment fields open after
-      foo: Int
-    # comment fields close before
-    } # comment fields close after
+    { foo: Int }
   `);
   const definition = ast.definitions[0] as InterfaceTypeDefinitionNode;
   expect(definition.comments).toEqual([
@@ -1194,14 +1222,6 @@ it("parses comments for interface type definitions", () => {
   expect(definition.commentsInterfaces).toEqual([
     { kind: "BlockComment", value: "comment implements before" },
     { kind: "InlineComment", value: "comment implements after" },
-  ]);
-  expect(definition.commentsFieldsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields open before" },
-    { kind: "InlineComment", value: "comment fields open after" },
-  ]);
-  expect(definition.commentsFieldsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields close before" },
-    { kind: "InlineComment", value: "comment fields close after" },
   ]);
 });
 
@@ -1219,11 +1239,7 @@ it("parses comments for interface type extensions", () => {
       Bar
     # comment directive before
     @foo # comment directive after
-    # comment fields open before
-    { # comment fields open after
-      foo: Int
-    # comment fields close before
-    } # comment fields close after
+    { foo: Int }
   `);
   const definition = ast.definitions[0] as InterfaceTypeExtensionNode;
   expect(definition.comments).toEqual([
@@ -1241,14 +1257,6 @@ it("parses comments for interface type extensions", () => {
     { kind: "BlockComment", value: "comment implements before" },
     { kind: "InlineComment", value: "comment implements after" },
   ]);
-  expect(definition.commentsFieldsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields open before" },
-    { kind: "InlineComment", value: "comment fields open after" },
-  ]);
-  expect(definition.commentsFieldsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields close before" },
-    { kind: "InlineComment", value: "comment fields close after" },
-  ]);
 });
 
 it("parses comments for object type definitions", () => {
@@ -1263,11 +1271,7 @@ it("parses comments for object type definitions", () => {
       Bar
     # comment directive before
     @foo # comment directive after
-    # comment fields open before
-    { # comment fields open after
-      foo: Int
-    # comment fields close before
-    } # comment fields close after
+    { foo: Int }
   `);
   const definition = ast.definitions[0] as ObjectTypeDefinitionNode;
   expect(definition.comments).toEqual([
@@ -1282,14 +1286,6 @@ it("parses comments for object type definitions", () => {
   expect(definition.commentsInterfaces).toEqual([
     { kind: "BlockComment", value: "comment implements before" },
     { kind: "InlineComment", value: "comment implements after" },
-  ]);
-  expect(definition.commentsFieldsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields open before" },
-    { kind: "InlineComment", value: "comment fields open after" },
-  ]);
-  expect(definition.commentsFieldsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields close before" },
-    { kind: "InlineComment", value: "comment fields close after" },
   ]);
 });
 
@@ -1307,11 +1303,7 @@ it("parses comments for object type extensions", () => {
       Bar
     # comment directive before
     @foo # comment directive after
-    # comment fields open before
-    { # comment fields open after
-      foo: Int
-    # comment fields close before
-    } # comment fields close after
+    { foo: Int }
   `);
   const definition = ast.definitions[0] as ObjectTypeExtensionNode;
   expect(definition.comments).toEqual([
@@ -1329,14 +1321,6 @@ it("parses comments for object type extensions", () => {
     { kind: "BlockComment", value: "comment implements before" },
     { kind: "InlineComment", value: "comment implements after" },
   ]);
-  expect(definition.commentsFieldsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields open before" },
-    { kind: "InlineComment", value: "comment fields open after" },
-  ]);
-  expect(definition.commentsFieldsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment fields close before" },
-    { kind: "InlineComment", value: "comment fields close after" },
-  ]);
 });
 
 it("parses comments for scalar type definitions", () => {
@@ -1348,7 +1332,6 @@ it("parses comments for scalar type definitions", () => {
     Foo # comment name after
     # comment directive before
     @foo # comment directive after
-    # comment fields open before
   `);
   const definition = ast.definitions[0] as ScalarTypeDefinitionNode;
   expect(definition.comments).toEqual([
@@ -1476,27 +1459,6 @@ it("parses comments for schema extensions", () => {
   ]);
 });
 
-it("parses comments for selection sets", () => {
-  const ast = parse(/* GraphQL */ `
-    # prettier-ignore
-    query Foo
-    # comment selection set open before
-    { # comment selection set open after
-      id
-      # comment selection set close before
-    } # comment selection set close after
-  `);
-  const { selectionSet } = ast.definitions[0] as OperationDefinitionNode;
-  expect(selectionSet.commentsOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment selection set open before" },
-    { kind: "InlineComment", value: "comment selection set open after" },
-  ]);
-  expect(selectionSet.commentsClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment selection set close before" },
-    { kind: "InlineComment", value: "comment selection set close after" },
-  ]);
-});
-
 describe("parsing comments for inline fragments", () => {
   it("parses comments for inline fragments without type condition", () => {
     const ast = parse(/* GraphQL */ `
@@ -1612,6 +1574,27 @@ describe("parsing comments for fields", () => {
   });
 });
 
+it("parses comments for selection sets", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    query Foo
+    # comment selection set open before
+    { # comment selection set open after
+      id
+      # comment selection set close before
+    } # comment selection set close after
+  `);
+  const { selectionSet } = ast.definitions[0] as OperationDefinitionNode;
+  expect(selectionSet.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment selection set open before" },
+    { kind: "InlineComment", value: "comment selection set open after" },
+  ]);
+  expect(selectionSet.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment selection set close before" },
+    { kind: "InlineComment", value: "comment selection set close after" },
+  ]);
+});
+
 it("parses comments for fragment definitions", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
@@ -1638,7 +1621,36 @@ it("parses comments for fragment definitions", () => {
   ]);
 });
 
-it("parses comments in variable description sets", () => {
+it("parses comments in variable definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    query Foo
+    (
+      # comment dollar before
+      $ # comment dollar after
+      # comment name before
+      variable # comment name after
+      # comment colon before
+      : # comment colon after
+      Int = 42
+    ) {
+      id
+    }
+  `);
+  expect(
+    (ast.definitions[0] as OperationDefinitionNode).variableDefinitionSet
+      ?.variableDefinitions[0].comments
+  ).toEqual([
+    { kind: "BlockComment", value: "comment dollar before" },
+    { kind: "InlineComment", value: "comment dollar after" },
+    { kind: "BlockComment", value: "comment name before" },
+    { kind: "InlineComment", value: "comment name after" },
+    { kind: "BlockComment", value: "comment colon before" },
+    { kind: "InlineComment", value: "comment colon after" },
+  ]);
+});
+
+it("parses comments in variable definition sets", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
     query Foo
@@ -1774,7 +1786,7 @@ function parseGql(source: string): DocumentNode {
            */
           /** input value definition set instead of plain args list */
           inputValueDefinitionSet:
-            args.length === 0
+            !args || args.length === 0
               ? null
               : {
                   kind: "InputValueDefinitionSet",
@@ -1831,7 +1843,7 @@ function parseGql(source: string): DocumentNode {
           description: description ?? null,
           /** input value definition set instead of plain args list */
           inputValueDefinitionSet:
-            args.length === 0
+            !args || args.length === 0
               ? null
               : {
                   kind: "InputValueDefinitionSet",
@@ -1857,7 +1869,7 @@ function parseGql(source: string): DocumentNode {
           description: description ?? null,
           /** input value definition set instead of plain fields list */
           inputValueDefinitionSet:
-            fields.length === 0
+            !fields || fields.length === 0
               ? null
               : {
                   kind: "InputValueDefinitionSet",
@@ -1872,7 +1884,7 @@ function parseGql(source: string): DocumentNode {
           ...restNode,
           /** input value definition set instead of plain fields list */
           inputValueDefinitionSet:
-            fields.length === 0
+            !fields || fields.length === 0
               ? null
               : {
                   kind: "InputValueDefinitionSet",
@@ -1893,20 +1905,54 @@ function parseGql(source: string): DocumentNode {
       },
     },
     InterfaceTypeDefinition: {
-      leave(node) {
+      leave({ description, fields, ...restNode }) {
         return {
-          ...node,
+          ...restNode,
           /** null instead of undefined */
-          description: node.description ?? null,
+          description: description ?? null,
+          /** field definition set instead of plain fields list */
+          fieldDefinitionSet:
+            !fields || fields.length === 0
+              ? null
+              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+        };
+      },
+    },
+    InterfaceTypeExtension: {
+      leave({ fields, ...restNode }) {
+        return {
+          ...restNode,
+          /** field definition set instead of plain fields list */
+          fieldDefinitionSet:
+            !fields || fields.length === 0
+              ? null
+              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
         };
       },
     },
     ObjectTypeDefinition: {
-      leave(node) {
+      leave({ description, fields, ...restNode }) {
         return {
-          ...node,
+          ...restNode,
           /** null instead of undefined */
-          description: node.description ?? null,
+          description: description ?? null,
+          /** field definition set instead of plain fields list */
+          fieldDefinitionSet:
+            !fields || fields.length === 0
+              ? null
+              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
+        };
+      },
+    },
+    ObjectTypeExtension: {
+      leave({ fields, ...restNode }) {
+        return {
+          ...restNode,
+          /** field definition set instead of plain fields list */
+          fieldDefinitionSet:
+            !fields || fields.length === 0
+              ? null
+              : { kind: "FieldDefinitionSet", fieldDefinitions: fields },
         };
       },
     },
@@ -1969,8 +2015,6 @@ function stripComments(obj: any) {
   delete obj.comments;
   delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
-  delete obj.commentsFieldsOpeningBracket;
-  delete obj.commentsFieldsClosingBracket;
   delete obj.commentsValuesOpeningBracket;
   delete obj.commentsValuesClosingBracket;
   delete obj.commentsOperationTypesOpeningBracket;

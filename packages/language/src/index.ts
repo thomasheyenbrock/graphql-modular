@@ -52,6 +52,7 @@ export type AstNodes = {
   VariableDefinition: VariableDefinitionNode;
   Directive: DirectiveNode | DirectiveConstNode;
   Argument: ArgumentNode | ArgumentConstNode;
+  FieldDefinitionSet: FieldDefinitionSetNode;
   FieldDefinition: FieldDefinitionNode;
   InputValueDefinitionSet: InputValueDefinitionSetNode;
   InputValueDefinition: InputValueDefinitionNode;
@@ -214,50 +215,42 @@ export type ObjectTypeDefinitionNode = {
   kind: "ObjectTypeDefinition";
   comments: CommentNode[];
   commentsInterfaces: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];
-  fields: FieldDefinitionNode[];
+  fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
 
 export type ObjectTypeExtensionNode = {
   kind: "ObjectTypeExtension";
   comments: CommentNode[];
   commentsInterfaces: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];
-  fields: FieldDefinitionNode[];
+  fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
 
 export type InterfaceTypeDefinitionNode = {
   kind: "InterfaceTypeDefinition";
   comments: CommentNode[];
   commentsInterfaces: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];
-  fields: FieldDefinitionNode[];
+  fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
 
 export type InterfaceTypeExtensionNode = {
   kind: "InterfaceTypeExtension";
   comments: CommentNode[];
   commentsInterfaces: CommentNode[];
-  commentsFieldsOpeningBracket: CommentNode[];
-  commentsFieldsClosingBracket: CommentNode[];
   name: NameNode;
   interfaces: NamedTypeNode[];
   directives: DirectiveConstNode[];
-  fields: FieldDefinitionNode[];
+  fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
 
 export type UnionTypeDefinitionNode = {
@@ -408,6 +401,13 @@ export type ArgumentConstNode = {
   comments: CommentNode[];
   name: NameNode;
   value: ValueConstNode;
+};
+
+export type FieldDefinitionSetNode = {
+  kind: "FieldDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  fieldDefinitions: FieldDefinitionNode[];
 };
 
 export type FieldDefinitionNode = {
