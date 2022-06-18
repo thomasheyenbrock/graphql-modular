@@ -187,20 +187,6 @@ export type SchemaExtensionNode = {
   operationTypeDefinitionSet: OperationTypeDefinitionSetNode | null;
 };
 
-export type OperationTypeDefinitionSetNode = {
-  kind: "OperationTypeDefinitionSet";
-  commentsOpeningBracket: CommentNode[];
-  commentsClosingBracket: CommentNode[];
-  definitions: OperationTypeDefinitionNode[];
-};
-
-export type OperationTypeDefinitionNode = {
-  kind: "OperationTypeDefinition";
-  comments: CommentNode[];
-  operation: OperationType;
-  type: NamedTypeNode;
-};
-
 export type ScalarTypeDefinitionNode = {
   kind: "ScalarTypeDefinition";
   comments: CommentNode[];
@@ -219,10 +205,9 @@ export type ScalarTypeExtensionNode = {
 export type ObjectTypeDefinitionNode = {
   kind: "ObjectTypeDefinition";
   comments: CommentNode[];
-  commentsInterfaces: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
-  interfaces: NamedTypeNode[];
+  interfaces: NamedTypeSetNode | null;
   directives: DirectiveConstNode[];
   fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
@@ -230,9 +215,8 @@ export type ObjectTypeDefinitionNode = {
 export type ObjectTypeExtensionNode = {
   kind: "ObjectTypeExtension";
   comments: CommentNode[];
-  commentsInterfaces: CommentNode[];
   name: NameNode;
-  interfaces: NamedTypeNode[];
+  interfaces: NamedTypeSetNode | null;
   directives: DirectiveConstNode[];
   fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
@@ -240,10 +224,9 @@ export type ObjectTypeExtensionNode = {
 export type InterfaceTypeDefinitionNode = {
   kind: "InterfaceTypeDefinition";
   comments: CommentNode[];
-  commentsInterfaces: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
-  interfaces: NamedTypeNode[];
+  interfaces: NamedTypeSetNode | null;
   directives: DirectiveConstNode[];
   fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
@@ -251,9 +234,8 @@ export type InterfaceTypeDefinitionNode = {
 export type InterfaceTypeExtensionNode = {
   kind: "InterfaceTypeExtension";
   comments: CommentNode[];
-  commentsInterfaces: CommentNode[];
   name: NameNode;
-  interfaces: NamedTypeNode[];
+  interfaces: NamedTypeSetNode | null;
   directives: DirectiveConstNode[];
   fieldDefinitionSet: FieldDefinitionSetNode | null;
 };
@@ -261,20 +243,18 @@ export type InterfaceTypeExtensionNode = {
 export type UnionTypeDefinitionNode = {
   kind: "UnionTypeDefinition";
   comments: CommentNode[];
-  commentsTypes: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   directives: DirectiveConstNode[];
-  types: NamedTypeNode[];
+  types: NamedTypeSetNode | null;
 };
 
 export type UnionTypeExtensionNode = {
   kind: "UnionTypeExtension";
   comments: CommentNode[];
-  commentsTypes: CommentNode[];
   name: NameNode;
   directives: DirectiveConstNode[];
-  types: NamedTypeNode[];
+  types: NamedTypeSetNode | null;
 };
 
 export type EnumTypeDefinitionNode = {
@@ -334,6 +314,26 @@ export type DirectiveDefinitionNode = {
   inputValueDefinitionSet: InputValueDefinitionSetNode | null;
   repeatable: boolean;
   locationSet: DirectiveLocationSetNode;
+};
+
+export type OperationTypeDefinitionSetNode = {
+  kind: "OperationTypeDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  definitions: OperationTypeDefinitionNode[];
+};
+
+export type OperationTypeDefinitionNode = {
+  kind: "OperationTypeDefinition";
+  comments: CommentNode[];
+  operation: OperationType;
+  type: NamedTypeNode;
+};
+
+export type NamedTypeSetNode = {
+  kind: "NamedTypeSet";
+  comments: CommentNode[];
+  types: NamedTypeNode[];
 };
 
 export type DirectiveLocationSetNode = {

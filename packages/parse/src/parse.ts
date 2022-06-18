@@ -22,6 +22,7 @@ import {
   InterfaceTypeExtensionNode,
   ListTypeNode,
   NamedTypeNode,
+  NamedTypeSetNode,
   NameNode,
   ObjectFieldConstNode,
   ObjectFieldNode,
@@ -472,11 +473,8 @@ export function parse(source: string): DocumentNode {
     return { value, comments };
   }
 
-  function parseInterfaces(): {
-    items: NamedTypeNode[];
-    initializerComments: CommentNode[];
-  } {
-    return takeDelimitedList<NamedTypeNode>(
+  function parseInterfaces(): NamedTypeSetNode | null {
+    const { items, initializerComments } = takeDelimitedList<NamedTypeNode>(
       "&",
       { type: "NAME", value: "implements" },
       (comments) => {
@@ -485,6 +483,13 @@ export function parse(source: string): DocumentNode {
         return type;
       }
     );
+    return items.length === 0
+      ? null
+      : {
+          kind: "NamedTypeSet",
+          types: items,
+          comments: initializerComments,
+        };
   }
 
   function parseDefaultValue(): ValueConstNode | null {
@@ -694,29 +699,27 @@ export function parse(source: string): DocumentNode {
     ];
     if (extendComments)
       assertCombinedListLength(
-        [interfaces.items, directives],
-        [fieldDefinitionSet],
+        [directives],
+        [interfaces, fieldDefinitionSet],
         "{"
       );
     return extendComments
       ? {
           kind: "ObjectTypeExtension",
           name: name.node,
-          interfaces: interfaces.items,
+          interfaces,
           directives,
           fieldDefinitionSet,
           comments,
-          commentsInterfaces: interfaces.initializerComments,
         }
       : {
           kind: "ObjectTypeDefinition",
           description,
           name: name.node,
-          interfaces: interfaces.items,
+          interfaces,
           directives,
           fieldDefinitionSet,
           comments,
-          commentsInterfaces: interfaces.initializerComments,
         };
   }
 
@@ -744,29 +747,27 @@ export function parse(source: string): DocumentNode {
     ];
     if (extendComments)
       assertCombinedListLength(
-        [interfaces.items, directives],
-        [fieldDefinitionSet],
+        [directives],
+        [interfaces, fieldDefinitionSet],
         "{"
       );
     return extendComments
       ? {
           kind: "InterfaceTypeExtension",
           name: name.node,
-          interfaces: interfaces.items,
+          interfaces,
           directives,
           fieldDefinitionSet,
           comments,
-          commentsInterfaces: interfaces.initializerComments,
         }
       : {
           kind: "InterfaceTypeDefinition",
           description,
           name: name.node,
-          interfaces: interfaces.items,
+          interfaces,
           directives,
           fieldDefinitionSet,
           comments,
-          commentsInterfaces: interfaces.initializerComments,
         };
   }
 
@@ -785,7 +786,7 @@ export function parse(source: string): DocumentNode {
     const keyword = takeToken("NAME", "union");
     const name = parseName();
     const directives = parseDirectives(true);
-    const types = takeDelimitedList<NamedTypeNode>(
+    const { items, initializerComments } = takeDelimitedList<NamedTypeNode>(
       "|",
       { type: "PUNCTUATOR", value: "=" },
       (comments) => {
@@ -794,30 +795,31 @@ export function parse(source: string): DocumentNode {
         return type;
       }
     );
+    const types: NamedTypeSetNode | null =
+      items.length === 0
+        ? null
+        : { kind: "NamedTypeSet", types: items, comments: initializerComments };
     const comments = [
       ...(extendComments || []),
       ...keyword.comments,
       ...name.comments,
     ];
-    if (extendComments)
-      assertCombinedListLength([directives, types.items], [], "=");
+    if (extendComments) assertCombinedListLength([directives], [types], "=");
     return extendComments
       ? {
           kind: "UnionTypeExtension",
           name: name.node,
           directives,
-          types: types.items,
+          types,
           comments,
-          commentsTypes: types.initializerComments,
         }
       : {
           kind: "UnionTypeDefinition",
           description,
           name: name.node,
           directives,
-          types: types.items,
+          types,
           comments,
-          commentsTypes: types.initializerComments,
         };
   }
 
