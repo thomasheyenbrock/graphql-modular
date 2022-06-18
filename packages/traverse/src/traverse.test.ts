@@ -1151,20 +1151,10 @@ it("leaves and enters in the right order", () => {
     },
     DirectiveDefinition: {
       enter(node) {
-        debug.push([
-          "enter",
-          node.kind,
-          "" + node.repeatable,
-          "" + node.locations,
-        ]);
+        debug.push(["enter", node.kind, "" + node.repeatable]);
       },
       leave(node) {
-        debug.push([
-          "leave",
-          node.kind,
-          "" + node.repeatable,
-          "" + node.locations,
-        ]);
+        debug.push(["leave", node.kind, "" + node.repeatable]);
       },
     },
     Document: {

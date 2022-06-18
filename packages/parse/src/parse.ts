@@ -1096,9 +1096,12 @@ export function parse(source: string): DocumentNode {
           name: name.node,
           inputValueDefinitionSet,
           repeatable,
-          locations: locations.items,
+          locationSet: {
+            kind: "DirectiveLocationSet",
+            comments: locations.initializerComments,
+            locations: locations.items,
+          },
           comments,
-          commentsLocations: locations.initializerComments,
         };
       }
       case "extend":

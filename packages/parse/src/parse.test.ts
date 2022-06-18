@@ -876,7 +876,8 @@ describe("parsing comments for directive locations", () => {
       QUERY # comment after
     `);
     expect(
-      (ast.definitions[0] as DirectiveDefinitionNode).locations[0].comments
+      (ast.definitions[0] as DirectiveDefinitionNode).locationSet.locations[0]
+        .comments
     ).toEqual([
       { kind: "BlockComment", value: "comment before" },
       { kind: "InlineComment", value: "comment after" },
@@ -897,7 +898,8 @@ describe("parsing comments for directive locations", () => {
       # comment location 3 before
       SUBSCRIPTION # comment location 3 after
     `);
-    const { locations } = ast.definitions[0] as DirectiveDefinitionNode;
+    const { locations } = (ast.definitions[0] as DirectiveDefinitionNode)
+      .locationSet;
     expect(locations[0].comments).toEqual([
       { kind: "BlockComment", value: "comment location 1 before" },
       { kind: "InlineComment", value: "comment location 1 after" },
@@ -932,7 +934,8 @@ describe("parsing comments for directive locations", () => {
       # comment location 3 before
       SUBSCRIPTION # comment location 3 after
     `);
-    const { locations } = ast.definitions[0] as DirectiveDefinitionNode;
+    const { locations } = (ast.definitions[0] as DirectiveDefinitionNode)
+      .locationSet;
     expect(locations[0].comments).toEqual([
       { kind: "BlockComment", value: "comment delimiter 1 before" },
       { kind: "InlineComment", value: "comment delimiter 1 after" },
@@ -980,7 +983,7 @@ it("parses comments for directive definitions", () => {
     { kind: "BlockComment", value: "comment name before" },
     { kind: "InlineComment", value: "comment name after" },
   ]);
-  expect(definition.commentsLocations).toEqual([
+  expect(definition.locationSet.comments).toEqual([
     { kind: "BlockComment", value: "comment on before" },
     { kind: "InlineComment", value: "comment on after" },
   ]);
@@ -1782,12 +1785,18 @@ function parseGql(source: string): DocumentNode {
             !args || args.length === 0
               ? null
               : { kind: "InputValueDefinitionSet", definitions: args },
-          locations: locations.map((location) => ({
-            kind: EXECUTABLE_DIRECTIVE_LOCATION.includes(location.value as any)
-              ? "ExecutableDirectiveLocation"
-              : "TypeSystemDirectiveLocation",
-            value: location.value,
-          })),
+          /** directive location set instead of plain list */
+          locationSet: {
+            kind: "DirectiveLocationSet",
+            locations: locations.map((location) => ({
+              kind: EXECUTABLE_DIRECTIVE_LOCATION.includes(
+                location.value as any
+              )
+                ? "ExecutableDirectiveLocation"
+                : "TypeSystemDirectiveLocation",
+              value: location.value,
+            })),
+          },
         };
       },
     },
@@ -2041,6 +2050,5 @@ function stripComments(obj: any) {
   delete obj.commentsClosingBracket;
   delete obj.commentsInterfaces;
   delete obj.commentsTypes;
-  delete obj.commentsLocations;
   Object.values(obj).forEach(stripComments);
 }

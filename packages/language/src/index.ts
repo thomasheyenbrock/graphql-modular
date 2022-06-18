@@ -329,11 +329,16 @@ export type InputObjectTypeExtensionNode = {
 export type DirectiveDefinitionNode = {
   kind: "DirectiveDefinition";
   comments: CommentNode[];
-  commentsLocations: CommentNode[];
   description: StringValueNode | null;
   name: NameNode;
   inputValueDefinitionSet: InputValueDefinitionSetNode | null;
   repeatable: boolean;
+  locationSet: DirectiveLocationSetNode;
+};
+
+export type DirectiveLocationSetNode = {
+  kind: "DirectiveLocationSet";
+  comments: CommentNode[];
   locations: DirectiveLocationNode[];
 };
 
