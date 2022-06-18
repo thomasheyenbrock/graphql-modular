@@ -32,8 +32,9 @@ export type AstNodes = {
   FragmentSpread: FragmentSpreadNode;
   InlineFragment: InlineFragmentNode;
   SchemaDefinition: SchemaDefinitionNode;
-  OperationTypeDefinition: OperationTypeDefinitionNode;
   SchemaExtension: SchemaExtensionNode;
+  OperationTypeDefinitionSet: OperationTypeDefinitionSetNode;
+  OperationTypeDefinition: OperationTypeDefinitionNode;
   ScalarTypeDefinition: ScalarTypeDefinitionNode;
   ScalarTypeExtension: ScalarTypeExtensionNode;
   ObjectTypeDefinition: ObjectTypeDefinitionNode;
@@ -174,11 +175,23 @@ export type TypeExtensionNode =
 export type SchemaDefinitionNode = {
   kind: "SchemaDefinition";
   comments: CommentNode[];
-  commentsOperationTypesOpeningBracket: CommentNode[];
-  commentsOperationTypesClosingBracket: CommentNode[];
   description: StringValueNode | null;
   directives: DirectiveConstNode[];
-  operationTypes: OperationTypeDefinitionNode[];
+  operationTypeDefinitionSet: OperationTypeDefinitionSetNode | null;
+};
+
+export type SchemaExtensionNode = {
+  kind: "SchemaExtension";
+  comments: CommentNode[];
+  directives: DirectiveConstNode[];
+  operationTypeDefinitionSet: OperationTypeDefinitionSetNode | null;
+};
+
+export type OperationTypeDefinitionSetNode = {
+  kind: "OperationTypeDefinitionSet";
+  commentsOpeningBracket: CommentNode[];
+  commentsClosingBracket: CommentNode[];
+  definitions: OperationTypeDefinitionNode[];
 };
 
 export type OperationTypeDefinitionNode = {
@@ -186,15 +199,6 @@ export type OperationTypeDefinitionNode = {
   comments: CommentNode[];
   operation: OperationType;
   type: NamedTypeNode;
-};
-
-export type SchemaExtensionNode = {
-  kind: "SchemaExtension";
-  comments: CommentNode[];
-  commentsOperationTypesOpeningBracket: CommentNode[];
-  commentsOperationTypesClosingBracket: CommentNode[];
-  directives: DirectiveConstNode[];
-  operationTypes: OperationTypeDefinitionNode[];
 };
 
 export type ScalarTypeDefinitionNode = {

@@ -1382,7 +1382,8 @@ it("parses comments for operation type definitions", () => {
     }
   `);
   expect(
-    (ast.definitions[0] as SchemaDefinitionNode).operationTypes[0].comments
+    (ast.definitions[0] as SchemaDefinitionNode).operationTypeDefinitionSet
+      ?.definitions[0].comments
   ).toEqual([
     { kind: "BlockComment", value: "comment operation type before" },
     { kind: "InlineComment", value: "comment operation type after" },
@@ -1391,18 +1392,34 @@ it("parses comments for operation type definitions", () => {
   ]);
 });
 
-it("parses comments for schema definitions", () => {
+it("parses comments for operation type definition sets", () => {
   const ast = parse(/* GraphQL */ `
     # prettier-ignore
-    # comment keyword before
-    schema # comment keyword after
-    # comment directive before
-    @foo # comment directive after
+    schema
     # comment operation types open before
     { # comment operation types open after
       query: Root
     # comment operation types close before
     } # comment operation types close after
+  `);
+  const { operationTypeDefinitionSet } = ast
+    .definitions[0] as SchemaDefinitionNode;
+  expect(operationTypeDefinitionSet?.commentsOpeningBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types open before" },
+    { kind: "InlineComment", value: "comment operation types open after" },
+  ]);
+  expect(operationTypeDefinitionSet?.commentsClosingBracket).toEqual([
+    { kind: "BlockComment", value: "comment operation types close before" },
+    { kind: "InlineComment", value: "comment operation types close after" },
+  ]);
+});
+
+it("parses comments for schema definitions", () => {
+  const ast = parse(/* GraphQL */ `
+    # prettier-ignore
+    # comment keyword before
+    schema # comment keyword after
+    { query: Root }
   `);
   const definition = ast.definitions[0] as SchemaDefinitionNode;
   expect(definition.comments).toEqual([
@@ -1411,14 +1428,6 @@ it("parses comments for schema definitions", () => {
       value: "prettier-ignore\ncomment keyword before",
     },
     { kind: "InlineComment", value: "comment keyword after" },
-  ]);
-  expect(definition.commentsOperationTypesOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment operation types open before" },
-    { kind: "InlineComment", value: "comment operation types open after" },
-  ]);
-  expect(definition.commentsOperationTypesClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment operation types close before" },
-    { kind: "InlineComment", value: "comment operation types close after" },
   ]);
 });
 
@@ -1429,13 +1438,7 @@ it("parses comments for schema extensions", () => {
     extend # comment extend after
     # comment keyword before
     schema # comment keyword after
-    # comment directive before
-    @foo # comment directive after
-    # comment operation types open before
-    { # comment operation types open after
-      query: Root
-    # comment operation types close before
-    } # comment operation types close after
+    { query: Root }
   `);
   const definition = ast.definitions[0] as SchemaExtensionNode;
   expect(definition.comments).toEqual([
@@ -1446,14 +1449,6 @@ it("parses comments for schema extensions", () => {
     { kind: "InlineComment", value: "comment extend after" },
     { kind: "BlockComment", value: "comment keyword before" },
     { kind: "InlineComment", value: "comment keyword after" },
-  ]);
-  expect(definition.commentsOperationTypesOpeningBracket).toEqual([
-    { kind: "BlockComment", value: "comment operation types open before" },
-    { kind: "InlineComment", value: "comment operation types open after" },
-  ]);
-  expect(definition.commentsOperationTypesClosingBracket).toEqual([
-    { kind: "BlockComment", value: "comment operation types close before" },
-    { kind: "InlineComment", value: "comment operation types close after" },
   ]);
 });
 
@@ -1986,11 +1981,34 @@ function parseGql(source: string): DocumentNode {
       },
     },
     SchemaDefinition: {
-      leave(node) {
+      leave({ description, operationTypes, ...restNode }) {
         return {
-          ...node,
+          ...restNode,
           /** null instead of undefined */
-          description: node.description ?? null,
+          description: description ?? null,
+          /** operation type definition set instead of plain list */
+          operationTypeDefinitionSet:
+            operationTypes.length === 0
+              ? null
+              : {
+                  kind: "OperationTypeDefinitionSet",
+                  definitions: operationTypes,
+                },
+        };
+      },
+    },
+    SchemaExtension: {
+      leave({ operationTypes, ...restNode }) {
+        return {
+          ...restNode,
+          /** operation type definition set instead of plain list */
+          operationTypeDefinitionSet:
+            !operationTypes || operationTypes.length === 0
+              ? null
+              : {
+                  kind: "OperationTypeDefinitionSet",
+                  definitions: operationTypes,
+                },
         };
       },
     },
@@ -2021,8 +2039,6 @@ function stripComments(obj: any) {
   delete obj.comments;
   delete obj.commentsOpeningBracket;
   delete obj.commentsClosingBracket;
-  delete obj.commentsOperationTypesOpeningBracket;
-  delete obj.commentsOperationTypesClosingBracket;
   delete obj.commentsInterfaces;
   delete obj.commentsTypes;
   delete obj.commentsLocations;

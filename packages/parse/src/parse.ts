@@ -29,6 +29,7 @@ import {
   ObjectTypeExtensionNode,
   OperationType,
   OperationTypeDefinitionNode,
+  OperationTypeDefinitionSetNode,
   ScalarTypeDefinitionNode,
   ScalarTypeExtensionNode,
   SchemaDefinitionNode,
@@ -593,11 +594,8 @@ export function parse(source: string): DocumentNode {
   ): SchemaDefinitionNode | SchemaExtensionNode {
     const keyword = takeToken("NAME", "schema");
     const directives = parseDirectives(true);
-    const operationTypes = takeWrappedList<OperationTypeDefinitionNode>(
-      true,
-      "{",
-      "}",
-      () => {
+    const { items, commentsOpeningBracket, commentsClosingBracket } =
+      takeWrappedList<OperationTypeDefinitionNode>(true, "{", "}", () => {
         const operation = parseOperationType();
         const colon = takePunctuator(":");
         const type = parseNamedType();
@@ -607,32 +605,31 @@ export function parse(source: string): DocumentNode {
           type,
           comments: [...operation.comments, ...colon.comments],
         };
-      }
-    );
+      });
+    const operationTypeDefinitionSet: OperationTypeDefinitionSetNode | null =
+      items.length === 0
+        ? null
+        : {
+            kind: "OperationTypeDefinitionSet",
+            definitions: items,
+            commentsOpeningBracket,
+            commentsClosingBracket,
+          };
     const comments = [...(extendComments || []), ...keyword.comments];
-    if (extendComments)
-      assertCombinedListLength([directives, operationTypes.items], [], "{");
+    if (extendComments) assertCombinedListLength([directives, items], [], "{");
     return extendComments
       ? {
           kind: "SchemaExtension",
           directives,
-          operationTypes: operationTypes.items,
+          operationTypeDefinitionSet,
           comments,
-          commentsOperationTypesOpeningBracket:
-            operationTypes.commentsOpeningBracket,
-          commentsOperationTypesClosingBracket:
-            operationTypes.commentsClosingBracket,
         }
       : {
           kind: "SchemaDefinition",
           description,
           directives,
-          operationTypes: operationTypes.items,
+          operationTypeDefinitionSet,
           comments,
-          commentsOperationTypesOpeningBracket:
-            operationTypes.commentsOpeningBracket,
-          commentsOperationTypesClosingBracket:
-            operationTypes.commentsClosingBracket,
         };
   }
 
