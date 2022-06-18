@@ -33,8 +33,6 @@ export type AstNodes = {
   InlineFragment: InlineFragmentNode;
   SchemaDefinition: SchemaDefinitionNode;
   SchemaExtension: SchemaExtensionNode;
-  OperationTypeDefinitionSet: OperationTypeDefinitionSetNode;
-  OperationTypeDefinition: OperationTypeDefinitionNode;
   ScalarTypeDefinition: ScalarTypeDefinitionNode;
   ScalarTypeExtension: ScalarTypeExtensionNode;
   ObjectTypeDefinition: ObjectTypeDefinitionNode;
@@ -50,9 +48,16 @@ export type AstNodes = {
   InputObjectTypeDefinition: InputObjectTypeDefinitionNode;
   InputObjectTypeExtension: InputObjectTypeExtensionNode;
   DirectiveDefinition: DirectiveDefinitionNode;
+  OperationTypeDefinitionSet: OperationTypeDefinitionSetNode;
+  OperationTypeDefinition: OperationTypeDefinitionNode;
+  NamedTypeSet: NamedTypeSetNode;
+  DirectiveLocationSet: DirectiveLocationSetNode;
+  ExecutableDirectiveLocation: ExecutableDirectiveLocationNode;
+  TypeSystemDirectiveLocation: TypeSystemDirectiveLocationNode;
   VariableDefinitionSet: VariableDefinitionSetNode;
   VariableDefinition: VariableDefinitionNode;
   Directive: DirectiveNode | DirectiveConstNode;
+  ArgumentSet: ArgumentSetNode | ArgumentSetConstNode;
   Argument: ArgumentNode | ArgumentConstNode;
   FieldDefinitionSet: FieldDefinitionSetNode;
   FieldDefinition: FieldDefinitionNode;
@@ -72,6 +77,8 @@ export type AstNodes = {
   ObjectField: ObjectFieldNode | ObjectFieldConstNode;
   Variable: VariableNode;
   Name: NameNode;
+  BlockComment: BlockCommentNode;
+  InlineComment: InlineCommentNode;
 };
 
 export type AstNode = AstNodes[keyof AstNodes];

@@ -1133,6 +1133,22 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    ArgumentSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
+    BlockComment: {
+      enter(node) {
+        debug.push(["enter", node.kind, node.value]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind, node.value]);
+      },
+    },
     BooleanValue: {
       enter(node) {
         debug.push(["enter", node.kind, "" + node.value]);
@@ -1155,6 +1171,14 @@ it("leaves and enters in the right order", () => {
       },
       leave(node) {
         debug.push(["leave", node.kind, "" + node.repeatable]);
+      },
+    },
+    DirectiveLocationSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
       },
     },
     Document: {
@@ -1197,6 +1221,22 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    EnumValueDefinitionSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
+    ExecutableDirectiveLocation: {
+      enter(node) {
+        debug.push(["enter", node.kind, node.value]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind, node.value]);
+      },
+    },
     Field: {
       enter(node) {
         debug.push(["enter", node.kind]);
@@ -1206,6 +1246,14 @@ it("leaves and enters in the right order", () => {
       },
     },
     FieldDefinition: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
+    FieldDefinitionSet: {
       enter(node) {
         debug.push(["enter", node.kind]);
       },
@@ -1237,6 +1285,14 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    InlineComment: {
+      enter(node) {
+        debug.push(["enter", node.kind, node.value]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind, node.value]);
+      },
+    },
     InlineFragment: {
       enter(node) {
         debug.push(["enter", node.kind]);
@@ -1262,6 +1318,14 @@ it("leaves and enters in the right order", () => {
       },
     },
     InputValueDefinition: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
+    InputValueDefinitionSet: {
       enter(node) {
         debug.push(["enter", node.kind]);
       },
@@ -1318,6 +1382,14 @@ it("leaves and enters in the right order", () => {
       },
     },
     NamedType: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
+    NamedTypeSet: {
       enter(node) {
         debug.push(["enter", node.kind]);
       },
@@ -1389,6 +1461,14 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    OperationTypeDefinitionSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
     ScalarTypeDefinition: {
       enter(node) {
         debug.push(["enter", node.kind]);
@@ -1421,12 +1501,28 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    SelectionSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
     StringValue: {
       enter(node) {
         debug.push(["enter", node.kind, node.value, "" + node.block]);
       },
       leave(node) {
         debug.push(["leave", node.kind, node.value, "" + node.block]);
+      },
+    },
+    TypeSystemDirectiveLocation: {
+      enter(node) {
+        debug.push(["enter", node.kind, node.value]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind, node.value]);
       },
     },
     UnionTypeDefinition: {
@@ -1461,6 +1557,14 @@ it("leaves and enters in the right order", () => {
         debug.push(["leave", node.kind]);
       },
     },
+    VariableDefinitionSet: {
+      enter(node) {
+        debug.push(["enter", node.kind]);
+      },
+      leave(node) {
+        debug.push(["leave", node.kind]);
+      },
+    },
   });
   expect(debug).toMatchInlineSnapshot(`
     [
@@ -1474,11 +1578,29 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
-        "Field",
+        "SelectionSet",
       ],
       [
         "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "Field",
+      ],
+      [
+        "enter",
+        "BlockComment",
+        "field block comment",
+      ],
+      [
+        "leave",
+        "BlockComment",
+        "field block comment",
       ],
       [
         "enter",
@@ -1500,11 +1622,29 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
-        "Field",
+        "SelectionSet",
       ],
       [
         "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "Field",
+      ],
+      [
+        "enter",
+        "InlineComment",
+        "field inline comment",
+      ],
+      [
+        "leave",
+        "InlineComment",
+        "field inline comment",
       ],
       [
         "enter",
@@ -1523,6 +1663,10 @@ it("leaves and enters in the right order", () => {
       [
         "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -1579,8 +1723,16 @@ it("leaves and enters in the right order", () => {
         "FragmentSpread",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Directive",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -1619,6 +1771,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "include",
@@ -1631,6 +1787,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Directive",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -1697,6 +1857,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "field1",
@@ -1721,6 +1885,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Name",
         "field2",
@@ -1733,6 +1901,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -1780,6 +1952,10 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
       ],
       [
@@ -1795,10 +1971,18 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "enter",
         "Directive",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -1837,6 +2021,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "skip",
@@ -1860,6 +2048,10 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
       ],
       [
@@ -1878,7 +2070,19 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "leave",
+        "SelectionSet",
+      ],
+      [
+        "leave",
         "InlineFragment",
+      ],
+      [
+        "leave",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -1927,6 +2131,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "node",
@@ -1951,6 +2159,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Directive",
       ],
@@ -1967,6 +2179,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Directive",
+      ],
+      [
+        "enter",
+        "VariableDefinitionSet",
       ],
       [
         "enter",
@@ -2067,6 +2283,10 @@ it("leaves and enters in the right order", () => {
         "VariableDefinition",
       ],
       [
+        "leave",
+        "VariableDefinitionSet",
+      ],
+      [
         "enter",
         "Name",
         "queryName",
@@ -2086,11 +2306,45 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
-        "Field",
+        "BlockComment",
+        "block comment
+    with multiple lines",
+      ],
+      [
+        "leave",
+        "BlockComment",
+        "block comment
+    with multiple lines",
+      ],
+      [
+        "enter",
+        "BlockComment",
+        "this is a new comment",
+      ],
+      [
+        "leave",
+        "BlockComment",
+        "this is a new comment",
+      ],
+      [
+        "enter",
+        "SelectionSet",
       ],
       [
         "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2129,6 +2383,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Name",
         "story",
@@ -2143,6 +2401,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Directive",
       ],
@@ -2159,6 +2421,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Directive",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -2189,6 +2455,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "like",
@@ -2201,6 +2471,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2240,7 +2514,7 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
-        "Field",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2248,7 +2522,23 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "Field",
+      ],
+      [
+        "enter",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2267,6 +2557,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2288,6 +2582,10 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
       ],
       [
@@ -2305,6 +2603,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Name",
         "likeSentence",
@@ -2319,6 +2621,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Name",
         "story",
@@ -2331,6 +2637,14 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -2369,6 +2683,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "storyLikeSubscribe",
@@ -2383,6 +2701,10 @@ it("leaves and enters in the right order", () => {
         "Field",
       ],
       [
+        "leave",
+        "SelectionSet",
+      ],
+      [
         "enter",
         "Directive",
       ],
@@ -2399,6 +2721,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Directive",
+      ],
+      [
+        "enter",
+        "VariableDefinitionSet",
       ],
       [
         "enter",
@@ -2461,6 +2787,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "VariableDefinition",
+      ],
+      [
+        "leave",
+        "VariableDefinitionSet",
       ],
       [
         "enter",
@@ -2482,7 +2812,15 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -2643,6 +2981,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "foo",
@@ -2655,6 +2997,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2712,7 +3058,15 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
+        "SelectionSet",
+      ],
+      [
+        "enter",
         "Field",
+      ],
+      [
+        "enter",
+        "ArgumentSet",
       ],
       [
         "enter",
@@ -2797,6 +3151,10 @@ it("leaves and enters in the right order", () => {
         "Argument",
       ],
       [
+        "leave",
+        "ArgumentSet",
+      ],
+      [
         "enter",
         "Name",
         "unnamed",
@@ -2830,11 +3188,19 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "leave",
+        "SelectionSet",
+      ],
+      [
+        "leave",
         "OperationDefinition",
       ],
       [
         "enter",
         "OperationDefinition",
+      ],
+      [
+        "enter",
+        "SelectionSet",
       ],
       [
         "enter",
@@ -2853,6 +3219,10 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "Field",
+      ],
+      [
+        "leave",
+        "SelectionSet",
       ],
       [
         "leave",
