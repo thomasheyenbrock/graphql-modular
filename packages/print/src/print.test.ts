@@ -59,6 +59,17 @@ describe("idempotency for parsing-printing", () => {
   });
 });
 
+const COMMENTS = fs.readFileSync(
+  path.join(__dirname, "..", "..", "..", "utils", "comments.gql"),
+  "utf8"
+);
+
+it("does not remove any comments", () => {
+  const printed = print(parse(COMMENTS), { preserveComments: true });
+  for (let i = 1; i <= 46; i++)
+    expect(printed).toContain("#comment " + i + "\n");
+});
+
 const comments: CommentNode[] = [
   { kind: "BlockComment", value: "block comment" },
   { kind: "InlineComment", value: "inline comment" },
