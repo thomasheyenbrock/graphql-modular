@@ -75,17 +75,12 @@ const COMMENTS = [
   {
     r: /^((\n|\r(?!\n)|\r\n)[\t ]*#.*)+/,
     t: "BLOCK_COMMENT",
-    v: (input: string) => {
-      let value = "";
-
-      const lines = input.split(/\n|\r(?!\n)|\r\n/g);
-      for (let i = 1; i < lines.length; i++) {
-        if (i > 1) value += "\n";
-        value += lines[i].replace(/^[\t ]*#[\t ]*/, "").replace(/[\t ]*$/, "");
-      }
-
-      return value;
-    },
+    v: (input: string) =>
+      normalizeIndentation(
+        input
+          .split(/\n|\r(?!\n)|\r\n/g)
+          .map((line) => line.replace(/^[\t ]*#/, "").replace(/[\t ]*$/, ""))
+      ),
   },
   /** Inline */
   {
@@ -131,8 +126,11 @@ const LEXICAL_TOKENS = [
     r: /^"""([^"\\]|"[^"]|""[^"]|\\[^"]|\\"[^"]|\\""[^"]|\\""")*"""/s,
     t: "BLOCK_STRING_VALUE",
     v: (input: string) =>
-      blockStringValue(
-        input.substring(3, input.length - 3).replace(/\\"""/g, '"""')
+      normalizeIndentation(
+        input
+          .substring(3, input.length - 3)
+          .replace(/\\"""/g, '"""')
+          .split(/\n|\r(?!\n)|\r\n/g)
       ),
   },
   /** StringValue */
@@ -226,8 +224,7 @@ function isBetween(n: number, lower: number, upper: number) {
   return n >= lower && n <= upper;
 }
 
-function blockStringValue(input: string) {
-  let lines = input.split(/\n|\r(?!\n)|\r\n/g);
+function normalizeIndentation(lines: string[]) {
   let commonIndent: number | null = null;
 
   for (let i = 1; i < lines.length; i++) {

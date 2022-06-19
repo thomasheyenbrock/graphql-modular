@@ -60,6 +60,21 @@ it("parses all language features", () => {
 });
 
 describe("parsing comments", () => {
+  it("parses multi-line block comments", () => {
+    const ast = parse(/* GraphQL */ `
+      #   Hello
+      #
+      #     world
+      {
+        id
+      }
+    `);
+    const comments = (ast.definitions[0] as OperationDefinitionNode)
+      .selectionSet.commentsOpeningBracket;
+    expect(comments).toHaveLength(1);
+    expect(comments[0].value).toBe("Hello\n\n  world");
+  });
+
   describe("for variables", () => {
     it("parses comments for variables in values", () => {
       const ast = parse(/* GraphQL */ `
