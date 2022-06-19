@@ -16,13 +16,16 @@ export function print(
   }: { preserveComments?: boolean; pretty?: boolean } = {}
 ): string {
   const SPACE = pretty ? " " : "";
+  const LINE_BREAK = pretty ? "\n" : "";
 
   function printComment(comment: CommentNode) {
     return preserveComments
-      ? comment.value
-          .split("\n")
-          .map((line) => "#" + SPACE + line)
-          .join("\n") + "\n"
+      ? (comment.kind === "BlockComment" ? LINE_BREAK : "") +
+          comment.value
+            .split("\n")
+            .map((line) => "#" + SPACE + line)
+            .join("\n") +
+          "\n"
       : "";
   }
 

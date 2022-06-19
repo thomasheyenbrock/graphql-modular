@@ -1487,7 +1487,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         name:value# inline comment
         "
       `);
@@ -1509,9 +1510,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         (# inline comment open
-        name1:value1,name2:value2# block comment close
+        name1:value1,name2:value2
+        # block comment close
         )# inline comment close
         "
       `);
@@ -1530,7 +1533,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-          "# block comment
+          "
+          # block comment
           "
         `);
       });
@@ -1548,9 +1552,11 @@ describe("pretty printing for ast nodes", () => {
         expect(print([node, node], { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
             [
-              "# block comment
+              "
+            # block comment
             ",
-              "# block comment
+              "
+            # block comment
             ",
             ]
           `);
@@ -1570,7 +1576,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         true# inline comment
         "
       `);
@@ -1592,7 +1599,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         @myDirective# inline comment
         (name:value)"
       `);
@@ -1617,7 +1625,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"some description\\" # block comment
+        "\\"some description\\" 
+        # block comment
         directive @myDirective# inline comment
         (name:Int=42) repeatable on QUERY|MUTATION"
       `);
@@ -1638,7 +1647,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         on# inline comment
          QUERY|MUTATION"
       `);
@@ -1661,6 +1671,7 @@ describe("pretty printing for ast nodes", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
         "type MyObjectType{field:Int}
+        
         # block comment
         # inline comment
         "
@@ -1685,7 +1696,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         enum MyEnumType# inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
@@ -1708,7 +1720,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend enum MyEnumType# inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
@@ -1729,7 +1742,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         MY_ENUM_VALUE# inline comment
         "
       `);
@@ -1752,7 +1766,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         MY_ENUM_VALUE# inline comment
          @myDirective @myOtherDirective"
       `);
@@ -1774,9 +1789,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE# block comment close
+        MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE
+        # block comment close
         }# inline comment close
         "
       `);
@@ -1795,7 +1812,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         QUERY# inline comment
         "
       `);
@@ -1820,7 +1838,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         fieldAlias:fieldName# inline comment
         (argName:42) @myDirective @myOtherDirective{subField}"
       `);
@@ -1845,7 +1864,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         fieldName# inline comment
         (argName:MyInputType=42):MyOutputType @myDirective @myOtherDirective"
       `);
@@ -1870,9 +1890,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2# block comment close
+        field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2
+        # block comment close
         }# inline comment close
         "
       `);
@@ -1891,7 +1913,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         42.43e44# inline comment
         "
       `);
@@ -1915,7 +1938,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         fragment MyFragmentName# inline comment
          on MyType @myDirective @myOtherDirective{field}"
       `);
@@ -1937,7 +1961,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         ...MyFragmentName# inline comment
          @myDirective @myOtherDirective"
       `);
@@ -2000,7 +2025,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         ...on MyType# inline comment
          @myDirective @myOtherDirective{field}"
       `);
@@ -2024,7 +2050,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         input MyInputObjectType# inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
@@ -2047,7 +2074,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend input MyInputObjectType# inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
@@ -2072,7 +2100,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         inputField:# inline comment
         MyInputType=42 @myDirective @myOtherDirective"
       `);
@@ -2097,9 +2126,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        inputField1:MyInputType1,inputField2:MyInputType2=42# block comment close
+        inputField1:MyInputType1,inputField2:MyInputType2=42
+        # block comment close
         }# inline comment close
         "
       `);
@@ -2124,7 +2155,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         interface MyInterfaceType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
@@ -2148,7 +2180,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend interface MyInterfaceType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
@@ -2167,7 +2200,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         42# inline comment
         "
       `);
@@ -2186,7 +2220,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         [MyType]# inline comment
         "
       `);
@@ -2206,9 +2241,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         [# inline comment open
-        42,43# block comment close
+        42,43
+        # block comment close
         ]# inline comment close
         "
       `);
@@ -2242,7 +2279,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         MyType# inline comment
         "
       `);
@@ -2264,7 +2302,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-          "# block comment
+          "
+          # block comment
           # inline comment
           MyType1,MyType2"
         `);
@@ -2288,7 +2327,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "type MyObjectType # block comment
+            "type MyObjectType 
+            # block comment
             implements # inline comment
             MyType1&MyType2"
           `);
@@ -2311,7 +2351,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "extend type MyObjectType # block comment
+            "extend type MyObjectType 
+            # block comment
             implements # inline comment
             MyType1&MyType2"
           `);
@@ -2335,7 +2376,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "interface MyInterfaceType # block comment
+            "interface MyInterfaceType 
+            # block comment
             implements # inline comment
             MyType1&MyType2"
           `);
@@ -2358,7 +2400,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "extend interface MyInterfaceType # block comment
+            "extend interface MyInterfaceType 
+            # block comment
             implements # inline comment
             MyType1&MyType2"
           `);
@@ -2381,7 +2424,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "union MyUnionType# block comment
+            "union MyUnionType
+            # block comment
             =# inline comment
             MyType1|MyType2"
           `);
@@ -2403,7 +2447,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-            "extend union MyUnionType# block comment
+            "extend union MyUnionType
+            # block comment
             =# inline comment
             MyType1|MyType2"
           `);
@@ -2423,7 +2468,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         MyType!# inline comment
         "
       `);
@@ -2441,7 +2487,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         null# inline comment
         "
       `);
@@ -2463,7 +2510,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         fieldName:42# inline comment
         "
       `);
@@ -2488,7 +2536,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         type MyObjectType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
@@ -2512,7 +2561,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend type MyObjectType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
@@ -2534,9 +2584,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        fieldName1:42,fieldName2:\\"some string\\"# block comment close
+        fieldName1:42,fieldName2:\\"some string\\"
+        # block comment close
         }# inline comment close
         "
       `);
@@ -2583,7 +2635,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-          "# block comment
+          "
+          # block comment
           query MyOperation# inline comment
           ($myVariable:Int=42) @myDirective @myOtherDirective{field1,field2(arg:42)}"
         `);
@@ -2606,7 +2659,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         query:# inline comment
         MyOutputType"
       `);
@@ -2628,9 +2682,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        query:MyOutputType1,mutation:MyOutputType2# block comment close
+        query:MyOutputType1,mutation:MyOutputType2
+        # block comment close
         }# inline comment close
         "
       `);
@@ -2653,7 +2709,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         scalar MyScalarType# inline comment
          @myDirective @myOtherDirective"
       `);
@@ -2675,7 +2732,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend scalar MyScalarType# inline comment
          @myDirective @myOtherDirective"
       `);
@@ -2698,7 +2756,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         schema# inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
@@ -2720,7 +2779,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend schema# inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
@@ -2742,9 +2802,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         {# inline comment open
-        field1,field2(arg:42)# block comment close
+        field1,field2(arg:42)
+        # block comment close
         }# inline comment close
         "
       `);
@@ -2767,7 +2829,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-          "# block comment
+          "
+          # block comment
           \\"my string\\"# inline comment
           "
         `);
@@ -2789,7 +2852,8 @@ describe("pretty printing for ast nodes", () => {
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
-          "# block comment
+          "
+          # block comment
           \\"\\"\\"
           my \\\\\\"\\"\\" string\\"\\"\\"# inline comment
           "
@@ -2810,7 +2874,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         OBJECT# inline comment
         "
       `);
@@ -2834,7 +2899,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" # block comment
+        "\\"my description\\" 
+        # block comment
         union MyUnionType# inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
@@ -2857,7 +2923,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         extend union MyUnionType# inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
@@ -2878,7 +2945,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         $myVariable# inline comment
         "
       `);
@@ -2902,7 +2970,8 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment
+        "
+        # block comment
         $myVariable:# inline comment
         MyType=42 @myDirective @myOtherDirective"
       `);
@@ -2924,9 +2993,11 @@ describe("pretty printing for ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "# block comment open
+        "
+        # block comment open
         (# inline comment open
-        $myVariable:MyType,$myVariable:MyOtherType# block comment close
+        $myVariable:MyType,$myVariable:MyOtherType
+        # block comment close
         )# inline comment close
         "
       `);
