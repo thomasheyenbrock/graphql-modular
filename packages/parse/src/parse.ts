@@ -19,10 +19,70 @@ import {
 import { LexicalToken, Token, tokenize } from "./tokenize";
 
 export function parse(source: string): AstNodes["Document"] {
-  const tokens = new TokenStream(source);
+  const iterator = tokenize(source);
+
+  /**
+   * When the `peekCache` is empty, the `peek()` method requires the
+   * following:
+   * - `this.next` is set to the next token that is not consumed yet (this
+   *   can be any token except for an inline-comment which would have already
+   *   been consumed in the prevoius peek)
+   * - `this.nextNext` is `undefined`
+   *
+   * When calling `take()` (which effectively empties the `peekCache`) we
+   * restore this state by assigning the value of `this.nextNext` to
+   * `this.next`.
+   */
+  const state: {
+    next: LexicalToken | undefined;
+    nextNext: LexicalToken | undefined;
+    peekCache:
+      | { token: LexicalToken | undefined; comments: CommentNode[] }
+      | undefined;
+  } = {
+    next: iterator.next().value,
+    nextNext: undefined,
+    peekCache: undefined,
+  };
+
+  function peek() {
+    if (!state.peekCache) {
+      state.peekCache = { token: undefined, comments: [] };
+
+      let nextToken: Token | undefined = state.next;
+      while (nextToken && nextToken.type === "BLOCK_COMMENT") {
+        state.peekCache.comments.push({
+          kind: "BlockComment",
+          value: nextToken.value,
+        });
+        nextToken = iterator.next().value;
+      }
+
+      state.peekCache.token = nextToken as LexicalToken;
+
+      let nextNext: Token | undefined = iterator.next().value;
+      while (nextNext && nextNext.type === "INLINE_COMMENT") {
+        state.peekCache.comments.push({
+          kind: "InlineComment",
+          value: nextNext.value,
+        });
+        nextNext = iterator.next().value;
+      }
+      state.nextNext = nextNext as LexicalToken;
+    }
+    return state.peekCache;
+  }
+
+  function take() {
+    const token = peek();
+    state.next = state.nextNext;
+    state.nextNext = undefined;
+    state.peekCache = undefined;
+    return token;
+  }
 
   function assertToken(expected: Token["type"], expectedValue?: string) {
-    const { token, comments } = tokens.peek();
+    const { token, comments } = peek();
     if (
       !token ||
       token.type !== expected ||
@@ -59,7 +119,7 @@ export function parse(source: string): AstNodes["Document"] {
 
   function takeToken(expected: Token["type"], expectedValue?: string) {
     const next = assertToken(expected, expectedValue);
-    tokens.take();
+    take();
     return next;
   }
 
@@ -68,7 +128,7 @@ export function parse(source: string): AstNodes["Document"] {
   }
 
   function isNextPunctuator(punctuator: string) {
-    const { token } = tokens.peek();
+    const { token } = peek();
     return (
       (token &&
         token.type === "PUNCTUATOR" &&
@@ -79,7 +139,7 @@ export function parse(source: string): AstNodes["Document"] {
 
   function takeIfNextPunctuator(punctuator: string) {
     return isNextPunctuator(punctuator)
-      ? tokens.take()
+      ? take()
       : { token: undefined, comments: [] };
   }
 
@@ -153,12 +213,12 @@ export function parse(source: string): AstNodes["Document"] {
   }
 
   function parseDescription(): AstNodes["StringValue"] | null {
-    const { token, comments } = tokens.peek();
+    const { token, comments } = peek();
     if (
       token &&
       (token.type === "STRING_VALUE" || token.type === "BLOCK_STRING_VALUE")
     ) {
-      tokens.take();
+      take();
       return {
         kind: "StringValue",
         value: token.value,
@@ -261,7 +321,7 @@ export function parse(source: string): AstNodes["Document"] {
       };
     }
 
-    const { token, comments } = tokens.take();
+    const { token, comments } = take();
     if (!token) throw new Error("Unexpected EOF");
     if (token.type === "PUNCTUATOR")
       throw new Error(`Unexpected token: ${token.value}`);
@@ -353,7 +413,7 @@ export function parse(source: string): AstNodes["Document"] {
       takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
         const spread = takeIfNextPunctuator("...");
         if (spread.token) {
-          const { token } = tokens.peek();
+          const { token } = peek();
           if (token && token.type === "NAME" && token.value !== "on") {
             const name = parseName();
             const directives = parseDirectives(false);
@@ -1037,7 +1097,7 @@ export function parse(source: string): AstNodes["Document"] {
         const name = parseName();
         const inputValueDefinitionSet = parseInputValueDefinitionSet("(", ")");
         const repeatable = isNext("NAME", "repeatable")
-          ? (tokens.take(), true)
+          ? (take(), true)
           : false;
         const locations = takeDelimitedList<DirectiveLocationNode>(
           "|",
@@ -1081,74 +1141,9 @@ export function parse(source: string): AstNodes["Document"] {
   }
 
   const definitions: DefinitionNode[] = [];
-  while (tokens.peek().token) {
+  while (peek().token) {
     definitions.push(parseDefinition());
   }
 
-  return { kind: "Document", definitions, comments: tokens.peek().comments };
-}
-
-class TokenStream {
-  private iterator: IterableIterator<Token>;
-  private next: LexicalToken | undefined;
-  private nextNext: LexicalToken | undefined;
-  private peekCache:
-    | { token: LexicalToken | undefined; comments: CommentNode[] }
-    | undefined;
-
-  constructor(source: string) {
-    this.iterator = tokenize(source);
-
-    /**
-     * When the `peekCache` is empty, the `peek()` method requires the
-     * following:
-     * - `this.next` is set to the next token that is not consumed yet (this
-     *   can be any token except for an inline-comment which would have already
-     *   been consumed in the prevoius peek)
-     * - `this.nextNext` is `undefined`
-     *
-     * When calling `take()` (which effectively empties the `peekCache`) we
-     * restore this state by assigning the value of `this.nextNext` to
-     * `this.next`.
-     */
-    this.next = this.iterator.next().value;
-    this.nextNext = undefined;
-    this.peekCache = undefined;
-  }
-
-  peek() {
-    if (!this.peekCache) {
-      this.peekCache = { token: undefined, comments: [] };
-
-      let nextToken: Token | undefined = this.next;
-      while (nextToken && nextToken.type === "BLOCK_COMMENT") {
-        this.peekCache.comments.push({
-          kind: "BlockComment",
-          value: nextToken.value,
-        });
-        nextToken = this.iterator.next().value;
-      }
-
-      this.peekCache.token = nextToken as LexicalToken;
-
-      let nextNext: Token | undefined = this.iterator.next().value;
-      while (nextNext && nextNext.type === "INLINE_COMMENT") {
-        this.peekCache.comments.push({
-          kind: "InlineComment",
-          value: nextNext.value,
-        });
-        nextNext = this.iterator.next().value;
-      }
-      this.nextNext = nextNext as LexicalToken;
-    }
-    return this.peekCache;
-  }
-
-  take() {
-    const next = this.peek();
-    this.next = this.nextNext;
-    this.nextNext = undefined;
-    this.peekCache = undefined;
-    return next;
-  }
+  return { kind: "Document", definitions, comments: peek().comments };
 }
