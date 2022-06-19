@@ -139,7 +139,7 @@ export function print(
           printOptional(node.description, false) +
           printNodeWithComments("enum " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.valueDefinitionSet
+          (node.valueDefinitionSet || "")
         );
       },
     },
@@ -148,7 +148,7 @@ export function print(
         return (
           printNodeWithComments("extend enum " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.valueDefinitionSet
+          (node.valueDefinitionSet || "")
         );
       },
     },
@@ -189,9 +189,9 @@ export function print(
             (node.alias ? node.alias + ":" : "") + node.name,
             node.comments
           ) +
-          node.argumentSet +
+          (node.argumentSet || "") +
           printDirectives(node.directives) +
-          node.selectionSet
+          (node.selectionSet || "")
         );
       },
     },
@@ -265,7 +265,7 @@ export function print(
           printOptional(node.description, false) +
           printNodeWithComments("input " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.inputValueDefinitionSet
+          (node.inputValueDefinitionSet || "")
         );
       },
     },
@@ -274,7 +274,7 @@ export function print(
         return (
           printNodeWithComments("extend input " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.inputValueDefinitionSet
+          (node.inputValueDefinitionSet || "")
         );
       },
     },
@@ -490,7 +490,7 @@ export function print(
           printOptional(node.description, false) +
           printNodeWithComments("schema", node.comments) +
           printDirectives(node.directives) +
-          node.operationTypeDefinitionSet
+          (node.operationTypeDefinitionSet || "")
         );
       },
     },
@@ -499,7 +499,7 @@ export function print(
         return (
           printNodeWithComments("extend schema", node.comments) +
           printDirectives(node.directives) +
-          node.operationTypeDefinitionSet
+          (node.operationTypeDefinitionSet || "")
         );
       },
     },
@@ -518,7 +518,7 @@ export function print(
       leave(node) {
         return printNodeWithComments(
           node.block
-            ? '"""' + node.value.replace(/"""/g, '\\"""') + '"""'
+            ? '"""\n' + node.value.replace(/"""/g, '\\"""') + '"""'
             : JSON.stringify(node.value),
           node.comments
         );
@@ -535,7 +535,7 @@ export function print(
           printOptional(node.description, false) +
           printNodeWithComments("union " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.types
+          (node.types || "")
         );
       },
     },
@@ -544,7 +544,7 @@ export function print(
         return (
           printNodeWithComments("extend union " + node.name, node.comments) +
           printDirectives(node.directives) +
-          node.types
+          (node.types || "")
         );
       },
     },

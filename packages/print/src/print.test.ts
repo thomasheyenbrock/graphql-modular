@@ -1259,14 +1259,16 @@ describe("printing ast nodes", () => {
         value: 'my """ string',
       };
       it("prints without comments", () => {
-        expect(print(node)).toMatchInlineSnapshot(
-          '"\\"\\"\\"my \\\\\\"\\"\\" string\\"\\"\\""'
-        );
+        expect(print(node)).toMatchInlineSnapshot(`
+          "\\"\\"\\"
+          my \\\\\\"\\"\\" string\\"\\"\\""
+        `);
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
           "#block comment
-          \\"\\"\\"my \\\\\\"\\"\\" string\\"\\"\\"#inline comment
+          \\"\\"\\"
+          my \\\\\\"\\"\\" string\\"\\"\\"#inline comment
           "
         `);
       });
