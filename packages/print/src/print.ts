@@ -10,13 +10,15 @@ import { traverse } from "@graphql-modular/traverse";
 
 export function print(
   ast: AstNode | AstNode[],
-  { preserveComments = false }: { preserveComments?: boolean } = {}
+  {
+    preserveComments = false,
+  }: { preserveComments?: boolean; pretty?: boolean } = {}
 ): string {
   function printComment(comment: CommentNode) {
     return preserveComments
       ? comment.value
           .split("\n")
-          .map((line) => "#" + line)
+          .map((line) => "# " + line)
           .join("\n") + "\n"
       : "";
   }

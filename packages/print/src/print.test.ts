@@ -26,20 +26,20 @@ describe("kitchen sink", () => {
   it("prints with comments", () => {
     expect(print(parse(KITCHEN_SINK), { preserveComments: true }))
       .toMatchInlineSnapshot(`
-      "query queryName($foo:ComplexType,$site:Site=MOBILE) @onQuery{whoever123is:node(id:[123,456]){#field block comment
-      id,...on User @onInlineFragment{field2{id#field inline comment
-      ,alias:field1(first:10,after:$foo) @include(if:$foo){id,...frag @onFragmentSpread}}},... @skip(unless:$foo){id},...{id}}}
-      #block comment
-      #with multiple lines
-      #this is a new comment
-      mutation likeStory @onMutation{like(story:123) @onField{story{id @onField}}}
-      subscription StoryLikeSubscription($input:StoryLikeSubscribeInput @onVariableDefinition) @onSubscription{storyLikeSubscribe(input:$input){story{likers{count},likeSentence{text}}}}
-      fragment frag on Friend @onFragmentDefinition{foo(size:$size,bar:$b,obj:{key:\\"value\\",block:\\"\\"\\"
-      block string uses \\\\\\"\\"\\"\\"\\"\\"})}
-      {unnamed(truthy:true,falsy:false,nullish:null),query}
-      {__typename}
-      "
-    `);
+        "query queryName($foo:ComplexType,$site:Site=MOBILE) @onQuery{whoever123is:node(id:[123,456]){# field block comment
+        id,...on User @onInlineFragment{field2{id# field inline comment
+        ,alias:field1(first:10,after:$foo) @include(if:$foo){id,...frag @onFragmentSpread}}},... @skip(unless:$foo){id},...{id}}}
+        # block comment
+        # with multiple lines
+        # this is a new comment
+        mutation likeStory @onMutation{like(story:123) @onField{story{id @onField}}}
+        subscription StoryLikeSubscription($input:StoryLikeSubscribeInput @onVariableDefinition) @onSubscription{storyLikeSubscribe(input:$input){story{likers{count},likeSentence{text}}}}
+        fragment frag on Friend @onFragmentDefinition{foo(size:$size,bar:$b,obj:{key:\\"value\\",block:\\"\\"\\"
+        block string uses \\\\\\"\\"\\"\\"\\"\\"})}
+        {unnamed(truthy:true,falsy:false,nullish:null),query}
+        {__typename}
+        "
+      `);
   });
 });
 
@@ -67,7 +67,7 @@ const COMMENTS = fs.readFileSync(
 it("does not remove any comments", () => {
   const printed = print(parse(COMMENTS), { preserveComments: true });
   for (let i = 1; i <= 46; i++)
-    expect(printed).toContain("#comment " + i + "\n");
+    expect(printed).toContain("# comment " + i + "\n");
 });
 
 const comments: CommentNode[] = [
@@ -98,8 +98,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        name:value#inline comment
+        "# block comment
+        name:value# inline comment
         "
       `);
     });
@@ -119,10 +119,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        (#inline comment open
-        name1:value1,name2:value2#block comment close
-        )#inline comment close
+        "# block comment open
+        (# inline comment open
+        name1:value1,name2:value2# block comment close
+        )# inline comment close
         "
       `);
     });
@@ -139,7 +139,7 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-          "#block comment
+          "# block comment
           "
         `);
       });
@@ -156,13 +156,13 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print([node, node], { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          [
-            "#block comment
-          ",
-            "#block comment
-          ",
-          ]
-        `);
+            [
+              "# block comment
+            ",
+              "# block comment
+            ",
+            ]
+          `);
       });
     });
   });
@@ -178,8 +178,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        true#inline comment
+        "# block comment
+        true# inline comment
         "
       `);
     });
@@ -197,8 +197,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        @myDirective#inline comment
+        "# block comment
+        @myDirective# inline comment
         (name:value)"
       `);
     });
@@ -221,8 +221,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"some description\\" #block comment
-        directive @myDirective#inline comment
+        "\\"some description\\" # block comment
+        directive @myDirective# inline comment
         (name:Int=42) repeatable on QUERY|MUTATION"
       `);
     });
@@ -239,8 +239,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        on#inline comment
+        "# block comment
+        on# inline comment
          QUERY|MUTATION"
       `);
     });
@@ -261,8 +261,8 @@ describe("printing ast nodes", () => {
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
         "type MyObjectType{field:Int}
-        #block comment
-        #inline comment
+        # block comment
+        # inline comment
         "
       `);
     });
@@ -284,8 +284,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        enum MyEnumType#inline comment
+        "\\"my description\\" # block comment
+        enum MyEnumType# inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
     });
@@ -306,8 +306,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend enum MyEnumType#inline comment
+        "# block comment
+        extend enum MyEnumType# inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
     });
@@ -324,8 +324,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        MY_ENUM_VALUE#inline comment
+        "# block comment
+        MY_ENUM_VALUE# inline comment
         "
       `);
     });
@@ -346,8 +346,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        MY_ENUM_VALUE#inline comment
+        "\\"my description\\" # block comment
+        MY_ENUM_VALUE# inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -367,10 +367,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -387,8 +387,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        QUERY#inline comment
+        "# block comment
+        QUERY# inline comment
         "
       `);
     });
@@ -411,8 +411,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        fieldAlias:fieldName#inline comment
+        "# block comment
+        fieldAlias:fieldName# inline comment
         (argName:42) @myDirective @myOtherDirective{subField}"
       `);
     });
@@ -435,8 +435,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        fieldName#inline comment
+        "\\"my description\\" # block comment
+        fieldName# inline comment
         (argName:MyInputType=42):MyOutputType @myDirective @myOtherDirective"
       `);
     });
@@ -459,10 +459,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -479,8 +479,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        42.43e44#inline comment
+        "# block comment
+        42.43e44# inline comment
         "
       `);
     });
@@ -502,8 +502,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        fragment MyFragmentName#inline comment
+        "# block comment
+        fragment MyFragmentName# inline comment
          on MyType @myDirective @myOtherDirective{field}"
       `);
     });
@@ -523,8 +523,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        ...MyFragmentName#inline comment
+        "# block comment
+        ...MyFragmentName# inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -541,7 +541,7 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-          "#inline comment
+          "# inline comment
           "
         `);
       });
@@ -558,13 +558,13 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print([node, node], { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          [
-            "#inline comment
-          ",
-            "#inline comment
-          ",
-          ]
-        `);
+            [
+              "# inline comment
+            ",
+              "# inline comment
+            ",
+            ]
+          `);
       });
     });
   });
@@ -584,8 +584,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        ...on MyType#inline comment
+        "# block comment
+        ...on MyType# inline comment
          @myDirective @myOtherDirective{field}"
       `);
     });
@@ -607,8 +607,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        input MyInputObjectType#inline comment
+        "\\"my description\\" # block comment
+        input MyInputObjectType# inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
     });
@@ -629,8 +629,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend input MyInputObjectType#inline comment
+        "# block comment
+        extend input MyInputObjectType# inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
     });
@@ -653,8 +653,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        inputField:#inline comment
+        "\\"my description\\" # block comment
+        inputField:# inline comment
         MyInputType=42 @myDirective @myOtherDirective"
       `);
     });
@@ -677,10 +677,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        inputField1:MyInputType1,inputField2:MyInputType2=42#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        inputField1:MyInputType1,inputField2:MyInputType2=42# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -703,8 +703,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        interface MyInterfaceType#inline comment
+        "\\"my description\\" # block comment
+        interface MyInterfaceType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -726,8 +726,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend interface MyInterfaceType#inline comment
+        "# block comment
+        extend interface MyInterfaceType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -744,8 +744,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        42#inline comment
+        "# block comment
+        42# inline comment
         "
       `);
     });
@@ -762,8 +762,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        [MyType]#inline comment
+        "# block comment
+        [MyType]# inline comment
         "
       `);
     });
@@ -781,10 +781,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        [#inline comment open
-        42,43#block comment close
-        ]#inline comment close
+        "# block comment open
+        [# inline comment open
+        42,43# block comment close
+        ]# inline comment close
         "
       `);
     });
@@ -816,8 +816,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        MyType#inline comment
+        "# block comment
+        MyType# inline comment
         "
       `);
     });
@@ -835,9 +835,9 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        #inline comment
-        MyType1,MyType2"
+          "# block comment
+          # inline comment
+          MyType1,MyType2"
         `);
       });
     });
@@ -859,10 +859,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "type MyObjectType #block comment
-          implements #inline comment
-          MyType1&MyType2"
-        `);
+            "type MyObjectType # block comment
+            implements # inline comment
+            MyType1&MyType2"
+          `);
       });
     });
     describe("when printing as child of an object type extension", () => {
@@ -882,10 +882,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "extend type MyObjectType #block comment
-          implements #inline comment
-          MyType1&MyType2"
-        `);
+            "extend type MyObjectType # block comment
+            implements # inline comment
+            MyType1&MyType2"
+          `);
       });
     });
     describe("when printing as child of an interface type definition", () => {
@@ -906,10 +906,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "interface MyInterfaceType #block comment
-          implements #inline comment
-          MyType1&MyType2"
-        `);
+            "interface MyInterfaceType # block comment
+            implements # inline comment
+            MyType1&MyType2"
+          `);
       });
     });
     describe("when printing as child of an interface type extension", () => {
@@ -929,10 +929,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "extend interface MyInterfaceType #block comment
-          implements #inline comment
-          MyType1&MyType2"
-        `);
+            "extend interface MyInterfaceType # block comment
+            implements # inline comment
+            MyType1&MyType2"
+          `);
       });
     });
     describe("when printing as child of an union type definition", () => {
@@ -952,10 +952,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "union MyUnionType#block comment
-          =#inline comment
-          MyType1|MyType2"
-        `);
+            "union MyUnionType# block comment
+            =# inline comment
+            MyType1|MyType2"
+          `);
       });
     });
     describe("when printing as child of an union type extension", () => {
@@ -974,10 +974,10 @@ describe("printing ast nodes", () => {
       it("prints with comments", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
-          "extend union MyUnionType#block comment
-          =#inline comment
-          MyType1|MyType2"
-        `);
+            "extend union MyUnionType# block comment
+            =# inline comment
+            MyType1|MyType2"
+          `);
       });
     });
   });
@@ -993,8 +993,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        MyType!#inline comment
+        "# block comment
+        MyType!# inline comment
         "
       `);
     });
@@ -1010,8 +1010,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        null#inline comment
+        "# block comment
+        null# inline comment
         "
       `);
     });
@@ -1029,8 +1029,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        fieldName:42#inline comment
+        "# block comment
+        fieldName:42# inline comment
         "
       `);
     });
@@ -1053,8 +1053,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        type MyObjectType#inline comment
+        "\\"my description\\" # block comment
+        type MyObjectType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -1076,8 +1076,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend type MyObjectType#inline comment
+        "# block comment
+        extend type MyObjectType# inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -1097,10 +1097,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        fieldName1:42,fieldName2:\\"some string\\"#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        fieldName1:42,fieldName2:\\"some string\\"# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -1143,8 +1143,8 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-          "#block comment
-          query MyOperation#inline comment
+          "# block comment
+          query MyOperation# inline comment
           ($myVariable:Int=42) @myDirective @myOtherDirective{field1,field2(arg:42)}"
         `);
       });
@@ -1163,8 +1163,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        query:#inline comment
+        "# block comment
+        query:# inline comment
         MyOutputType"
       `);
     });
@@ -1184,10 +1184,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        query:MyOutputType1,mutation:MyOutputType2#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        query:MyOutputType1,mutation:MyOutputType2# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -1208,8 +1208,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        scalar MyScalarType#inline comment
+        "\\"my description\\" # block comment
+        scalar MyScalarType# inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -1229,8 +1229,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend scalar MyScalarType#inline comment
+        "# block comment
+        extend scalar MyScalarType# inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -1251,8 +1251,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        schema#inline comment
+        "\\"my description\\" # block comment
+        schema# inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
     });
@@ -1272,8 +1272,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend schema#inline comment
+        "# block comment
+        extend schema# inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
     });
@@ -1291,10 +1291,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        {#inline comment open
-        field1,field2(arg:42)#block comment close
-        }#inline comment close
+        "# block comment open
+        {# inline comment open
+        field1,field2(arg:42)# block comment close
+        }# inline comment close
         "
       `);
     });
@@ -1313,8 +1313,8 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-          "#block comment
-          \\"my string\\"#inline comment
+          "# block comment
+          \\"my string\\"# inline comment
           "
         `);
       });
@@ -1334,9 +1334,9 @@ describe("printing ast nodes", () => {
       });
       it("prints with comments", () => {
         expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-          "#block comment
+          "# block comment
           \\"\\"\\"
-          my \\\\\\"\\"\\" string\\"\\"\\"#inline comment
+          my \\\\\\"\\"\\" string\\"\\"\\"# inline comment
           "
         `);
       });
@@ -1354,8 +1354,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        OBJECT#inline comment
+        "# block comment
+        OBJECT# inline comment
         "
       `);
     });
@@ -1377,8 +1377,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
-        union MyUnionType#inline comment
+        "\\"my description\\" # block comment
+        union MyUnionType# inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
     });
@@ -1399,8 +1399,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        extend union MyUnionType#inline comment
+        "# block comment
+        extend union MyUnionType# inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
     });
@@ -1417,8 +1417,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        $myVariable#inline comment
+        "# block comment
+        $myVariable# inline comment
         "
       `);
     });
@@ -1440,8 +1440,8 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment
-        $myVariable:#inline comment
+        "# block comment
+        $myVariable:# inline comment
         MyType=42 @myDirective @myOtherDirective"
       `);
     });
@@ -1461,10 +1461,10 @@ describe("printing ast nodes", () => {
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "#block comment open
-        (#inline comment open
-        $myVariable:MyType,$myVariable:MyOtherType#block comment close
-        )#inline comment close
+        "# block comment open
+        (# inline comment open
+        $myVariable:MyType,$myVariable:MyOtherType# block comment close
+        )# inline comment close
         "
       `);
     });
