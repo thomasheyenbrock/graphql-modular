@@ -860,7 +860,7 @@ describe("standard printing for ast nodes", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
             "type MyObjectType #block comment
-            implements #inline comment
+            implements#inline comment
             MyType1&MyType2"
           `);
       });
@@ -883,7 +883,7 @@ describe("standard printing for ast nodes", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
             "extend type MyObjectType #block comment
-            implements #inline comment
+            implements#inline comment
             MyType1&MyType2"
           `);
       });
@@ -907,7 +907,7 @@ describe("standard printing for ast nodes", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
             "interface MyInterfaceType #block comment
-            implements #inline comment
+            implements#inline comment
             MyType1&MyType2"
           `);
       });
@@ -930,7 +930,7 @@ describe("standard printing for ast nodes", () => {
         expect(print(parent, { preserveComments: true }))
           .toMatchInlineSnapshot(`
             "extend interface MyInterfaceType #block comment
-            implements #inline comment
+            implements#inline comment
             MyType1&MyType2"
           `);
       });
@@ -1489,7 +1489,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        name:value# inline comment
+        name:value # inline comment
         "
       `);
     });
@@ -1512,10 +1512,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        (# inline comment open
+        ( # inline comment open
         name1:value1,name2:value2
         # block comment close
-        )# inline comment close
+        ) # inline comment close
         "
       `);
     });
@@ -1578,7 +1578,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        true# inline comment
+        true # inline comment
         "
       `);
     });
@@ -1601,7 +1601,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        @myDirective# inline comment
+        @myDirective # inline comment
         (name:value)"
       `);
     });
@@ -1627,7 +1627,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"some description\\" 
         # block comment
-        directive @myDirective# inline comment
+        directive @myDirective # inline comment
         (name:Int=42) repeatable on QUERY|MUTATION"
       `);
     });
@@ -1649,7 +1649,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        on# inline comment
+        on # inline comment
          QUERY|MUTATION"
       `);
     });
@@ -1698,7 +1698,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        enum MyEnumType# inline comment
+        enum MyEnumType # inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
     });
@@ -1722,7 +1722,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend enum MyEnumType# inline comment
+        extend enum MyEnumType # inline comment
          @myDirective @myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
     });
@@ -1744,7 +1744,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        MY_ENUM_VALUE# inline comment
+        MY_ENUM_VALUE # inline comment
         "
       `);
     });
@@ -1768,7 +1768,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        MY_ENUM_VALUE# inline comment
+        MY_ENUM_VALUE # inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -1791,10 +1791,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -1814,7 +1814,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        QUERY# inline comment
+        QUERY # inline comment
         "
       `);
     });
@@ -1840,7 +1840,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        fieldAlias:fieldName# inline comment
+        fieldAlias:fieldName # inline comment
         (argName:42) @myDirective @myOtherDirective{subField}"
       `);
     });
@@ -1866,7 +1866,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        fieldName# inline comment
+        fieldName # inline comment
         (argName:MyInputType=42):MyOutputType @myDirective @myOtherDirective"
       `);
     });
@@ -1892,10 +1892,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -1915,7 +1915,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        42.43e44# inline comment
+        42.43e44 # inline comment
         "
       `);
     });
@@ -1940,7 +1940,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        fragment MyFragmentName# inline comment
+        fragment MyFragmentName # inline comment
          on MyType @myDirective @myOtherDirective{field}"
       `);
     });
@@ -1963,7 +1963,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        ...MyFragmentName# inline comment
+        ...MyFragmentName # inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -2027,7 +2027,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        ...on MyType# inline comment
+        ...on MyType # inline comment
          @myDirective @myOtherDirective{field}"
       `);
     });
@@ -2052,7 +2052,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        input MyInputObjectType# inline comment
+        input MyInputObjectType # inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
     });
@@ -2076,7 +2076,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend input MyInputObjectType# inline comment
+        extend input MyInputObjectType # inline comment
          @myDirective @myOtherDirective{field:MyInputType}"
       `);
     });
@@ -2102,7 +2102,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        inputField:# inline comment
+        inputField: # inline comment
         MyInputType=42 @myDirective @myOtherDirective"
       `);
     });
@@ -2128,10 +2128,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         inputField1:MyInputType1,inputField2:MyInputType2=42
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -2157,7 +2157,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        interface MyInterfaceType# inline comment
+        interface MyInterfaceType # inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -2182,7 +2182,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend interface MyInterfaceType# inline comment
+        extend interface MyInterfaceType # inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -2202,7 +2202,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        42# inline comment
+        42 # inline comment
         "
       `);
     });
@@ -2222,7 +2222,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        [MyType]# inline comment
+        [MyType] # inline comment
         "
       `);
     });
@@ -2243,10 +2243,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        [# inline comment open
+        [ # inline comment open
         42,43
         # block comment close
-        ]# inline comment close
+        ] # inline comment close
         "
       `);
     });
@@ -2281,7 +2281,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        MyType# inline comment
+        MyType # inline comment
         "
       `);
     });
@@ -2426,7 +2426,7 @@ describe("pretty printing for ast nodes", () => {
           .toMatchInlineSnapshot(`
             "union MyUnionType
             # block comment
-            =# inline comment
+            = # inline comment
             MyType1|MyType2"
           `);
       });
@@ -2449,7 +2449,7 @@ describe("pretty printing for ast nodes", () => {
           .toMatchInlineSnapshot(`
             "extend union MyUnionType
             # block comment
-            =# inline comment
+            = # inline comment
             MyType1|MyType2"
           `);
       });
@@ -2470,7 +2470,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        MyType!# inline comment
+        MyType! # inline comment
         "
       `);
     });
@@ -2489,7 +2489,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        null# inline comment
+        null # inline comment
         "
       `);
     });
@@ -2512,7 +2512,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        fieldName:42# inline comment
+        fieldName:42 # inline comment
         "
       `);
     });
@@ -2538,7 +2538,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        type MyObjectType# inline comment
+        type MyObjectType # inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -2563,7 +2563,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend type MyObjectType# inline comment
+        extend type MyObjectType # inline comment
          implements MyInterfaceType1 & MyInterfaceType2 @myDirective @myOtherDirective{field:MyOutputType}"
       `);
     });
@@ -2586,10 +2586,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         fieldName1:42,fieldName2:\\"some string\\"
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -2637,7 +2637,7 @@ describe("pretty printing for ast nodes", () => {
           .toMatchInlineSnapshot(`
           "
           # block comment
-          query MyOperation# inline comment
+          query MyOperation # inline comment
           ($myVariable:Int=42) @myDirective @myOtherDirective{field1,field2(arg:42)}"
         `);
       });
@@ -2661,7 +2661,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        query:# inline comment
+        query: # inline comment
         MyOutputType"
       `);
     });
@@ -2684,10 +2684,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         query:MyOutputType1,mutation:MyOutputType2
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -2711,7 +2711,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        scalar MyScalarType# inline comment
+        scalar MyScalarType # inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -2734,7 +2734,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend scalar MyScalarType# inline comment
+        extend scalar MyScalarType # inline comment
          @myDirective @myOtherDirective"
       `);
     });
@@ -2758,7 +2758,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        schema# inline comment
+        schema # inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
     });
@@ -2781,7 +2781,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend schema# inline comment
+        extend schema # inline comment
          @myDirective @myOtherDirective{query:MyOutputType}"
       `);
     });
@@ -2804,10 +2804,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        {# inline comment open
+        { # inline comment open
         field1,field2(arg:42)
         # block comment close
-        }# inline comment close
+        } # inline comment close
         "
       `);
     });
@@ -2831,7 +2831,7 @@ describe("pretty printing for ast nodes", () => {
           .toMatchInlineSnapshot(`
           "
           # block comment
-          \\"my string\\"# inline comment
+          \\"my string\\" # inline comment
           "
         `);
       });
@@ -2855,7 +2855,7 @@ describe("pretty printing for ast nodes", () => {
           "
           # block comment
           \\"\\"\\"
-          my \\\\\\"\\"\\" string\\"\\"\\"# inline comment
+          my \\\\\\"\\"\\" string\\"\\"\\" # inline comment
           "
         `);
       });
@@ -2876,7 +2876,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        OBJECT# inline comment
+        OBJECT # inline comment
         "
       `);
     });
@@ -2901,7 +2901,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "\\"my description\\" 
         # block comment
-        union MyUnionType# inline comment
+        union MyUnionType # inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
     });
@@ -2925,7 +2925,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        extend union MyUnionType# inline comment
+        extend union MyUnionType # inline comment
          @myDirective @myOtherDirective=MyType1|MyType2"
       `);
     });
@@ -2947,7 +2947,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        $myVariable# inline comment
+        $myVariable # inline comment
         "
       `);
     });
@@ -2972,7 +2972,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        $myVariable:# inline comment
+        $myVariable: # inline comment
         MyType=42 @myDirective @myOtherDirective"
       `);
     });
@@ -2995,10 +2995,10 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment open
-        (# inline comment open
+        ( # inline comment open
         $myVariable:MyType,$myVariable:MyOtherType
         # block comment close
-        )# inline comment close
+        ) # inline comment close
         "
       `);
     });

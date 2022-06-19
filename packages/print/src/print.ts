@@ -40,7 +40,7 @@ export function print(
 
   function printNodeWithComments(printed: string, comments: CommentNode[]) {
     const { before, after } = printComments(comments);
-    return before + printed + after;
+    return before + printed + (after ? SPACE : "") + after;
   }
 
   function printWrappedListWithComments(
@@ -55,10 +55,12 @@ export function print(
     return (
       openingBracket.before +
       openingBracketPunctuator +
+      (openingBracket.after ? SPACE : "") +
       openingBracket.after +
       list.join(",") +
       closingBracket.before +
       closingBracketPunctuator +
+      (closingBracket.after ? SPACE : "") +
       closingBracket.after
     );
   }
@@ -139,11 +141,9 @@ export function print(
     },
     Document: {
       leave(node) {
-        return (
-          node.definitions.join("\n") +
-          "\n" +
-          printNodeWithComments("", node.comments)
-        );
+        const definitions = node.definitions.join("\n");
+        const { before, after } = printComments(node.comments);
+        return definitions + "\n" + before + after;
       },
     },
     EnumTypeDefinition: {
@@ -376,20 +376,25 @@ export function print(
     },
     NamedTypeSet: {
       leave(node, _key, parent) {
-        const [initializer = "", delimiter = ","] = isSingleNode(parent)
+        const [initializer = "", spacer = "", delimiter = ","] = isSingleNode(
+          parent
+        )
           ? parent.kind === "ObjectTypeDefinition" ||
             parent.kind === "ObjectTypeExtension" ||
             parent.kind === "InterfaceTypeDefinition" ||
             parent.kind === "InterfaceTypeExtension"
-            ? ["implements ", "&"]
+            ? ["implements", " ", "&"]
             : parent.kind === "UnionTypeDefinition" ||
               parent.kind === "UnionTypeExtension"
-            ? ["=", "|"]
+            ? ["=", "", "|"]
             : []
           : [];
+        const { before, after } = printComments(node.comments);
+        const afterWithSpacer = after ? after + "" : after + spacer;
+        const types = node.types.join(delimiter);
+        if (!initializer) return before + afterWithSpacer + types;
         return (
-          printNodeWithComments(initializer, node.comments) +
-          node.types.join(delimiter)
+          before + initializer + (after ? SPACE : "") + afterWithSpacer + types
         );
       },
     },
