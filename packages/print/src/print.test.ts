@@ -1,6 +1,25 @@
 import type { AstNodes, CommentNode } from "@graphql-modular/language";
+import { parse } from "@graphql-modular/parse";
+import fs from "fs";
+import path from "path";
 import { describe, expect, it } from "vitest";
 import { print } from "./print";
+
+const LANGUAGE = fs.readFileSync(
+  path.join(__dirname, "..", "..", "..", "utils", "language.gql"),
+  "utf8"
+);
+
+describe("idempotency for parsing-printing", () => {
+  it("is idempotent without comments", () => {
+    const language = print(parse(LANGUAGE));
+    expect(print(parse(language))).toBe(language);
+  });
+  it("is idempotent with comments", () => {
+    const language = print(parse(LANGUAGE), { preserveComments: true });
+    expect(print(parse(language), { preserveComments: true })).toBe(language);
+  });
+});
 
 const comments: CommentNode[] = [
   { kind: "BlockComment", value: "block comment" },

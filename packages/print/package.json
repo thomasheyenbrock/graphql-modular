@@ -9,6 +9,7 @@
     "@graphql-modular/traverse": "0.0.0"
   },
   "devDependencies": {
-    "@graphql-modular/language": "0.0.0"
+    "@graphql-modular/language": "0.0.0",
+    "@graphql-modular/parse": "0.0.0"
   }
 }
