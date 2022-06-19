@@ -13,7 +13,12 @@ export function print(
   { preserveComments = false }: { preserveComments?: boolean } = {}
 ): string {
   function printComment(comment: CommentNode) {
-    return preserveComments ? "#" + comment.value + "\n" : "";
+    return preserveComments
+      ? comment.value
+          .split("\n")
+          .map((line) => "#" + line)
+          .join("\n") + "\n"
+      : "";
   }
 
   function printComments(comments: CommentNode[]) {
