@@ -80,8 +80,8 @@ export function traverse<T extends AstNodeOrList = AstNodeOrList>(
     if (stackItem.type === "ENTER") {
       const { item, key, parent, leave, prev } = stackItem;
 
-      if (key) path.push(key);
-      if (parent) ancestors.push(parent);
+      if (key !== null) path.push(key);
+      if (parent !== null) ancestors.push(parent);
 
       if (Array.isArray(item)) {
         for (let i = item.length - 1; i >= 0; i--) {
@@ -150,8 +150,8 @@ export function traverse<T extends AstNodeOrList = AstNodeOrList>(
         }
       }
 
-      if (key) path.pop();
-      if (parent) ancestors.pop();
+      if (key !== null) path.pop();
+      if (parent !== null) ancestors.pop();
     }
   } while (stack.length > 0);
 

@@ -1,4 +1,4 @@
-import { NamedTypeNode, NameNode } from "@graphql-modular/language";
+import type { NamedTypeNode, NameNode } from "@graphql-modular/language";
 import { parse } from "@graphql-modular/parse";
 import fs from "fs";
 import path from "path";
