@@ -38,7 +38,7 @@ export function print(
   }
 
   function printWrappedListWithComments(
-    printed: string,
+    list: any[],
     openingBracketPunctuator: string,
     closingBracketPunctuator: string,
     commentsOpeningBracket: CommentNode[],
@@ -50,7 +50,7 @@ export function print(
       openingBracket.before +
       openingBracketPunctuator +
       openingBracket.after +
-      printed +
+      list.join(",") +
       closingBracket.before +
       closingBracketPunctuator +
       closingBracket.after
@@ -85,7 +85,7 @@ export function print(
     ArgumentSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.args.join(","),
+          node.args,
           "(",
           ")",
           node.commentsOpeningBracket,
@@ -176,7 +176,7 @@ export function print(
     EnumValueDefinitionSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.definitions.join(","),
+          node.definitions,
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -217,7 +217,7 @@ export function print(
     FieldDefinitionSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.definitions.join(","),
+          node.definitions,
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -305,7 +305,7 @@ export function print(
             ? ["(", ")"]
             : ["{", "}"];
         return printWrappedListWithComments(
-          node.definitions.join(","),
+          node.definitions,
           startPunctuator,
           endPunctuator,
           node.commentsOpeningBracket,
@@ -350,7 +350,7 @@ export function print(
     ListValue: {
       leave(node) {
         return printWrappedListWithComments(
-          node.values.join(","),
+          node.values,
           "[",
           "]",
           node.commentsOpeningBracket,
@@ -429,7 +429,7 @@ export function print(
     ObjectValue: {
       leave(node) {
         return printWrappedListWithComments(
-          node.fields.join(","),
+          node.fields,
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -466,7 +466,7 @@ export function print(
     OperationTypeDefinitionSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.definitions.join(","),
+          node.definitions,
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -513,7 +513,7 @@ export function print(
     SelectionSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.selections.join(","),
+          node.selections,
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -573,7 +573,7 @@ export function print(
     VariableDefinitionSet: {
       leave(node) {
         return printWrappedListWithComments(
-          node.definitions.join(","),
+          node.definitions,
           "(",
           ")",
           node.commentsOpeningBracket,
