@@ -414,7 +414,7 @@ export function parse(source: string): DocumentNode {
           ];
           return {
             kind: "InlineFragment",
-            typeCondition: typeCondition?.type || null,
+            typeCondition: typeCondition ? typeCondition.type : null,
             directives,
             selectionSet,
             comments,

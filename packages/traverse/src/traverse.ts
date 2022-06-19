@@ -50,10 +50,10 @@ type StackItemEnter = StackItemBase & {
 
 type StackItem = StackItemEnter | StackItemLeave;
 
-export function traverse<T extends AstNodeOrList = AstNodeOrList>(
-  root: T,
-  visitors: VisitorMap
-): T {
+export function traverse<
+  Input extends AstNodeOrList = AstNodeOrList,
+  Output = Input
+>(root: Input, visitors: VisitorMap): Output {
   const visitorCache: Partial<{ [N in keyof AstNodes]: Visitor<AstNodes[N]> }> =
     {};
   function getVisitor<T extends AstNode>(node: T): Visitor<T> {
@@ -72,7 +72,7 @@ export function traverse<T extends AstNodeOrList = AstNodeOrList>(
   const path: Key[] = [];
   const ancestors: AstNodeOrList[] = [];
 
-  let returnValue = root;
+  let returnValue = root as unknown as Output;
 
   do {
     const stackItem = stack.shift()!;
