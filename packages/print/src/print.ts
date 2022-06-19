@@ -70,7 +70,7 @@ export function print(
   }
 
   function printDirectives(directives: DirectiveNode[] | DirectiveConstNode[]) {
-    return printOptional(directives.join(" "), true);
+    return directives.join("");
   }
 
   function printDefaultValue(value: ValueConstNode | null) {
@@ -123,7 +123,10 @@ export function print(
       leave(node) {
         return (
           printOptional(node.description, false) +
-          printNodeWithComments("directive @" + node.name, node.comments) +
+          printNodeWithComments(
+            "directive" + SPACE + "@" + node.name,
+            node.comments
+          ) +
           (node.inputValueDefinitionSet || "") +
           (node.repeatable ? " repeatable " : " ") +
           node.locationSet
@@ -132,11 +135,9 @@ export function print(
     },
     DirectiveLocationSet: {
       leave(node) {
-        return (
-          printNodeWithComments("on", node.comments) +
-          " " +
-          node.locations.join("|")
-        );
+        let printed = printNodeWithComments("on", node.comments);
+        if (!printed.endsWith("\n")) printed += " ";
+        return printed + node.locations.join("|");
       },
     },
     Document: {
@@ -238,9 +239,13 @@ export function print(
     },
     FragmentDefinition: {
       leave(node) {
+        let printed = printNodeWithComments(
+          "fragment " + node.name,
+          node.comments
+        );
+        if (node.typeCondition && !printed.endsWith("\n")) printed += " ";
         return (
-          printNodeWithComments("fragment " + node.name, node.comments) +
-          " " +
+          printed +
           printTypeCondition(node.typeCondition) +
           printDirectives(node.directives) +
           node.selectionSet
@@ -326,10 +331,13 @@ export function print(
     },
     InterfaceTypeDefinition: {
       leave(node) {
-        return (
+        let printed =
           printOptional(node.description, false) +
-          printNodeWithComments("interface " + node.name, node.comments) +
-          printOptional(node.interfaces, true) +
+          printNodeWithComments("interface " + node.name, node.comments);
+        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
+        return (
+          printed +
+          (node.interfaces || "") +
           printDirectives(node.directives) +
           (node.fieldDefinitionSet || "")
         );
@@ -337,12 +345,14 @@ export function print(
     },
     InterfaceTypeExtension: {
       leave(node) {
+        let printed = printNodeWithComments(
+          "extend interface " + node.name,
+          node.comments
+        );
+        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
-          printNodeWithComments(
-            "extend interface " + node.name,
-            node.comments
-          ) +
-          printOptional(node.interfaces, true) +
+          printed +
+          (node.interfaces || "") +
           printDirectives(node.directives) +
           (node.fieldDefinitionSet || "")
         );
@@ -418,10 +428,13 @@ export function print(
     },
     ObjectTypeDefinition: {
       leave(node) {
-        return (
+        let printed =
           printOptional(node.description, false) +
-          printNodeWithComments("type " + node.name, node.comments) +
-          printOptional(node.interfaces, true) +
+          printNodeWithComments("type " + node.name, node.comments);
+        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
+        return (
+          printed +
+          (node.interfaces || "") +
           printDirectives(node.directives) +
           (node.fieldDefinitionSet || "")
         );
@@ -429,9 +442,14 @@ export function print(
     },
     ObjectTypeExtension: {
       leave(node) {
+        let printed = printNodeWithComments(
+          "extend type " + node.name,
+          node.comments
+        );
+        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
-          printNodeWithComments("extend type " + node.name, node.comments) +
-          printOptional(node.interfaces, true) +
+          printed +
+          (node.interfaces || "") +
           printDirectives(node.directives) +
           (node.fieldDefinitionSet || "")
         );
