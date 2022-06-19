@@ -12,13 +12,16 @@ export function print(
   ast: AstNode | AstNode[],
   {
     preserveComments = false,
+    pretty = false,
   }: { preserveComments?: boolean; pretty?: boolean } = {}
 ): string {
+  const SPACE = pretty ? " " : "";
+
   function printComment(comment: CommentNode) {
     return preserveComments
       ? comment.value
           .split("\n")
-          .map((line) => "# " + line)
+          .map((line) => "#" + SPACE + line)
           .join("\n") + "\n"
       : "";
   }
