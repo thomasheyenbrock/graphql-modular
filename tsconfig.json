@@ -2,6 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "esModuleInterop": true,
+    "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",

@@ -1,61 +1,4 @@
-import type {
-  ArgumentNode,
-  ArgumentSetNode,
-  BlockCommentNode,
-  BooleanValueNode,
-  CommentNode,
-  DirectiveDefinitionNode,
-  DirectiveLocationSetNode,
-  DirectiveNode,
-  DocumentNode,
-  EnumTypeDefinitionNode,
-  EnumTypeExtensionNode,
-  EnumValueDefinitionNode,
-  EnumValueDefinitionSetNode,
-  EnumValueNode,
-  ExecutableDirectiveLocationNode,
-  FieldDefinitionNode,
-  FieldDefinitionSetNode,
-  FieldNode,
-  FloatValueNode,
-  FragmentDefinitionNode,
-  FragmentSpreadNode,
-  InlineCommentNode,
-  InlineFragmentNode,
-  InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
-  InputValueDefinitionNode,
-  InputValueDefinitionSetNode,
-  InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
-  IntValueNode,
-  ListTypeNode,
-  ListValueNode,
-  NamedTypeNode,
-  NamedTypeSetNode,
-  NameNode,
-  NonNullTypeNode,
-  NullValueNode,
-  ObjectFieldNode,
-  ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
-  ObjectValueNode,
-  OperationDefinitionNode,
-  OperationTypeDefinitionNode,
-  OperationTypeDefinitionSetNode,
-  ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
-  SchemaDefinitionNode,
-  SchemaExtensionNode,
-  SelectionSetNode,
-  StringValueNode,
-  TypeSystemDirectiveLocationNode,
-  UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
-  VariableDefinitionNode,
-  VariableDefinitionSetNode,
-  VariableNode,
-} from "@graphql-modular/language";
+import type { AstNodes, CommentNode } from "@graphql-modular/language";
 import { describe, expect, it } from "vitest";
 import { print } from "./print";
 
@@ -76,7 +19,7 @@ const commentsClosingBracket: CommentNode[] = [
 
 describe("printing ast nodes", () => {
   describe("Argument node", () => {
-    const node: ArgumentNode = {
+    const node: AstNodes["Argument"] = {
       kind: "Argument",
       comments,
       name: "name" as any,
@@ -95,7 +38,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ArgumentSet", () => {
-    const node: ArgumentSetNode = {
+    const node: AstNodes["ArgumentSet"] = {
       kind: "ArgumentSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -118,7 +61,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("BlockComment", () => {
-    const node: BlockCommentNode = {
+    const node: AstNodes["BlockComment"] = {
       kind: "BlockComment",
       value: "block comment",
     };
@@ -157,7 +100,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("BooleanValue", () => {
-    const node: BooleanValueNode = {
+    const node: AstNodes["BooleanValue"] = {
       kind: "BooleanValue",
       comments,
       value: true,
@@ -175,7 +118,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("Directive", () => {
-    const node: DirectiveNode = {
+    const node: AstNodes["Directive"] = {
       kind: "Directive",
       comments,
       name: "myDirective" as any,
@@ -194,7 +137,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("DirectiveDefinition", () => {
-    const node: DirectiveDefinitionNode = {
+    const node: AstNodes["DirectiveDefinition"] = {
       kind: "DirectiveDefinition",
       comments,
       description: '"some description"' as any,
@@ -218,7 +161,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("DirectiveLocationSet", () => {
-    const node: DirectiveLocationSetNode = {
+    const node: AstNodes["DirectiveLocationSet"] = {
       kind: "DirectiveLocationSet",
       comments,
       locations: ["QUERY", "MUTATION"] as any,
@@ -236,7 +179,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("Document", () => {
-    const node: DocumentNode = {
+    const node: AstNodes["Document"] = {
       kind: "Document",
       comments,
       definitions: ["type MyObjectType{field:Int}"] as any,
@@ -258,7 +201,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("EnumTypeDefinition", () => {
-    const node: EnumTypeDefinitionNode = {
+    const node: AstNodes["EnumTypeDefinition"] = {
       kind: "EnumTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -281,7 +224,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("EnumTypeExtension", () => {
-    const node: EnumTypeExtensionNode = {
+    const node: AstNodes["EnumTypeExtension"] = {
       kind: "EnumTypeExtension",
       comments,
       name: "MyEnumType" as any,
@@ -303,7 +246,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("EnumValue", () => {
-    const node: EnumValueNode = {
+    const node: AstNodes["EnumValue"] = {
       kind: "EnumValue",
       comments,
       value: "MY_ENUM_VALUE",
@@ -321,7 +264,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("EnumValueDefinitionNode", () => {
-    const node: EnumValueDefinitionNode = {
+    const node: AstNodes["EnumValueDefinition"] = {
       kind: "EnumValueDefinition",
       comments,
       description: '"my description"' as any,
@@ -343,7 +286,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("EnumValueDefinitionSetNode", () => {
-    const node: EnumValueDefinitionSetNode = {
+    const node: AstNodes["EnumValueDefinitionSet"] = {
       kind: "EnumValueDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -366,7 +309,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ExecutableDirectiveLocation", () => {
-    const node: ExecutableDirectiveLocationNode = {
+    const node: AstNodes["ExecutableDirectiveLocation"] = {
       kind: "ExecutableDirectiveLocation",
       comments,
       value: "QUERY",
@@ -384,7 +327,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("Field", () => {
-    const node: FieldNode = {
+    const node: AstNodes["Field"] = {
       kind: "Field",
       comments,
       alias: "fieldAlias" as any,
@@ -408,7 +351,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("FieldDefinition", () => {
-    const node: FieldDefinitionNode = {
+    const node: AstNodes["FieldDefinition"] = {
       kind: "FieldDefinition",
       comments,
       description: '"my description"' as any,
@@ -432,7 +375,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("FieldDefinitionSet", () => {
-    const node: FieldDefinitionSetNode = {
+    const node: AstNodes["FieldDefinitionSet"] = {
       kind: "FieldDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -458,7 +401,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("FloatValue", () => {
-    const node: FloatValueNode = {
+    const node: AstNodes["FloatValue"] = {
       kind: "FloatValue",
       comments,
       value: "42.43e44",
@@ -476,7 +419,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("FragmentDefinition", () => {
-    const node: FragmentDefinitionNode = {
+    const node: AstNodes["FragmentDefinition"] = {
       kind: "FragmentDefinition",
       comments,
       name: "MyFragmentName" as any,
@@ -499,7 +442,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("FragmentSpread", () => {
-    const node: FragmentSpreadNode = {
+    const node: AstNodes["FragmentSpread"] = {
       kind: "FragmentSpread",
       comments,
       name: "MyFragmentName" as any,
@@ -520,7 +463,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InlineComment", () => {
-    const node: InlineCommentNode = {
+    const node: AstNodes["InlineComment"] = {
       kind: "InlineComment",
       value: "inline comment",
     };
@@ -559,7 +502,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InlineFragment", () => {
-    const node: InlineFragmentNode = {
+    const node: AstNodes["InlineFragment"] = {
       kind: "InlineFragment",
       comments,
       typeCondition: "MyType" as any,
@@ -581,7 +524,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InputObjectTypeDefinition", () => {
-    const node: InputObjectTypeDefinitionNode = {
+    const node: AstNodes["InputObjectTypeDefinition"] = {
       kind: "InputObjectTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -604,7 +547,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InputObjectTypeExtension", () => {
-    const node: InputObjectTypeExtensionNode = {
+    const node: AstNodes["InputObjectTypeExtension"] = {
       kind: "InputObjectTypeExtension",
       comments,
       name: "MyInputObjectType" as any,
@@ -626,7 +569,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InputValueDefinition", () => {
-    const node: InputValueDefinitionNode = {
+    const node: AstNodes["InputValueDefinition"] = {
       kind: "InputValueDefinition",
       comments,
       description: '"my description"' as any,
@@ -650,7 +593,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InputValueDefinitionSet", () => {
-    const node: InputValueDefinitionSetNode = {
+    const node: AstNodes["InputValueDefinitionSet"] = {
       kind: "InputValueDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -676,7 +619,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InterfaceTypeDefinition", () => {
-    const node: InterfaceTypeDefinitionNode = {
+    const node: AstNodes["InterfaceTypeDefinition"] = {
       kind: "InterfaceTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -700,7 +643,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("InterfaceTypeExtension", () => {
-    const node: InterfaceTypeExtensionNode = {
+    const node: AstNodes["InterfaceTypeExtension"] = {
       kind: "InterfaceTypeExtension",
       comments,
       name: "MyInterfaceType" as any,
@@ -723,7 +666,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("IntValue", () => {
-    const node: IntValueNode = {
+    const node: AstNodes["IntValue"] = {
       kind: "IntValue",
       comments,
       value: "42",
@@ -741,7 +684,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ListType", () => {
-    const node: ListTypeNode = {
+    const node: AstNodes["ListType"] = {
       kind: "ListType",
       comments,
       type: "MyType" as any,
@@ -759,7 +702,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ListValue", () => {
-    const node: ListValueNode = {
+    const node: AstNodes["ListValue"] = {
       kind: "ListValue",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -780,7 +723,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("Name", () => {
-    const node: NameNode = {
+    const node: AstNodes["Name"] = {
       kind: "Name",
       value: "myName",
     };
@@ -795,7 +738,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("NamedType", () => {
-    const node: NamedTypeNode = {
+    const node: AstNodes["NamedType"] = {
       kind: "NamedType",
       comments,
       name: "MyType" as any,
@@ -813,7 +756,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("NamedTypeSet", () => {
-    const node: NamedTypeSetNode = {
+    const node: AstNodes["NamedTypeSet"] = {
       kind: "NamedTypeSet",
       comments,
       types: ["MyType1", "MyType2"] as any,
@@ -831,7 +774,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an object type definition", () => {
-      const parent: ObjectTypeDefinitionNode = {
+      const parent: AstNodes["ObjectTypeDefinition"] = {
         kind: "ObjectTypeDefinition",
         comments: [],
         description: null,
@@ -855,7 +798,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an object type extension", () => {
-      const parent: ObjectTypeExtensionNode = {
+      const parent: AstNodes["ObjectTypeExtension"] = {
         kind: "ObjectTypeExtension",
         comments: [],
         name: "MyObjectType" as any,
@@ -878,7 +821,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an interface type definition", () => {
-      const parent: InterfaceTypeDefinitionNode = {
+      const parent: AstNodes["InterfaceTypeDefinition"] = {
         kind: "InterfaceTypeDefinition",
         comments: [],
         description: null,
@@ -902,7 +845,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an interface type extension", () => {
-      const parent: InterfaceTypeExtensionNode = {
+      const parent: AstNodes["InterfaceTypeExtension"] = {
         kind: "InterfaceTypeExtension",
         comments: [],
         name: "MyInterfaceType" as any,
@@ -925,7 +868,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an union type definition", () => {
-      const parent: UnionTypeDefinitionNode = {
+      const parent: AstNodes["UnionTypeDefinition"] = {
         kind: "UnionTypeDefinition",
         comments: [],
         description: null,
@@ -948,7 +891,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("when printing as child of an union type extension", () => {
-      const parent: UnionTypeExtensionNode = {
+      const parent: AstNodes["UnionTypeExtension"] = {
         kind: "UnionTypeExtension",
         comments: [],
         name: "MyUnionType" as any,
@@ -972,7 +915,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("NonNullType", () => {
-    const node: NonNullTypeNode = {
+    const node: AstNodes["NonNullType"] = {
       kind: "NonNullType",
       comments,
       type: "MyType" as any,
@@ -990,7 +933,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("NullValue", () => {
-    const node: NullValueNode = {
+    const node: AstNodes["NullValue"] = {
       kind: "NullValue",
       comments,
     };
@@ -1007,7 +950,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ObjectField", () => {
-    const node: ObjectFieldNode = {
+    const node: AstNodes["ObjectField"] = {
       kind: "ObjectField",
       comments,
       name: "fieldName" as any,
@@ -1026,7 +969,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ObjectTypeDefinition", () => {
-    const node: ObjectTypeDefinitionNode = {
+    const node: AstNodes["ObjectTypeDefinition"] = {
       kind: "ObjectTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -1050,7 +993,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ObjectTypeExtension", () => {
-    const node: ObjectTypeExtensionNode = {
+    const node: AstNodes["ObjectTypeExtension"] = {
       kind: "ObjectTypeExtension",
       comments,
       name: "MyObjectType" as any,
@@ -1073,7 +1016,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ObjectValue", () => {
-    const node: ObjectValueNode = {
+    const node: AstNodes["ObjectValue"] = {
       kind: "ObjectValue",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -1097,13 +1040,13 @@ describe("printing ast nodes", () => {
 
   describe("OperationDefinition", () => {
     describe("using query shorthand", () => {
-      const node: OperationDefinitionNode = {
+      const node: AstNodes["OperationDefinition"] = {
         kind: "OperationDefinition",
         comments,
         operation: "query",
         name: null,
         variableDefinitionSet: null,
-        directives: null,
+        directives: [],
         selectionSet: "{field1,field2(arg:42)}" as any,
       };
       it("prints without comments", () => {
@@ -1116,7 +1059,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("using elaborate form", () => {
-      const node: OperationDefinitionNode = {
+      const node: AstNodes["OperationDefinition"] = {
         kind: "OperationDefinition",
         comments,
         operation: "query",
@@ -1141,7 +1084,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("OperationTypeDefinition", () => {
-    const node: OperationTypeDefinitionNode = {
+    const node: AstNodes["OperationTypeDefinition"] = {
       kind: "OperationTypeDefinition",
       comments,
       operation: "query",
@@ -1160,7 +1103,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("OperationTypeDefinitionSet", () => {
-    const node: OperationTypeDefinitionSetNode = {
+    const node: AstNodes["OperationTypeDefinitionSet"] = {
       kind: "OperationTypeDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -1183,7 +1126,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ScalarTypeDefinition", () => {
-    const node: ScalarTypeDefinitionNode = {
+    const node: AstNodes["ScalarTypeDefinition"] = {
       kind: "ScalarTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -1205,7 +1148,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("ScalarTypeExtension", () => {
-    const node: ScalarTypeExtensionNode = {
+    const node: AstNodes["ScalarTypeExtension"] = {
       kind: "ScalarTypeExtension",
       comments,
       name: "MyScalarType" as any,
@@ -1226,7 +1169,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("SchemaDefinition", () => {
-    const node: SchemaDefinitionNode = {
+    const node: AstNodes["SchemaDefinition"] = {
       kind: "SchemaDefinition",
       comments,
       description: '"my description"' as any,
@@ -1248,7 +1191,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("SchemaExtension", () => {
-    const node: SchemaExtensionNode = {
+    const node: AstNodes["SchemaExtension"] = {
       kind: "SchemaExtension",
       comments,
       directives: ["@myDirective", "@myOtherDirective"] as any,
@@ -1269,7 +1212,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("SelectionSet", () => {
-    const node: SelectionSetNode = {
+    const node: AstNodes["SelectionSet"] = {
       kind: "SelectionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
@@ -1291,7 +1234,7 @@ describe("printing ast nodes", () => {
 
   describe("StringValue", () => {
     describe("regular string values", () => {
-      const node: StringValueNode = {
+      const node: AstNodes["StringValue"] = {
         kind: "StringValue",
         comments,
         block: false,
@@ -1309,7 +1252,7 @@ describe("printing ast nodes", () => {
       });
     });
     describe("block string values", () => {
-      const node: StringValueNode = {
+      const node: AstNodes["StringValue"] = {
         kind: "StringValue",
         comments,
         block: true,
@@ -1331,7 +1274,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("TypeSystemDirectiveLocation", () => {
-    const node: TypeSystemDirectiveLocationNode = {
+    const node: AstNodes["TypeSystemDirectiveLocation"] = {
       kind: "TypeSystemDirectiveLocation",
       comments,
       value: "OBJECT",
@@ -1349,7 +1292,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("UnionTypeDefinition", () => {
-    const node: UnionTypeDefinitionNode = {
+    const node: AstNodes["UnionTypeDefinition"] = {
       kind: "UnionTypeDefinition",
       comments,
       description: '"my description"' as any,
@@ -1372,7 +1315,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("UnionTypeExtension", () => {
-    const node: UnionTypeExtensionNode = {
+    const node: AstNodes["UnionTypeExtension"] = {
       kind: "UnionTypeExtension",
       comments,
       name: "MyUnionType" as any,
@@ -1394,7 +1337,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("Variable", () => {
-    const node: VariableNode = {
+    const node: AstNodes["Variable"] = {
       kind: "Variable",
       comments,
       name: "myVariable" as any,
@@ -1412,7 +1355,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("VariableDefinition", () => {
-    const node: VariableDefinitionNode = {
+    const node: AstNodes["VariableDefinition"] = {
       kind: "VariableDefinition",
       comments,
       variable: "$myVariable" as any,
@@ -1435,7 +1378,7 @@ describe("printing ast nodes", () => {
   });
 
   describe("VariableDefinitionSet", () => {
-    const node: VariableDefinitionSetNode = {
+    const node: AstNodes["VariableDefinitionSet"] = {
       kind: "VariableDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,

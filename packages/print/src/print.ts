@@ -432,7 +432,11 @@ export function print(
     },
     OperationDefinition: {
       leave(node) {
-        if (!node.name && !node.variableDefinitionSet && !node.directives)
+        if (
+          !node.name &&
+          !node.variableDefinitionSet &&
+          node.directives.length === 0
+        )
           return node.selectionSet;
         return (
           printNodeWithComments(

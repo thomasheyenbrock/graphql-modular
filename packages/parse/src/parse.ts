@@ -1,61 +1,24 @@
 import {
-  ArgumentConstNode,
-  ArgumentNode,
+  ArgumentSetConstNode,
   ArgumentSetNode,
+  AstNodes,
   CommentNode,
+  DefinitionNode,
   DirectiveConstNode,
   DirectiveLocationNode,
   DirectiveNode,
-  EnumTypeDefinitionNode,
-  EnumTypeExtensionNode,
-  EnumValueDefinitionNode,
-  EnumValueDefinitionSetNode,
-  EnumValueNode,
   EXECUTABLE_DIRECTIVE_LOCATION,
-  FieldDefinitionNode,
-  FieldDefinitionSetNode,
-  InputObjectTypeDefinitionNode,
-  InputObjectTypeExtensionNode,
-  InputValueDefinitionNode,
-  InputValueDefinitionSetNode,
-  InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode,
-  ListTypeNode,
-  NamedTypeNode,
-  NamedTypeSetNode,
-  NameNode,
-  ObjectFieldConstNode,
-  ObjectFieldNode,
-  ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
   OperationType,
-  OperationTypeDefinitionNode,
-  OperationTypeDefinitionSetNode,
-  ScalarTypeDefinitionNode,
-  ScalarTypeExtensionNode,
-  SchemaDefinitionNode,
-  SchemaExtensionNode,
   SelectionNode,
-  SelectionSetNode,
   TypeNode,
   TypeSystemExtensionNode,
   TYPE_SYSTEM_DIRECTIVE_LOCATION,
-  UnionTypeDefinitionNode,
-  UnionTypeExtensionNode,
   ValueConstNode,
   ValueNode,
-  VariableDefinitionNode,
-  VariableNode,
 } from "@graphql-modular/language";
 import { LexicalToken, Token, tokenize } from "./tokenize";
 
-import type {
-  DefinitionNode,
-  DocumentNode,
-  StringValueNode,
-} from "@graphql-modular/language";
-
-export function parse(source: string): DocumentNode {
+export function parse(source: string): AstNodes["Document"] {
   const tokens = new TokenStream(source);
 
   function assertToken(expected: Token["type"], expectedValue?: string) {
@@ -189,7 +152,7 @@ export function parse(source: string): DocumentNode {
     return { items, initializerComments };
   }
 
-  function parseDescription(): StringValueNode | null {
+  function parseDescription(): AstNodes["StringValue"] | null {
     const { token, comments } = tokens.peek();
     if (
       token &&
@@ -207,7 +170,7 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseName(bad?: string): {
-    node: NameNode;
+    node: AstNodes["Name"];
     comments: CommentNode[];
   } {
     const {
@@ -218,7 +181,7 @@ export function parse(source: string): DocumentNode {
     return { node: { kind: "Name", value }, comments };
   }
 
-  function parseNamedType(): NamedTypeNode {
+  function parseNamedType(): AstNodes["NamedType"] {
     const name = parseName();
     return { kind: "NamedType", name: name.node, comments: name.comments };
   }
@@ -229,7 +192,7 @@ export function parse(source: string): DocumentNode {
       const type = parseType();
       const close = takePunctuator("]");
 
-      const listType: ListTypeNode = {
+      const listType: AstNodes["ListType"] = {
         kind: "ListType",
         type,
         comments: [...open.comments, ...type.comments, ...close.comments],
@@ -258,7 +221,7 @@ export function parse(source: string): DocumentNode {
     return name;
   }
 
-  function parseVariable(): VariableNode {
+  function parseVariable(): AstNodes["Variable"] {
     const { comments } = takePunctuator("$");
     const name = parseName();
     comments.push(...name.comments);
@@ -283,18 +246,13 @@ export function parse(source: string): DocumentNode {
     }
     if (isNextPunctuator("{")) {
       const { items, commentsOpeningBracket, commentsClosingBracket } =
-        takeWrappedList<ObjectFieldNode | ObjectFieldConstNode>(
-          false,
-          "{",
-          "}",
-          () => {
-            const name = parseName();
-            const colon = takePunctuator(":");
-            const value = isConst ? parseValue(true) : parseValue(false);
-            const comments = [...name.comments, ...colon.comments];
-            return { kind: "ObjectField", name: name.node, value, comments };
-          }
-        );
+        takeWrappedList<AstNodes["ObjectField"]>(false, "{", "}", () => {
+          const name = parseName();
+          const colon = takePunctuator(":");
+          const value = isConst ? parseValue(true) : parseValue(false);
+          const comments = [...name.comments, ...colon.comments];
+          return { kind: "ObjectField", name: name.node, value, comments };
+        });
       return {
         kind: "ObjectValue",
         fields: items,
@@ -327,10 +285,10 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseArgumentSet(isConst: false): ArgumentSetNode | null;
-  function parseArgumentSet(isConst: true): ArgumentSetNode | null;
-  function parseArgumentSet(isConst: boolean): ArgumentSetNode | null {
+  function parseArgumentSet(isConst: true): ArgumentSetConstNode | null;
+  function parseArgumentSet(isConst: boolean): AstNodes["ArgumentSet"] | null {
     const { items, commentsOpeningBracket, commentsClosingBracket } =
-      takeWrappedList<ArgumentNode | ArgumentConstNode>(true, "(", ")", () => {
+      takeWrappedList<AstNodes["Argument"]>(true, "(", ")", () => {
         const name = parseName();
         const colon = takePunctuator(":");
         const value = isConst ? parseValue(true) : parseValue(false);
@@ -352,7 +310,7 @@ export function parse(source: string): DocumentNode {
   function parseDirectives(
     isConst: boolean
   ): DirectiveNode[] | DirectiveConstNode[] {
-    return takeList<DirectiveNode | DirectiveConstNode>(
+    return takeList<AstNodes["Directive"]>(
       () => isNextPunctuator("@"),
       () => {
         const at = takePunctuator("@");
@@ -367,15 +325,15 @@ export function parse(source: string): DocumentNode {
   }
 
   function parseTypeCondition(isOptional: false): {
-    type: NamedTypeNode;
+    type: AstNodes["NamedType"];
     comments: CommentNode[];
   };
   function parseTypeCondition(
     isOptional: true
-  ): { type: NamedTypeNode; comments: CommentNode[] } | null;
+  ): { type: AstNodes["NamedType"]; comments: CommentNode[] } | null;
   function parseTypeCondition(
     isOptional: boolean
-  ): { type: NamedTypeNode; comments: CommentNode[] } | null {
+  ): { type: AstNodes["NamedType"]; comments: CommentNode[] } | null {
     let comments: CommentNode[] = [];
     try {
       comments = takeToken("NAME", "on").comments;
@@ -386,9 +344,11 @@ export function parse(source: string): DocumentNode {
     return { type: parseNamedType(), comments };
   }
 
-  function parseSelectionSet(isOptional: false): SelectionSetNode;
-  function parseSelectionSet(isOptional: true): SelectionSetNode | null;
-  function parseSelectionSet(isOptional: boolean): SelectionSetNode | null {
+  function parseSelectionSet(isOptional: false): AstNodes["SelectionSet"];
+  function parseSelectionSet(isOptional: true): AstNodes["SelectionSet"] | null;
+  function parseSelectionSet(
+    isOptional: boolean
+  ): AstNodes["SelectionSet"] | null {
     const { items, commentsOpeningBracket, commentsClosingBracket } =
       takeWrappedList<SelectionNode>(isOptional, "{", "}", () => {
         const spread = takeIfNextPunctuator("...");
@@ -421,7 +381,8 @@ export function parse(source: string): DocumentNode {
           };
         }
 
-        let alias: { node: NameNode; comments: CommentNode[] } | null = null;
+        let alias: { node: AstNodes["Name"]; comments: CommentNode[] } | null =
+          null;
         let name = parseName();
 
         const colon = takeIfNextPunctuator(":");
@@ -473,16 +434,14 @@ export function parse(source: string): DocumentNode {
     return { value, comments };
   }
 
-  function parseInterfaces(): NamedTypeSetNode | null {
-    const { items, initializerComments } = takeDelimitedList<NamedTypeNode>(
-      "&",
-      { type: "NAME", value: "implements" },
-      (comments) => {
-        const type = parseNamedType();
-        type.comments.unshift(...comments);
-        return type;
-      }
-    );
+  function parseInterfaces(): AstNodes["NamedTypeSet"] | null {
+    const { items, initializerComments } = takeDelimitedList<
+      AstNodes["NamedType"]
+    >("&", { type: "NAME", value: "implements" }, (comments) => {
+      const type = parseNamedType();
+      type.comments.unshift(...comments);
+      return type;
+    });
     return items.length === 0
       ? null
       : {
@@ -505,9 +464,9 @@ export function parse(source: string): DocumentNode {
   function parseInputValueDefinitionSet(
     startPunctuator: string,
     endPunctuator: string
-  ): InputValueDefinitionSetNode | null {
+  ): AstNodes["InputValueDefinitionSet"] | null {
     const { items, commentsOpeningBracket, commentsClosingBracket } =
-      takeWrappedList<InputValueDefinitionNode>(
+      takeWrappedList<AstNodes["InputValueDefinition"]>(
         true,
         startPunctuator,
         endPunctuator,
@@ -540,9 +499,9 @@ export function parse(source: string): DocumentNode {
         };
   }
 
-  function parseFieldDefinitionSet(): FieldDefinitionSetNode | null {
+  function parseFieldDefinitionSet(): AstNodes["FieldDefinitionSet"] | null {
     const { items, commentsOpeningBracket, commentsClosingBracket } =
-      takeWrappedList<FieldDefinitionNode>(true, "{", "}", () => {
+      takeWrappedList<AstNodes["FieldDefinition"]>(true, "{", "}", () => {
         const description = parseDescription();
         const name = parseName();
         const inputValueDefinitionSet = parseInputValueDefinitionSet("(", ")");
@@ -570,7 +529,7 @@ export function parse(source: string): DocumentNode {
         };
   }
 
-  function parseEnumValue(): EnumValueNode {
+  function parseEnumValue(): AstNodes["EnumValue"] {
     const name = parseName();
     if (
       name.node.value === "null" ||
@@ -587,31 +546,38 @@ export function parse(source: string): DocumentNode {
 
   function parseSchemaDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): SchemaDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["SchemaDefinition"];
   function parseSchemaDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): SchemaExtensionNode;
+  ): AstNodes["SchemaExtension"];
   function parseSchemaDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): SchemaDefinitionNode | SchemaExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["SchemaDefinition"] | AstNodes["SchemaExtension"] {
     const keyword = takeToken("NAME", "schema");
     const directives = parseDirectives(true);
     const { items, commentsOpeningBracket, commentsClosingBracket } =
-      takeWrappedList<OperationTypeDefinitionNode>(true, "{", "}", () => {
-        const operation = parseOperationType();
-        const colon = takePunctuator(":");
-        const type = parseNamedType();
-        return {
-          kind: "OperationTypeDefinition",
-          operation: operation.value,
-          type,
-          comments: [...operation.comments, ...colon.comments],
-        };
-      });
-    const operationTypeDefinitionSet: OperationTypeDefinitionSetNode | null =
+      takeWrappedList<AstNodes["OperationTypeDefinition"]>(
+        true,
+        "{",
+        "}",
+        () => {
+          const operation = parseOperationType();
+          const colon = takePunctuator(":");
+          const type = parseNamedType();
+          return {
+            kind: "OperationTypeDefinition",
+            operation: operation.value,
+            type,
+            comments: [...operation.comments, ...colon.comments],
+          };
+        }
+      );
+    const operationTypeDefinitionSet:
+      | AstNodes["OperationTypeDefinitionSet"]
+      | null =
       items.length === 0
         ? null
         : {
@@ -640,16 +606,16 @@ export function parse(source: string): DocumentNode {
 
   function parseScalarTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): ScalarTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["ScalarTypeDefinition"];
   function parseScalarTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): ScalarTypeExtensionNode;
+  ): AstNodes["ScalarTypeExtension"];
   function parseScalarTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): ScalarTypeDefinitionNode | ScalarTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["ScalarTypeDefinition"] | AstNodes["ScalarTypeExtension"] {
     const keyword = takeToken("NAME", "scalar");
     const name = parseName();
     const directives = parseDirectives(true);
@@ -677,16 +643,16 @@ export function parse(source: string): DocumentNode {
 
   function parseObjectTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): ObjectTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["ObjectTypeDefinition"];
   function parseObjectTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): ObjectTypeExtensionNode;
+  ): AstNodes["ObjectTypeExtension"];
   function parseObjectTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["ObjectTypeDefinition"] | AstNodes["ObjectTypeExtension"] {
     const keyword = takeToken("NAME", "type");
     const name = parseName();
     const interfaces = parseInterfaces();
@@ -725,16 +691,16 @@ export function parse(source: string): DocumentNode {
 
   function parseInterfaceTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): InterfaceTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["InterfaceTypeDefinition"];
   function parseInterfaceTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): InterfaceTypeExtensionNode;
+  ): AstNodes["InterfaceTypeExtension"];
   function parseInterfaceTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["InterfaceTypeDefinition"] | AstNodes["InterfaceTypeExtension"] {
     const keyword = takeToken("NAME", "interface");
     const name = parseName();
     const interfaces = parseInterfaces();
@@ -773,29 +739,27 @@ export function parse(source: string): DocumentNode {
 
   function parseUnionTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): UnionTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["UnionTypeDefinition"];
   function parseUnionTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): UnionTypeExtensionNode;
+  ): AstNodes["UnionTypeExtension"];
   function parseUnionTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): UnionTypeDefinitionNode | UnionTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["UnionTypeDefinition"] | AstNodes["UnionTypeExtension"] {
     const keyword = takeToken("NAME", "union");
     const name = parseName();
     const directives = parseDirectives(true);
-    const { items, initializerComments } = takeDelimitedList<NamedTypeNode>(
-      "|",
-      { type: "PUNCTUATOR", value: "=" },
-      (comments) => {
-        const type = parseNamedType();
-        type.comments.unshift(...comments);
-        return type;
-      }
-    );
-    const types: NamedTypeSetNode | null =
+    const { items, initializerComments } = takeDelimitedList<
+      AstNodes["NamedType"]
+    >("|", { type: "PUNCTUATOR", value: "=" }, (comments) => {
+      const type = parseNamedType();
+      type.comments.unshift(...comments);
+      return type;
+    });
+    const types: AstNodes["NamedTypeSet"] | null =
       items.length === 0
         ? null
         : { kind: "NamedTypeSet", types: items, comments: initializerComments };
@@ -825,20 +789,20 @@ export function parse(source: string): DocumentNode {
 
   function parseEnumTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): EnumTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["EnumTypeDefinition"];
   function parseEnumTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): EnumTypeExtensionNode;
+  ): AstNodes["EnumTypeExtension"];
   function parseEnumTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): EnumTypeDefinitionNode | EnumTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ): AstNodes["EnumTypeDefinition"] | AstNodes["EnumTypeExtension"] {
     const keyword = takeToken("NAME", "enum");
     const name = parseName();
     const directives = parseDirectives(true);
-    const values = takeWrappedList<EnumValueDefinitionNode>(
+    const values = takeWrappedList<AstNodes["EnumValueDefinition"]>(
       true,
       "{",
       "}",
@@ -857,7 +821,7 @@ export function parse(source: string): DocumentNode {
         };
       }
     );
-    const valueDefinitionSet: EnumValueDefinitionSetNode | null =
+    const valueDefinitionSet: AstNodes["EnumValueDefinitionSet"] | null =
       values.items.length === 0
         ? null
         : {
@@ -893,16 +857,18 @@ export function parse(source: string): DocumentNode {
 
   function parseInputObjectTypeDefinition(
     extendComments: null,
-    description: StringValueNode | null
-  ): InputObjectTypeDefinitionNode;
+    description: AstNodes["StringValue"] | null
+  ): AstNodes["InputObjectTypeDefinition"];
   function parseInputObjectTypeDefinition(
     extendComments: CommentNode[],
     description?: undefined
-  ): InputObjectTypeExtensionNode;
+  ): AstNodes["InputObjectTypeExtension"];
   function parseInputObjectTypeDefinition(
     extendComments: CommentNode[] | null,
-    description: StringValueNode | null = null
-  ): InputObjectTypeDefinitionNode | InputObjectTypeExtensionNode {
+    description: AstNodes["StringValue"] | null = null
+  ):
+    | AstNodes["InputObjectTypeDefinition"]
+    | AstNodes["InputObjectTypeExtension"] {
     const keyword = takeToken("NAME", "input");
     const name = parseName();
     const directives = parseDirectives(true);
@@ -984,7 +950,7 @@ export function parse(source: string): DocumentNode {
           throw new Error(`Unexpected token "${description}"`);
         const operation = parseOperationType();
         const name = isNext("NAME") ? parseName() : null;
-        const definitions = takeWrappedList<VariableDefinitionNode>(
+        const definitions = takeWrappedList<AstNodes["VariableDefinition"]>(
           true,
           "(",
           ")",
