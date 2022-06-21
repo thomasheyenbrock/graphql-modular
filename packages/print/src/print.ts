@@ -85,7 +85,7 @@ export function print(
     Argument: {
       leave(node) {
         return printNodeWithComments(
-          node.name + ":" + node.value,
+          node.name + ":" + SPACE + node.value,
           node.comments
         );
       },

@@ -1481,7 +1481,7 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"name:value"'
+        '"name: value"'
       );
     });
     it("prints with comments", () => {
@@ -1489,7 +1489,7 @@ describe("pretty printing for ast nodes", () => {
         .toMatchInlineSnapshot(`
         "
         # block comment
-        name:value # inline comment
+        name: value # inline comment
         "
       `);
     });
@@ -1589,11 +1589,11 @@ describe("pretty printing for ast nodes", () => {
       kind: "Directive",
       comments,
       name: "myDirective" as any,
-      argumentSet: "(name:value)" as any,
+      argumentSet: "(name: value)" as any,
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"@myDirective(name:value)"'
+        '"@myDirective(name: value)"'
       );
     });
     it("prints with comments", () => {
@@ -1602,7 +1602,7 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment
         @myDirective # inline comment
-        (name:value)"
+        (name: value)"
       `);
     });
   });
@@ -1826,13 +1826,13 @@ describe("pretty printing for ast nodes", () => {
       comments,
       alias: "fieldAlias" as any,
       name: "fieldName" as any,
-      argumentSet: "(argName:42)" as any,
+      argumentSet: "(argName: 42)" as any,
       directives: ["@myDirective", "@myOtherDirective"] as any,
       selectionSet: "{subField}" as any,
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"fieldAlias:fieldName(argName:42)@myDirective@myOtherDirective{subField}"'
+        '"fieldAlias:fieldName(argName: 42)@myDirective@myOtherDirective{subField}"'
       );
     });
     it("prints with comments", () => {
@@ -1841,7 +1841,7 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment
         fieldAlias:fieldName # inline comment
-        (argName:42)@myDirective@myOtherDirective{subField}"
+        (argName: 42)@myDirective@myOtherDirective{subField}"
       `);
     });
   });
