@@ -4,6 +4,7 @@ import type {
   DirectiveConstNode,
   DirectiveNode,
   NamedTypeNode,
+  StringValueNode,
   ValueConstNode,
 } from "@graphql-modular/language";
 import { traverse } from "@graphql-modular/traverse";
@@ -65,8 +66,8 @@ export function print(
     );
   }
 
-  function printOptional<T>(opt: T | null, leading: boolean) {
-    return opt ? (leading ? " " : "") + opt + (leading ? "" : " ") : "";
+  function printDescription(opt: StringValueNode | null) {
+    return opt ? opt + " " : "";
   }
 
   function printDirectives(directives: DirectiveNode[] | DirectiveConstNode[]) {
@@ -122,7 +123,7 @@ export function print(
     DirectiveDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments(
             "directive" + SPACE + "@" + node.name,
             node.comments
@@ -150,7 +151,7 @@ export function print(
     EnumTypeDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("enum " + node.name, node.comments) +
           printDirectives(node.directives) +
           (node.valueDefinitionSet || "")
@@ -174,7 +175,7 @@ export function print(
     EnumValueDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("" + node.name, node.comments) +
           printDirectives(node.directives)
         );
@@ -212,7 +213,7 @@ export function print(
     FieldDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("" + node.name, node.comments) +
           (node.inputValueDefinitionSet || "") +
           ":" +
@@ -280,7 +281,7 @@ export function print(
     InputObjectTypeDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("input " + node.name, node.comments) +
           printDirectives(node.directives) +
           (node.inputValueDefinitionSet || "")
@@ -299,7 +300,7 @@ export function print(
     InputValueDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments(node.name + ":", node.comments) +
           node.type +
           printDefaultValue(node.defaultValue) +
@@ -332,7 +333,7 @@ export function print(
     InterfaceTypeDefinition: {
       leave(node) {
         let printed =
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("interface " + node.name, node.comments);
         if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
@@ -429,7 +430,7 @@ export function print(
     ObjectTypeDefinition: {
       leave(node) {
         let printed =
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("type " + node.name, node.comments);
         if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
@@ -476,7 +477,7 @@ export function print(
           return node.selectionSet;
         return (
           printNodeWithComments(
-            node.operation + printOptional(node.name, true),
+            node.operation + (node.name ? " " + node.name : ""),
             node.comments
           ) +
           (node.variableDefinitionSet || "") +
@@ -506,7 +507,7 @@ export function print(
     ScalarTypeDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("scalar " + node.name, node.comments) +
           printDirectives(node.directives)
         );
@@ -523,7 +524,7 @@ export function print(
     SchemaDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("schema", node.comments) +
           printDirectives(node.directives) +
           (node.operationTypeDefinitionSet || "")
@@ -568,7 +569,7 @@ export function print(
     UnionTypeDefinition: {
       leave(node) {
         return (
-          printOptional(node.description, false) +
+          printDescription(node.description) +
           printNodeWithComments("union " + node.name, node.comments) +
           printDirectives(node.directives) +
           (node.types || "")
