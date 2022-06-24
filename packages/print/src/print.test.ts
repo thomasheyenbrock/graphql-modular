@@ -1500,12 +1500,15 @@ describe("pretty printing for ast nodes", () => {
       kind: "ArgumentSet",
       commentsOpeningBracket,
       commentsClosingBracket,
-      args: ["name1:value1", "name2:value2"] as any,
+      args: ["  name1: value1", "  name2: value2"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"(name1:value1,name2:value2)"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+      "(
+        name1: value1
+        name2: value2
+      )"
+    `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1513,7 +1516,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         ( # inline comment open
-        name1:value1,name2:value2
+          name1: value1
+          name2: value2
         # block comment close
         ) # inline comment close
         "
@@ -1613,14 +1617,15 @@ describe("pretty printing for ast nodes", () => {
       comments,
       description: '"my description"' as any,
       name: "myDirective" as any,
-      inputValueDefinitionSet: "(name:Int=42)" as any,
+      inputValueDefinitionSet: "(name: Int = 42)" as any,
       repeatable: true,
       locationSet: "on QUERY|MUTATION" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"directive @myDirective(name:Int=42) repeatable on QUERY|MUTATION"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        directive @myDirective(name: Int = 42) repeatable on QUERY|MUTATION"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1628,7 +1633,7 @@ describe("pretty printing for ast nodes", () => {
         "\\"my description\\"
         # block comment
         directive @myDirective # inline comment
-        (name:Int=42) repeatable on QUERY|MUTATION"
+        (name: Int = 42) repeatable on QUERY|MUTATION"
       `);
     });
   });
@@ -1689,9 +1694,10 @@ describe("pretty printing for ast nodes", () => {
       valueDefinitionSet: "{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+      "\\"my description\\"
+      enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
+    `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1759,9 +1765,10 @@ describe("pretty printing for ast nodes", () => {
       directives: ["@myDirective", "@myOtherDirective"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"MY_ENUM_VALUE@myDirective@myOtherDirective"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+      "\\"my description\\"
+      MY_ENUM_VALUE@myDirective@myOtherDirective"
+    `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1779,11 +1786,14 @@ describe("pretty printing for ast nodes", () => {
       kind: "EnumValueDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
-      definitions: ["MY_ENUM_VALUE", "MY_OTHER_ENUM_VALUE"] as any,
+      definitions: ["  MY_ENUM_VALUE", "  MY_OTHER_ENUM_VALUE"] as any,
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
-        "{MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE}"
+        "{
+          MY_ENUM_VALUE
+          MY_OTHER_ENUM_VALUE
+        }"
       `);
     });
     it("prints with comments", () => {
@@ -1792,7 +1802,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        MY_ENUM_VALUE,MY_OTHER_ENUM_VALUE
+          MY_ENUM_VALUE
+          MY_OTHER_ENUM_VALUE
         # block comment close
         } # inline comment close
         "
@@ -1857,9 +1868,10 @@ describe("pretty printing for ast nodes", () => {
       directives: ["@myDirective", "@myOtherDirective"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1878,14 +1890,17 @@ describe("pretty printing for ast nodes", () => {
       commentsOpeningBracket,
       commentsClosingBracket,
       definitions: [
-        "field1:MyOutputType1",
-        "field2(argName:MyInputType=42):MyOutputType2",
+        "  field1: MyOutputType1",
+        "  field2(argName: MyInputType = 42): MyOutputType2",
       ] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"{field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "{
+          field1: MyOutputType1
+          field2(argName: MyInputType = 42): MyOutputType2
+        }"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -1893,7 +1908,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        field1:MyOutputType1,field2(argName:MyInputType=42):MyOutputType2
+          field1: MyOutputType1
+          field2(argName: MyInputType = 42): MyOutputType2
         # block comment close
         } # inline comment close
         "
@@ -2043,9 +2059,10 @@ describe("pretty printing for ast nodes", () => {
       inputValueDefinitionSet: "{field:MyInputType}" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2093,9 +2110,10 @@ describe("pretty printing for ast nodes", () => {
       directives: ["@myDirective", "@myOtherDirective"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"inputField:MyInputType=42@myDirective@myOtherDirective"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        inputField:MyInputType=42@myDirective@myOtherDirective"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2114,13 +2132,16 @@ describe("pretty printing for ast nodes", () => {
       commentsOpeningBracket,
       commentsClosingBracket,
       definitions: [
-        "inputField1:MyInputType1",
-        "inputField2:MyInputType2=42",
+        "  inputField1: MyInputType1",
+        "  inputField2: MyInputType2 = 42",
       ] as any,
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
-        "{inputField1:MyInputType1,inputField2:MyInputType2=42}"
+        "{
+          inputField1: MyInputType1
+          inputField2: MyInputType2 = 42
+        }"
       `);
     });
     it("prints with comments", () => {
@@ -2129,7 +2150,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        inputField1:MyInputType1,inputField2:MyInputType2=42
+          inputField1: MyInputType1
+          inputField2: MyInputType2 = 42
         # block comment close
         } # inline comment close
         "
@@ -2148,9 +2170,10 @@ describe("pretty printing for ast nodes", () => {
       fieldDefinitionSet: "{field:MyOutputType}" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2236,7 +2259,12 @@ describe("pretty printing for ast nodes", () => {
       values: ["42", "43"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot('"[42,43]"');
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "[
+          42
+          43
+        ]"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2244,7 +2272,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         [ # inline comment open
-        42,43
+          42
+          43
         # block comment close
         ] # inline comment close
         "
@@ -2526,12 +2555,13 @@ describe("pretty printing for ast nodes", () => {
       name: "MyObjectType" as any,
       interfaces: "implements MyInterfaceType1 & MyInterfaceType2" as any,
       directives: ["@myDirective", "@myOtherDirective"] as any,
-      fieldDefinitionSet: "{field:MyOutputType}" as any,
+      fieldDefinitionSet: "{field:MyOutputType}" as any, // TODO: line breaks for lists
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2574,12 +2604,14 @@ describe("pretty printing for ast nodes", () => {
       kind: "ObjectValue",
       commentsOpeningBracket,
       commentsClosingBracket,
-      fields: ["fieldName1:42", 'fieldName2:"some string"'] as any,
+      fields: ["fieldName1: 42", 'fieldName2: "some string"'] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"{fieldName1:42,fieldName2:\\"some string\\"}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+      "{
+        fieldName1: 42
+        fieldName2: \\"some string\\"
+      }"`);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2587,7 +2619,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        fieldName1:42,fieldName2:\\"some string\\"
+          fieldName1: 42
+          fieldName2: \\"some string\\"
         # block comment close
         } # inline comment close
         "
@@ -2672,12 +2705,18 @@ describe("pretty printing for ast nodes", () => {
       kind: "OperationTypeDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
-      definitions: ["query:MyOutputType1", "mutation:MyOutputType2"] as any,
+      definitions: [
+        "  query: MyOutputType1",
+        "  mutation: MyOutputType2",
+      ] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"{query:MyOutputType1,mutation:MyOutputType2}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "{
+          query: MyOutputType1
+          mutation: MyOutputType2
+        }"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2685,7 +2724,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        query:MyOutputType1,mutation:MyOutputType2
+          query: MyOutputType1
+          mutation: MyOutputType2
         # block comment close
         } # inline comment close
         "
@@ -2702,9 +2742,10 @@ describe("pretty printing for ast nodes", () => {
       directives: ["@myDirective", "@myOtherDirective"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"scalar MyScalarType@myDirective@myOtherDirective"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        scalar MyScalarType@myDirective@myOtherDirective"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2749,9 +2790,10 @@ describe("pretty printing for ast nodes", () => {
       operationTypeDefinitionSet: "{query:MyOutputType}" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"schema@myDirective@myOtherDirective{query:MyOutputType}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        schema@myDirective@myOtherDirective{query:MyOutputType}"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2792,12 +2834,15 @@ describe("pretty printing for ast nodes", () => {
       kind: "SelectionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
-      selections: ["field1", "field2(arg:42)"] as any,
+      selections: ["  field1", "  field2(arg: 42)"] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"{field1,field2(arg:42)}"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "{
+          field1
+          field2(arg: 42)
+        }"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2805,7 +2850,8 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         { # inline comment open
-        field1,field2(arg:42)
+          field1
+          field2(arg: 42)
         # block comment close
         } # inline comment close
         "
@@ -2892,9 +2938,10 @@ describe("pretty printing for ast nodes", () => {
       types: "=MyType1|MyType2" as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\"union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "\\"my description\\"
+        union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2983,12 +3030,18 @@ describe("pretty printing for ast nodes", () => {
       kind: "VariableDefinitionSet",
       commentsOpeningBracket,
       commentsClosingBracket,
-      definitions: ["$myVariable:MyType", "$myVariable:MyOtherType"] as any,
+      definitions: [
+        "  $myVariable: MyType",
+        "  $myVariable: MyOtherType",
+      ] as any,
     };
     it("prints without comments", () => {
-      expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"($myVariable:MyType,$myVariable:MyOtherType)"'
-      );
+      expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+        "(
+          $myVariable: MyType
+          $myVariable: MyOtherType
+        )"
+      `);
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
@@ -2996,11 +3049,99 @@ describe("pretty printing for ast nodes", () => {
         "
         # block comment open
         ( # inline comment open
-        $myVariable:MyType,$myVariable:MyOtherType
+          $myVariable: MyType
+          $myVariable: MyOtherType
         # block comment close
         ) # inline comment close
         "
       `);
     });
+  });
+});
+
+describe.skip("max line length", () => {
+  function generateAst(args: AstNodes["Argument"][]): AstNodes["Document"] {
+    return {
+      kind: "Document",
+      comments: [],
+      definitions: [
+        {
+          kind: "OperationDefinition",
+          comments: [],
+          operation: "query",
+          name: { kind: "Name", value: "MyQuery" },
+          variableDefinitionSet: null,
+          directives: [],
+          selectionSet: {
+            kind: "SelectionSet",
+            commentsOpeningBracket: [],
+            commentsClosingBracket: [],
+            selections: [
+              {
+                kind: "Field",
+                comments: [],
+                alias: null,
+                name: { kind: "Name", value: "exampleField" },
+                argumentSet: {
+                  kind: "ArgumentSet",
+                  commentsOpeningBracket: [],
+                  commentsClosingBracket: [],
+                  args,
+                },
+                directives: [],
+                selectionSet: null,
+              },
+            ],
+          },
+        },
+      ],
+    };
+  }
+
+  function generateArg(name: string, value: string): AstNodes["Argument"] {
+    return {
+      kind: "Argument",
+      comments: [],
+      name: { kind: "Name", value: "argName" },
+      value: {
+        kind: "StringValue",
+        comments: [],
+        block: false,
+        value: "arg value",
+      },
+    };
+  }
+
+  it("prints a short lists inline", () => {
+    const ast = generateAst([
+      generateArg("argName1", "arg value 1"),
+      generateArg("argName2", "arg value 2"),
+    ]);
+    expect(print(ast, { pretty: true })).toMatchInlineSnapshot(`
+      "query MyQuery{
+        exampleField(argName: \\"arg value\\", argName: \\"arg value\\")
+      }
+      "
+    `);
+  });
+
+  it("prints a long lists inline", () => {
+    const ast = generateAst([
+      generateArg("argName1", "arg value 1"),
+      generateArg("argName2", "arg value 2"),
+      generateArg("argName3", "arg value 3"),
+      generateArg("argName4", "arg value 4"),
+    ]);
+    expect(print(ast, { pretty: true })).toMatchInlineSnapshot(`
+      "query MyQuery{
+        exampleField(
+          argName: \\"arg value\\"
+          argName: \\"arg value\\"
+          argName: \\"arg value\\"
+          argName: \\"arg value\\"
+        )
+      }
+      "
+    `);
   });
 });

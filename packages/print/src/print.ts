@@ -12,19 +12,36 @@ import { traverse } from "@graphql-modular/traverse";
 export function print(
   ast: AstNode | AstNode[],
   {
+    indentationStep = "  ",
+    // maxLineLength = 80,
     preserveComments = false,
     pretty = false,
-  }: { preserveComments?: boolean; pretty?: boolean } = {}
+  }: {
+    indentationStep?: string;
+    maxLineLength?: number;
+    preserveComments?: boolean;
+    pretty?: boolean;
+  } = {}
 ): string {
   const SPACE = pretty ? " " : "";
   const LINE_BREAK = pretty ? "\n" : "";
+
+  let lead = "";
+
+  function indent() {
+    if (pretty) lead += indentationStep;
+  }
+
+  function dedent() {
+    if (pretty) lead = lead.substring(indentationStep.length);
+  }
 
   function printComment(comment: CommentNode) {
     return preserveComments
       ? (comment.kind === "BlockComment" ? LINE_BREAK : "") +
           comment.value
             .split("\n")
-            .map((line) => "#" + SPACE + line)
+            .map((line) => lead + "#" + SPACE + line)
             .join("\n") +
           "\n"
       : "";
@@ -46,7 +63,13 @@ export function print(
   ) {
     const { before, after } = printComments(comments);
     return (
-      (description || "") + before + printed + (after ? SPACE : "") + after
+      (description ? lead + description : "") +
+      (description && !before ? LINE_BREAK : "") +
+      before +
+      (before ? lead : "") +
+      printed +
+      (after ? SPACE : "") +
+      after
     );
   }
 
@@ -57,15 +80,22 @@ export function print(
     commentsOpeningBracket: CommentNode[],
     commentsClosingBracket: CommentNode[]
   ) {
+    dedent();
+
     const openingBracket = printComments(commentsOpeningBracket);
     const closingBracket = printComments(commentsClosingBracket);
+
     return (
       openingBracket.before +
+      (openingBracket.before ? lead : "") +
       openingBracketPunctuator +
       (openingBracket.after ? SPACE : "") +
       openingBracket.after +
-      list.join(",") +
+      (openingBracket.after ? "" : LINE_BREAK) +
+      list.join(pretty ? LINE_BREAK : ",") +
       closingBracket.before +
+      (closingBracket.before ? "" : LINE_BREAK) +
+      lead +
       closingBracketPunctuator +
       (closingBracket.after ? SPACE : "") +
       closingBracket.after
@@ -87,13 +117,19 @@ export function print(
   return traverse(ast, {
     Argument: {
       leave(node) {
-        return printNodeWithComments(
-          node.name + ":" + SPACE + node.value,
-          node.comments
+        return (
+          lead +
+          printNodeWithComments(
+            node.name + ":" + SPACE + node.value,
+            node.comments
+          )
         );
       },
     },
     ArgumentSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.args,
@@ -181,7 +217,7 @@ export function print(
       leave(node) {
         return (
           printNodeWithComments(
-            "" + node.name,
+            lead + node.name,
             node.comments,
             node.description
           ) + printDirectives(node.directives)
@@ -189,6 +225,9 @@ export function print(
       },
     },
     EnumValueDefinitionSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.definitions,
@@ -208,7 +247,7 @@ export function print(
       leave(node) {
         return (
           printNodeWithComments(
-            (node.alias ? node.alias + ":" : "") + node.name,
+            lead + (node.alias ? node.alias + ":" : "") + node.name,
             node.comments
           ) +
           (node.argumentSet || "") +
@@ -221,7 +260,7 @@ export function print(
       leave(node) {
         return (
           printNodeWithComments(
-            "" + node.name,
+            lead + node.name,
             node.comments,
             node.description
           ) +
@@ -233,6 +272,9 @@ export function print(
       },
     },
     FieldDefinitionSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.definitions,
@@ -266,7 +308,7 @@ export function print(
     FragmentSpread: {
       leave(node) {
         return (
-          printNodeWithComments("..." + node.name, node.comments) +
+          printNodeWithComments(lead + "..." + node.name, node.comments) +
           printDirectives(node.directives)
         );
       },
@@ -280,7 +322,7 @@ export function print(
       leave(node) {
         return (
           printNodeWithComments(
-            "..." + printTypeCondition(node.typeCondition),
+            lead + "..." + printTypeCondition(node.typeCondition),
             node.comments
           ) +
           printDirectives(node.directives) +
@@ -314,7 +356,7 @@ export function print(
       leave(node) {
         return (
           printNodeWithComments(
-            node.name + ":",
+            lead + node.name + ":",
             node.comments,
             node.description
           ) +
@@ -325,6 +367,9 @@ export function print(
       },
     },
     InputValueDefinitionSet: {
+      enter() {
+        indent();
+      },
       leave(node, _key, parent) {
         const [startPunctuator, endPunctuator] =
           isSingleNode(parent) &&
@@ -383,9 +428,12 @@ export function print(
       },
     },
     ListValue: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
-          node.values,
+          node.values.map((value) => lead + value),
           "[",
           "]",
           node.commentsOpeningBracket,
@@ -477,9 +525,12 @@ export function print(
       },
     },
     ObjectValue: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
-          node.fields,
+          node.fields.map((field) => lead + field),
           "{",
           "}",
           node.commentsOpeningBracket,
@@ -509,11 +560,16 @@ export function print(
     OperationTypeDefinition: {
       leave(node) {
         return (
-          printNodeWithComments(node.operation + ":", node.comments) + node.type
+          lead +
+          printNodeWithComments(node.operation + ":", node.comments) +
+          node.type
         );
       },
     },
     OperationTypeDefinitionSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.definitions,
@@ -562,6 +618,9 @@ export function print(
       },
     },
     SelectionSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.selections,
@@ -617,7 +676,7 @@ export function print(
     VariableDefinition: {
       leave(node) {
         return (
-          printNodeWithComments(node.variable + ":", node.comments) +
+          printNodeWithComments(lead + node.variable + ":", node.comments) +
           node.type +
           printDefaultValue(node.defaultValue) +
           printDirectives(node.directives)
@@ -625,6 +684,9 @@ export function print(
       },
     },
     VariableDefinitionSet: {
+      enter() {
+        indent();
+      },
       leave(node) {
         return printWrappedListWithComments(
           node.definitions,
