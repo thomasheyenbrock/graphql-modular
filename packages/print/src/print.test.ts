@@ -208,7 +208,7 @@ describe("standard printing for ast nodes", () => {
     const node: AstNodes["DirectiveDefinition"] = {
       kind: "DirectiveDefinition",
       comments,
-      description: '"some description"' as any,
+      description: '"my description"' as any,
       name: "myDirective" as any,
       inputValueDefinitionSet: "(name:Int=42)" as any,
       repeatable: true,
@@ -216,12 +216,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"some description\\" directive@myDirective(name:Int=42) repeatable on QUERY|MUTATION"'
+        '"\\"my description\\"directive@myDirective(name:Int=42) repeatable on QUERY|MUTATION"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"some description\\" #block comment
+        "\\"my description\\"#block comment
         directive@myDirective#inline comment
         (name:Int=42) repeatable on QUERY|MUTATION"
       `);
@@ -279,12 +279,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"'
+        '"\\"my description\\"enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         enum MyEnumType#inline comment
         @myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
       `);
@@ -341,12 +341,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" MY_ENUM_VALUE@myDirective@myOtherDirective"'
+        '"\\"my description\\"MY_ENUM_VALUE@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         MY_ENUM_VALUE#inline comment
         @myDirective@myOtherDirective"
       `);
@@ -430,12 +430,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"'
+        '"\\"my description\\"fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         fieldName#inline comment
         (argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"
       `);
@@ -602,12 +602,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"'
+        '"\\"my description\\"input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         input MyInputObjectType#inline comment
         @myDirective@myOtherDirective{field:MyInputType}"
       `);
@@ -648,12 +648,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" inputField:MyInputType=42@myDirective@myOtherDirective"'
+        '"\\"my description\\"inputField:MyInputType=42@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         inputField:#inline comment
         MyInputType=42@myDirective@myOtherDirective"
       `);
@@ -698,12 +698,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
+        '"\\"my description\\"interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         interface MyInterfaceType#inline comment
         implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
       `);
@@ -1048,12 +1048,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
+        '"\\"my description\\"type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         type MyObjectType#inline comment
         implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
       `);
@@ -1203,12 +1203,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" scalar MyScalarType@myDirective@myOtherDirective"'
+        '"\\"my description\\"scalar MyScalarType@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         scalar MyScalarType#inline comment
         @myDirective@myOtherDirective"
       `);
@@ -1246,12 +1246,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" schema@myDirective@myOtherDirective{query:MyOutputType}"'
+        '"\\"my description\\"schema@myDirective@myOtherDirective{query:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         schema#inline comment
         @myDirective@myOtherDirective{query:MyOutputType}"
       `);
@@ -1372,12 +1372,12 @@ describe("standard printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node)).toMatchInlineSnapshot(
-        '"\\"my description\\" union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"'
+        '"\\"my description\\"union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
-        "\\"my description\\" #block comment
+        "\\"my description\\"#block comment
         union MyUnionType#inline comment
         @myDirective@myOtherDirective=MyType1|MyType2"
       `);
@@ -1611,7 +1611,7 @@ describe("pretty printing for ast nodes", () => {
     const node: AstNodes["DirectiveDefinition"] = {
       kind: "DirectiveDefinition",
       comments,
-      description: '"some description"' as any,
+      description: '"my description"' as any,
       name: "myDirective" as any,
       inputValueDefinitionSet: "(name:Int=42)" as any,
       repeatable: true,
@@ -1619,13 +1619,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"some description\\" directive @myDirective(name:Int=42) repeatable on QUERY|MUTATION"'
+        '"\\"my description\\"directive @myDirective(name:Int=42) repeatable on QUERY|MUTATION"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"some description\\" 
+        "\\"my description\\"
         # block comment
         directive @myDirective # inline comment
         (name:Int=42) repeatable on QUERY|MUTATION"
@@ -1690,13 +1690,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"'
+        '"\\"my description\\"enum MyEnumType@myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         enum MyEnumType # inline comment
         @myDirective@myOtherDirective{MY_ENUM_VALUE MY_OTHER_ENUM_VALUE}"
@@ -1760,13 +1760,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" MY_ENUM_VALUE@myDirective@myOtherDirective"'
+        '"\\"my description\\"MY_ENUM_VALUE@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         MY_ENUM_VALUE # inline comment
         @myDirective@myOtherDirective"
@@ -1858,13 +1858,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"'
+        '"\\"my description\\"fieldName(argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         fieldName # inline comment
         (argName:MyInputType=42):MyOutputType@myDirective@myOtherDirective"
@@ -2044,13 +2044,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"'
+        '"\\"my description\\"input MyInputObjectType@myDirective@myOtherDirective{field:MyInputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         input MyInputObjectType # inline comment
         @myDirective@myOtherDirective{field:MyInputType}"
@@ -2094,13 +2094,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" inputField:MyInputType=42@myDirective@myOtherDirective"'
+        '"\\"my description\\"inputField:MyInputType=42@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         inputField: # inline comment
         MyInputType=42@myDirective@myOtherDirective"
@@ -2149,13 +2149,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
+        '"\\"my description\\"interface MyInterfaceType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         interface MyInterfaceType # inline comment
         implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
@@ -2530,13 +2530,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
+        '"\\"my description\\"type MyObjectType implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         type MyObjectType # inline comment
         implements MyInterfaceType1 & MyInterfaceType2@myDirective@myOtherDirective{field:MyOutputType}"
@@ -2703,13 +2703,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" scalar MyScalarType@myDirective@myOtherDirective"'
+        '"\\"my description\\"scalar MyScalarType@myDirective@myOtherDirective"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         scalar MyScalarType # inline comment
         @myDirective@myOtherDirective"
@@ -2750,13 +2750,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" schema@myDirective@myOtherDirective{query:MyOutputType}"'
+        '"\\"my description\\"schema@myDirective@myOtherDirective{query:MyOutputType}"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         schema # inline comment
         @myDirective@myOtherDirective{query:MyOutputType}"
@@ -2893,13 +2893,13 @@ describe("pretty printing for ast nodes", () => {
     };
     it("prints without comments", () => {
       expect(print(node, { pretty: true })).toMatchInlineSnapshot(
-        '"\\"my description\\" union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"'
+        '"\\"my description\\"union MyUnionType@myDirective@myOtherDirective=MyType1|MyType2"'
       );
     });
     it("prints with comments", () => {
       expect(print(node, { preserveComments: true, pretty: true }))
         .toMatchInlineSnapshot(`
-        "\\"my description\\" 
+        "\\"my description\\"
         # block comment
         union MyUnionType # inline comment
         @myDirective@myOtherDirective=MyType1|MyType2"

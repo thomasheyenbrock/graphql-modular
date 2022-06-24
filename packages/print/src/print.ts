@@ -39,9 +39,15 @@ export function print(
     return printedComments;
   }
 
-  function printNodeWithComments(printed: string, comments: CommentNode[]) {
+  function printNodeWithComments(
+    printed: string,
+    comments: CommentNode[],
+    description?: StringValueNode | null
+  ) {
     const { before, after } = printComments(comments);
-    return before + printed + (after ? SPACE : "") + after;
+    return (
+      (description || "") + before + printed + (after ? SPACE : "") + after
+    );
   }
 
   function printWrappedListWithComments(
@@ -64,10 +70,6 @@ export function print(
       (closingBracket.after ? SPACE : "") +
       closingBracket.after
     );
-  }
-
-  function printDescription(opt: StringValueNode | null) {
-    return opt ? opt + " " : "";
   }
 
   function printDirectives(directives: DirectiveNode[] | DirectiveConstNode[]) {
@@ -123,10 +125,10 @@ export function print(
     DirectiveDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
           printNodeWithComments(
             "directive" + SPACE + "@" + node.name,
-            node.comments
+            node.comments,
+            node.description
           ) +
           (node.inputValueDefinitionSet || "") +
           (node.repeatable ? " repeatable " : " ") +
@@ -151,8 +153,11 @@ export function print(
     EnumTypeDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("enum " + node.name, node.comments) +
+          printNodeWithComments(
+            "enum " + node.name,
+            node.comments,
+            node.description
+          ) +
           printDirectives(node.directives) +
           (node.valueDefinitionSet || "")
         );
@@ -175,9 +180,11 @@ export function print(
     EnumValueDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("" + node.name, node.comments) +
-          printDirectives(node.directives)
+          printNodeWithComments(
+            "" + node.name,
+            node.comments,
+            node.description
+          ) + printDirectives(node.directives)
         );
       },
     },
@@ -213,8 +220,11 @@ export function print(
     FieldDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("" + node.name, node.comments) +
+          printNodeWithComments(
+            "" + node.name,
+            node.comments,
+            node.description
+          ) +
           (node.inputValueDefinitionSet || "") +
           ":" +
           node.type +
@@ -281,8 +291,11 @@ export function print(
     InputObjectTypeDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("input " + node.name, node.comments) +
+          printNodeWithComments(
+            "input " + node.name,
+            node.comments,
+            node.description
+          ) +
           printDirectives(node.directives) +
           (node.inputValueDefinitionSet || "")
         );
@@ -300,8 +313,11 @@ export function print(
     InputValueDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments(node.name + ":", node.comments) +
+          printNodeWithComments(
+            node.name + ":",
+            node.comments,
+            node.description
+          ) +
           node.type +
           printDefaultValue(node.defaultValue) +
           printDirectives(node.directives)
@@ -332,9 +348,11 @@ export function print(
     },
     InterfaceTypeDefinition: {
       leave(node) {
-        let printed =
-          printDescription(node.description) +
-          printNodeWithComments("interface " + node.name, node.comments);
+        let printed = printNodeWithComments(
+          "interface " + node.name,
+          node.comments,
+          node.description
+        );
         if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
           printed +
@@ -429,9 +447,11 @@ export function print(
     },
     ObjectTypeDefinition: {
       leave(node) {
-        let printed =
-          printDescription(node.description) +
-          printNodeWithComments("type " + node.name, node.comments);
+        let printed = printNodeWithComments(
+          "type " + node.name,
+          node.comments,
+          node.description
+        );
         if (node.interfaces && !printed.endsWith("\n")) printed += " ";
         return (
           printed +
@@ -507,9 +527,11 @@ export function print(
     ScalarTypeDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("scalar " + node.name, node.comments) +
-          printDirectives(node.directives)
+          printNodeWithComments(
+            "scalar " + node.name,
+            node.comments,
+            node.description
+          ) + printDirectives(node.directives)
         );
       },
     },
@@ -524,8 +546,7 @@ export function print(
     SchemaDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("schema", node.comments) +
+          printNodeWithComments("schema", node.comments, node.description) +
           printDirectives(node.directives) +
           (node.operationTypeDefinitionSet || "")
         );
@@ -569,8 +590,11 @@ export function print(
     UnionTypeDefinition: {
       leave(node) {
         return (
-          printDescription(node.description) +
-          printNodeWithComments("union " + node.name, node.comments) +
+          printNodeWithComments(
+            "union " + node.name,
+            node.comments,
+            node.description
+          ) +
           printDirectives(node.directives) +
           (node.types || "")
         );
