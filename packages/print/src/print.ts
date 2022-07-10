@@ -1,19 +1,64 @@
-import type {
-  AstNode,
-  CommentNode,
-  DirectiveConstNode,
-  DirectiveNode,
-  NamedTypeNode,
-  StringValueNode,
-  ValueConstNode,
-} from "@graphql-modular/language";
+import type { AstNode, AstNodes, CommentNode } from "@graphql-modular/language";
 import { traverse } from "@graphql-modular/traverse";
+
+type Indentation = "+" | "-";
+
+type LineItem =
+  | string
+  | {
+      type: "soft_line";
+      alt: string;
+      prefix: string;
+      indentation?: Indentation;
+    };
+
+type Printed = LineItem | { type: "hard_line"; indentation?: Indentation };
+
+function hardLine(indentation?: Indentation): Printed {
+  return { type: "hard_line", indentation };
+}
+
+function softLine(
+  alt: string,
+  prefix: string = "",
+  indentation?: Indentation
+): Printed {
+  return { type: "soft_line", alt, prefix, indentation };
+}
+
+export type Stringified<N extends AstNode> = {
+  [K in keyof N]: K extends
+    | "comments"
+    | "commentsOpeningBracket"
+    | "commentsClosingBracket"
+    ? N[K]
+    : N[K] extends boolean | number | string
+    ? N[K]
+    : N[K] extends any[]
+    ? Printed[][]
+    : null extends N[K]
+    ? Printed[] | null
+    : Printed[];
+};
+
+type Visitor<N extends AstNode> = (
+  node: Stringified<N>,
+  key: string | number | null,
+  parent: AstNode | ReadonlyArray<AstNode> | null
+) => Printed[];
+
+type VisitorMap = Omit<
+  {
+    [K in keyof AstNodes]: { leave: Visitor<AstNodes[K]> };
+  },
+  "BlockComment" | "InlineComment"
+>;
 
 export function print(
   ast: AstNode | AstNode[],
   {
     indentationStep = "  ",
-    // maxLineLength = 80,
+    maxLineLength = 80,
     preserveComments = false,
     pretty = false,
   }: {
@@ -24,293 +69,614 @@ export function print(
   } = {}
 ): string {
   const SPACE = pretty ? " " : "";
-  const LINE_BREAK = pretty ? "\n" : "";
-
-  let lead = "";
-
-  function indent() {
-    if (pretty) lead += indentationStep;
-  }
-
-  function dedent() {
-    if (pretty) lead = lead.substring(indentationStep.length);
-  }
 
   function printComment(comment: CommentNode) {
     return preserveComments
-      ? (comment.kind === "BlockComment" ? LINE_BREAK : "") +
-          comment.value
-            .split("\n")
-            .map((line) => lead + "#" + SPACE + line)
-            .join("\n") +
-          "\n"
-      : "";
+      ? [
+          ...join(
+            comment.value.split("\n").map((line) => ["#", SPACE, line]),
+            [hardLine()]
+          ),
+          hardLine(),
+        ]
+      : [];
   }
 
   function printComments(comments: CommentNode[]) {
-    const printedComments = { before: "", after: "" };
-    for (const comment of comments) {
-      printedComments[comment.kind === "BlockComment" ? "before" : "after"] +=
-        printComment(comment);
+    const before: Printed[] = [];
+    const after: Printed[] = [];
+    for (let i = 0; i < comments.length; i++) {
+      const comment = comments[i];
+      if (comment.kind === "BlockComment") {
+        before.push(...printComment(comment));
+      } else {
+        after.unshift(...printComment(comment));
+      }
     }
-    return printedComments;
-  }
-
-  function printNodeWithComments(
-    printed: string,
-    comments: CommentNode[],
-    description?: StringValueNode | null
-  ) {
-    const { before, after } = printComments(comments);
-    return (
-      (description ? lead + description : "") +
-      (description && !before ? LINE_BREAK : "") +
-      before +
-      (before ? lead : "") +
-      printed +
-      (after ? SPACE : "") +
-      after
-    );
+    if (before.length === 0 && after.length === 0) return [];
+    return [hardLine(), ...before, ...after];
   }
 
   function printWrappedListWithComments(
-    list: any[],
+    list: Printed[][],
     openingBracketPunctuator: string,
+    spacer: string,
+    delimiter: string,
     closingBracketPunctuator: string,
     commentsOpeningBracket: CommentNode[],
-    commentsClosingBracket: CommentNode[]
+    commentsClosingBracket: CommentNode[],
+    forceMultiLine: boolean = false
   ) {
-    dedent();
-
     const openingBracket = printComments(commentsOpeningBracket);
     const closingBracket = printComments(commentsClosingBracket);
 
-    return (
-      openingBracket.before +
-      (openingBracket.before ? lead : "") +
-      openingBracketPunctuator +
-      (openingBracket.after ? SPACE : "") +
-      openingBracket.after +
-      (openingBracket.after ? "" : LINE_BREAK) +
-      list.join(pretty ? LINE_BREAK : ",") +
-      closingBracket.before +
-      (closingBracket.before ? "" : LINE_BREAK) +
-      lead +
-      closingBracketPunctuator +
-      (closingBracket.after ? SPACE : "") +
-      closingBracket.after
-    );
+    const shouldPrintMultiLine =
+      pretty &&
+      (forceMultiLine || hasHardLine(list) || closingBracket.length > 0);
+
+    return [
+      ...openingBracket,
+      openingBracketPunctuator,
+      shouldPrintMultiLine ? hardLine("+") : softLine(spacer, undefined, "+"),
+      ...join(list, [shouldPrintMultiLine ? hardLine() : softLine(delimiter)]),
+      shouldPrintMultiLine
+        ? hardLine("-")
+        : softLine(closingBracket.length > 0 ? "\n" : spacer, undefined, "-"),
+      ...closingBracket.slice(1),
+      closingBracketPunctuator,
+    ];
   }
 
-  function printDirectives(directives: DirectiveNode[] | DirectiveConstNode[]) {
-    return directives.join("");
+  function withSpace(list: Printed[] | null) {
+    return list && list.length > 0 ? [SPACE, ...list] : [];
   }
 
-  function printDefaultValue(value: ValueConstNode | null) {
-    return value ? "=" + value : "";
+  function printDescription(
+    description: Printed[] | null,
+    comments: CommentNode[]
+  ) {
+    return description
+      ? [
+          ...description,
+          pretty && (!preserveComments || comments.length === 0)
+            ? hardLine()
+            : "",
+        ]
+      : [];
   }
 
-  function printTypeCondition(value: NamedTypeNode | null) {
-    return value ? "on " + value : "";
-  }
-
-  return traverse(ast, {
+  const visitorMap: VisitorMap = {
     Argument: {
-      leave(node) {
-        return (
-          lead +
-          printNodeWithComments(
-            node.name + ":" + SPACE + node.value,
-            node.comments
-          )
-        );
-      },
+      leave: (node) => [
+        ...printComments(node.comments),
+        ...node.name,
+        ":",
+        SPACE,
+        ...node.value,
+      ],
     },
     ArgumentSet: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
+      leave: (node) =>
+        printWrappedListWithComments(
           node.args,
           "(",
+          "",
+          "," + SPACE,
           ")",
           node.commentsOpeningBracket,
           node.commentsClosingBracket
-        );
-      },
-    },
-    BlockComment: {
-      leave(node, _key, _parent, path) {
-        return path.length > 1 ? node : printComment(node);
-      },
+        ),
     },
     BooleanValue: {
-      leave(node) {
-        return printNodeWithComments("" + node.value, node.comments);
-      },
+      leave: (node) => [...printComments(node.comments), "" + node.value],
     },
     Directive: {
-      leave(node) {
-        return (
-          printNodeWithComments("@" + node.name, node.comments) +
-          (node.argumentSet || "")
-        );
-      },
+      leave: (node) => [
+        ...printComments(node.comments),
+        "@",
+        ...node.name,
+        ...(node.argumentSet || []),
+      ],
     },
     DirectiveDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            "directive" + SPACE + "@" + node.name,
-            node.comments,
-            node.description
-          ) +
-          (node.inputValueDefinitionSet || "") +
-          (node.repeatable ? " repeatable " : " ") +
-          node.locationSet
-        );
-      },
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "directive",
+        SPACE,
+        "@",
+        ...node.name,
+        ...(node.inputValueDefinitionSet || []),
+        node.repeatable ? " repeatable " : " ",
+        ...node.locationSet,
+      ],
     },
     DirectiveLocationSet: {
-      leave(node) {
-        let printed = printNodeWithComments("on", node.comments);
-        if (!printed.endsWith("\n")) printed += " ";
-        return printed + node.locations.join("|");
-      },
+      leave: (node) =>
+        hasHardLine(node.locations)
+          ? [
+              ...printComments(node.comments),
+              "on",
+              hardLine(),
+              ...node.locations.flatMap((location, index) => [
+                !pretty && index === 0 ? "" : "|",
+                SPACE,
+                ...location,
+                pretty ? hardLine() : softLine(""),
+              ]),
+            ]
+          : [
+              ...printComments(node.comments),
+              "on",
+              softLine(" ", "|" + SPACE),
+              ...join(node.locations, [softLine(SPACE), "|", SPACE]),
+              softLine(""),
+            ],
     },
     Document: {
-      leave(node) {
-        const definitions = node.definitions.join("\n");
-        const { before, after } = printComments(node.comments);
-        return definitions + "\n" + before + after;
+      leave: (node) => {
+        const comments = printComments(node.comments);
+        return [
+          ...join(node.definitions, [hardLine()]),
+          pretty && comments.length > 0 ? hardLine() : "",
+          ...comments,
+        ];
       },
     },
     EnumTypeDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            "enum " + node.name,
-            node.comments,
-            node.description
-          ) +
-          printDirectives(node.directives) +
-          (node.valueDefinitionSet || "")
-        );
-      },
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "enum ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.valueDefinitionSet),
+      ],
     },
     EnumTypeExtension: {
-      leave(node) {
-        return (
-          printNodeWithComments("extend enum " + node.name, node.comments) +
-          printDirectives(node.directives) +
-          (node.valueDefinitionSet || "")
-        );
-      },
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend enum ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.valueDefinitionSet),
+      ],
     },
     EnumValue: {
-      leave(node) {
-        return printNodeWithComments(node.value, node.comments);
-      },
+      leave: (node) => [...printComments(node.comments), node.value],
     },
     EnumValueDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            lead + node.name,
-            node.comments,
-            node.description
-          ) + printDirectives(node.directives)
-        );
-      },
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
     },
     EnumValueDefinitionSet: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
+      leave: (node) =>
+        printWrappedListWithComments(
           node.definitions,
           "{",
+          "",
+          ",",
           "}",
           node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
+          node.commentsClosingBracket,
+          true
+        ),
     },
     ExecutableDirectiveLocation: {
-      leave(node) {
-        return printNodeWithComments(node.value, node.comments);
-      },
+      leave: (node) => [...printComments(node.comments), node.value],
     },
     Field: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            lead + (node.alias ? node.alias + ":" : "") + node.name,
-            node.comments
-          ) +
-          (node.argumentSet || "") +
-          printDirectives(node.directives) +
-          (node.selectionSet || "")
-        );
-      },
+      leave: (node) => [
+        ...printComments(node.comments),
+        ...(node.alias ? [...node.alias, ":", SPACE] : []),
+        ...node.name,
+        ...(node.argumentSet || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.selectionSet),
+      ],
     },
     FieldDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            lead + node.name,
-            node.comments,
-            node.description
-          ) +
-          (node.inputValueDefinitionSet || "") +
-          ":" +
-          node.type +
-          printDirectives(node.directives)
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        ...node.name,
+        ...(node.inputValueDefinitionSet || []),
+        ":",
+        SPACE,
+        ...node.type,
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    FieldDefinitionSet: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.definitions,
+          "{",
+          "",
+          ",",
+          "}",
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket,
+          true
+        ),
+    },
+    FloatValue: {
+      leave: (node) => [...printComments(node.comments), node.value],
+    },
+    FragmentDefinition: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "fragment ",
+        ...node.name,
+        ...(node.typeCondition ? [" on ", ...node.typeCondition] : []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.selectionSet),
+      ],
+    },
+    FragmentSpread: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "...",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    InlineFragment: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "...",
+        ...(node.typeCondition ? ["on ", ...node.typeCondition] : []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.selectionSet),
+      ],
+    },
+    InputObjectTypeDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "input ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.inputValueDefinitionSet),
+      ],
+    },
+    InputObjectTypeExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend input ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.inputValueDefinitionSet),
+      ],
+    },
+    InputValueDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        ...node.name,
+        ":",
+        SPACE,
+        ...node.type,
+        ...(node.defaultValue ? [SPACE, "=", SPACE, ...node.defaultValue] : []),
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    InputValueDefinitionSet: {
+      leave: (node, _key, parent) => {
+        const [startPunctuator, endPunctuator, forceMultiline] =
+          isSingleNode(parent) &&
+          (parent.kind === "DirectiveDefinition" ||
+            parent.kind === "FieldDefinition")
+            ? ["(", ")", false]
+            : ["{", "}", true];
+        return printWrappedListWithComments(
+          node.definitions,
+          startPunctuator,
+          "",
+          ",",
+          endPunctuator,
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket,
+          forceMultiline
         );
       },
     },
-    FieldDefinitionSet: {
-      enter() {
-        indent();
+    InterfaceTypeDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "interface ",
+        ...node.name,
+        ...(node.interfaces || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.fieldDefinitionSet),
+      ],
+    },
+    InterfaceTypeExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend interface ",
+        ...node.name,
+        ...(node.interfaces || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.fieldDefinitionSet),
+      ],
+    },
+    IntValue: {
+      leave: (node) => [...printComments(node.comments), node.value],
+    },
+    ListType: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "[",
+        ...node.type,
+        "]",
+      ],
+    },
+    ListValue: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.values,
+          "[",
+          "",
+          "," + SPACE,
+          "]",
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket
+        ),
+    },
+    Name: { leave: (node) => [node.value] },
+    NamedType: {
+      leave: (node) => [...printComments(node.comments), ...node.name],
+    },
+    NamedTypeSet: {
+      leave: (node, _key, parent) => {
+        const useHardLines = hasHardLine(node.types);
+        const [
+          initializer = "",
+          beforeInitializer = "",
+          afterInitializer = [],
+          delimiter = [useHardLines ? hardLine() : softLine("," + SPACE)],
+        ] = isSingleNode(parent)
+          ? parent.kind === "ObjectTypeDefinition" ||
+            parent.kind === "ObjectTypeExtension" ||
+            parent.kind === "InterfaceTypeDefinition" ||
+            parent.kind === "InterfaceTypeExtension"
+            ? [
+                "implements",
+                " ",
+                useHardLines
+                  ? [hardLine(), "&" + SPACE]
+                  : [softLine(" ", "&" + SPACE)],
+                [useHardLines ? hardLine() : softLine(SPACE), "&", SPACE],
+              ]
+            : parent.kind === "UnionTypeDefinition" ||
+              parent.kind === "UnionTypeExtension"
+            ? [
+                "=",
+                SPACE,
+                useHardLines
+                  ? [hardLine(), "|" + SPACE]
+                  : [softLine(SPACE, "|" + SPACE)],
+                [useHardLines ? hardLine() : softLine(SPACE), "|", SPACE],
+              ]
+            : []
+          : [];
+
+        const comments = printComments(node.comments);
+        return [
+          ...comments,
+          comments.length > 0 ? "" : beforeInitializer,
+          initializer,
+          ...afterInitializer,
+          ...join(node.types, delimiter),
+        ];
       },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.definitions,
+    },
+    NonNullType: {
+      leave: (node) => [...printComments(node.comments), ...node.type, "!"],
+    },
+    NullValue: {
+      leave: (node) => [...printComments(node.comments), "null"],
+    },
+    ObjectField: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        ...node.name,
+        ":",
+        SPACE,
+        ...node.value,
+      ],
+    },
+    ObjectTypeDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "type ",
+        ...node.name,
+        ...(node.interfaces || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.fieldDefinitionSet),
+      ],
+    },
+    ObjectTypeExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend type ",
+        ...node.name,
+        ...(node.interfaces || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.fieldDefinitionSet),
+      ],
+    },
+    ObjectValue: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.fields,
           "{",
+          SPACE,
+          "," + SPACE,
           "}",
           node.commentsOpeningBracket,
           node.commentsClosingBracket
-        );
-      },
+        ),
     },
-    FloatValue: {
-      leave(node) {
-        return printNodeWithComments(node.value, node.comments);
-      },
+    OperationDefinition: {
+      leave: (node) =>
+        !node.name &&
+        !node.variableDefinitionSet &&
+        node.directives.length === 0
+          ? node.selectionSet
+          : [
+              ...printComments(node.comments),
+              node.operation,
+              ...(node.name ? [" ", ...node.name] : []),
+              ...(node.variableDefinitionSet || []),
+              ...withSpace(join(node.directives, [SPACE])),
+              ...withSpace(node.selectionSet),
+            ],
     },
-    FragmentDefinition: {
-      leave(node) {
-        let printed = printNodeWithComments(
-          "fragment " + node.name,
-          node.comments
-        );
-        if (node.typeCondition && !printed.endsWith("\n")) printed += " ";
-        return (
-          printed +
-          printTypeCondition(node.typeCondition) +
-          printDirectives(node.directives) +
-          node.selectionSet
-        );
-      },
+    OperationTypeDefinition: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        node.operation,
+        ":",
+        SPACE,
+        ...node.type,
+      ],
     },
-    FragmentSpread: {
-      leave(node) {
-        return (
-          printNodeWithComments(lead + "..." + node.name, node.comments) +
-          printDirectives(node.directives)
-        );
+    OperationTypeDefinitionSet: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.definitions,
+          "{",
+          "",
+          ",",
+          "}",
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket,
+          true
+        ),
+    },
+    ScalarTypeDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "scalar ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    ScalarTypeExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend scalar ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    SchemaDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "schema",
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.operationTypeDefinitionSet),
+      ],
+    },
+    SchemaExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend schema",
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.operationTypeDefinitionSet),
+      ],
+    },
+    SelectionSet: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.selections,
+          "{",
+          "",
+          ",",
+          "}",
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket,
+          true
+        ),
+    },
+    StringValue: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        ...(node.block
+          ? [
+              '"""',
+              hardLine(),
+              node.value.replace(/"""/g, '\\"""'),
+              hardLine(),
+              '"""',
+            ]
+          : [JSON.stringify(node.value)]),
+      ],
+    },
+    TypeSystemDirectiveLocation: {
+      leave: (node) => [...printComments(node.comments), node.value],
+    },
+    UnionTypeDefinition: {
+      leave: (node) => [
+        ...printDescription(node.description, node.comments),
+        ...printComments(node.comments),
+        "union ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...(node.types || []),
+      ],
+    },
+    UnionTypeExtension: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        "extend union ",
+        ...node.name,
+        ...withSpace(join(node.directives, [SPACE])),
+        ...(node.types || []),
+      ],
+    },
+    Variable: {
+      leave: (node) => [...printComments(node.comments), "$", ...node.name],
+    },
+    VariableDefinition: {
+      leave: (node) => [
+        ...printComments(node.comments),
+        ...node.variable,
+        ":",
+        SPACE,
+        ...node.type,
+        ...(node.defaultValue ? [SPACE, "=", SPACE, ...node.defaultValue] : []),
+        ...withSpace(join(node.directives, [SPACE])),
+      ],
+    },
+    VariableDefinitionSet: {
+      leave: (node) =>
+        printWrappedListWithComments(
+          node.definitions,
+          "(",
+          "",
+          "," + SPACE,
+          ")",
+          node.commentsOpeningBracket,
+          node.commentsClosingBracket
+        ),
+    },
+  };
+
+  const list = traverse<AstNode | AstNode[], Printed[]>(ast, {
+    BlockComment: {
+      leave(node, _key, _parent, path) {
+        return path.length > 1 ? node : printComment(node);
       },
     },
     InlineComment: {
@@ -318,390 +684,81 @@ export function print(
         return path.length > 1 ? node : printComment(node);
       },
     },
-    InlineFragment: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            lead + "..." + printTypeCondition(node.typeCondition),
-            node.comments
-          ) +
-          printDirectives(node.directives) +
-          node.selectionSet
-        );
-      },
-    },
-    InputObjectTypeDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            "input " + node.name,
-            node.comments,
-            node.description
-          ) +
-          printDirectives(node.directives) +
-          (node.inputValueDefinitionSet || "")
-        );
-      },
-    },
-    InputObjectTypeExtension: {
-      leave(node) {
-        return (
-          printNodeWithComments("extend input " + node.name, node.comments) +
-          printDirectives(node.directives) +
-          (node.inputValueDefinitionSet || "")
-        );
-      },
-    },
-    InputValueDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            lead + node.name + ":",
-            node.comments,
-            node.description
-          ) +
-          node.type +
-          printDefaultValue(node.defaultValue) +
-          printDirectives(node.directives)
-        );
-      },
-    },
-    InputValueDefinitionSet: {
-      enter() {
-        indent();
-      },
-      leave(node, _key, parent) {
-        const [startPunctuator, endPunctuator] =
-          isSingleNode(parent) &&
-          (parent.kind === "DirectiveDefinition" ||
-            parent.kind === "FieldDefinition")
-            ? ["(", ")"]
-            : ["{", "}"];
-        return printWrappedListWithComments(
-          node.definitions,
-          startPunctuator,
-          endPunctuator,
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
-    IntValue: {
-      leave(node) {
-        return printNodeWithComments(node.value, node.comments);
-      },
-    },
-    InterfaceTypeDefinition: {
-      leave(node) {
-        let printed = printNodeWithComments(
-          "interface " + node.name,
-          node.comments,
-          node.description
-        );
-        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
-        return (
-          printed +
-          (node.interfaces || "") +
-          printDirectives(node.directives) +
-          (node.fieldDefinitionSet || "")
-        );
-      },
-    },
-    InterfaceTypeExtension: {
-      leave(node) {
-        let printed = printNodeWithComments(
-          "extend interface " + node.name,
-          node.comments
-        );
-        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
-        return (
-          printed +
-          (node.interfaces || "") +
-          printDirectives(node.directives) +
-          (node.fieldDefinitionSet || "")
-        );
-      },
-    },
-    ListType: {
-      leave(node) {
-        return printNodeWithComments("[" + node.type + "]", node.comments);
-      },
-    },
-    ListValue: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.values.map((value) => lead + value),
-          "[",
-          "]",
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
-    Name: {
-      leave(node) {
-        return node.value;
-      },
-    },
-    NamedType: {
-      leave(node) {
-        return printNodeWithComments("" + node.name, node.comments);
-      },
-    },
-    NamedTypeSet: {
-      leave(node, _key, parent) {
-        const [initializer = "", spacer = "", delimiter = ","] = isSingleNode(
-          parent
-        )
-          ? parent.kind === "ObjectTypeDefinition" ||
-            parent.kind === "ObjectTypeExtension" ||
-            parent.kind === "InterfaceTypeDefinition" ||
-            parent.kind === "InterfaceTypeExtension"
-            ? ["implements", " ", "&"]
-            : parent.kind === "UnionTypeDefinition" ||
-              parent.kind === "UnionTypeExtension"
-            ? ["=", "", "|"]
-            : []
-          : [];
-        const { before, after } = printComments(node.comments);
-        const afterWithSpacer = after ? after + "" : after + spacer;
-        const types = node.types.join(delimiter);
-        if (!initializer) return before + afterWithSpacer + types;
-        return (
-          before + initializer + (after ? SPACE : "") + afterWithSpacer + types
-        );
-      },
-    },
-    NonNullType: {
-      leave(node) {
-        return printNodeWithComments(node.type + "!", node.comments);
-      },
-    },
-    NullValue: {
-      leave(node) {
-        return printNodeWithComments("null", node.comments);
-      },
-    },
-    ObjectField: {
-      leave(node) {
-        return printNodeWithComments(
-          node.name + ":" + node.value,
-          node.comments
-        );
-      },
-    },
-    ObjectTypeDefinition: {
-      leave(node) {
-        let printed = printNodeWithComments(
-          "type " + node.name,
-          node.comments,
-          node.description
-        );
-        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
-        return (
-          printed +
-          (node.interfaces || "") +
-          printDirectives(node.directives) +
-          (node.fieldDefinitionSet || "")
-        );
-      },
-    },
-    ObjectTypeExtension: {
-      leave(node) {
-        let printed = printNodeWithComments(
-          "extend type " + node.name,
-          node.comments
-        );
-        if (node.interfaces && !printed.endsWith("\n")) printed += " ";
-        return (
-          printed +
-          (node.interfaces || "") +
-          printDirectives(node.directives) +
-          (node.fieldDefinitionSet || "")
-        );
-      },
-    },
-    ObjectValue: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.fields.map((field) => lead + field),
-          "{",
-          "}",
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
-    OperationDefinition: {
-      leave(node) {
-        if (
-          !node.name &&
-          !node.variableDefinitionSet &&
-          node.directives.length === 0
-        )
-          return node.selectionSet;
-        return (
-          printNodeWithComments(
-            node.operation + (node.name ? " " + node.name : ""),
-            node.comments
-          ) +
-          (node.variableDefinitionSet || "") +
-          printDirectives(node.directives) +
-          node.selectionSet
-        );
-      },
-    },
-    OperationTypeDefinition: {
-      leave(node) {
-        return (
-          lead +
-          printNodeWithComments(node.operation + ":", node.comments) +
-          node.type
-        );
-      },
-    },
-    OperationTypeDefinitionSet: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.definitions,
-          "{",
-          "}",
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
-    ScalarTypeDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            "scalar " + node.name,
-            node.comments,
-            node.description
-          ) + printDirectives(node.directives)
-        );
-      },
-    },
-    ScalarTypeExtension: {
-      leave(node) {
-        return (
-          printNodeWithComments("extend scalar " + node.name, node.comments) +
-          printDirectives(node.directives)
-        );
-      },
-    },
-    SchemaDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments("schema", node.comments, node.description) +
-          printDirectives(node.directives) +
-          (node.operationTypeDefinitionSet || "")
-        );
-      },
-    },
-    SchemaExtension: {
-      leave(node) {
-        return (
-          printNodeWithComments("extend schema", node.comments) +
-          printDirectives(node.directives) +
-          (node.operationTypeDefinitionSet || "")
-        );
-      },
-    },
-    SelectionSet: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.selections,
-          "{",
-          "}",
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
-    StringValue: {
-      leave(node) {
-        return printNodeWithComments(
-          node.block
-            ? '"""\n' + node.value.replace(/"""/g, '\\"""') + '"""'
-            : JSON.stringify(node.value),
-          node.comments
-        );
-      },
-    },
-    TypeSystemDirectiveLocation: {
-      leave(node) {
-        return printNodeWithComments(node.value, node.comments);
-      },
-    },
-    UnionTypeDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(
-            "union " + node.name,
-            node.comments,
-            node.description
-          ) +
-          printDirectives(node.directives) +
-          (node.types || "")
-        );
-      },
-    },
-    UnionTypeExtension: {
-      leave(node) {
-        return (
-          printNodeWithComments("extend union " + node.name, node.comments) +
-          printDirectives(node.directives) +
-          (node.types || "")
-        );
-      },
-    },
-    Variable: {
-      leave(node) {
-        return printNodeWithComments("$" + node.name, node.comments);
-      },
-    },
-    VariableDefinition: {
-      leave(node) {
-        return (
-          printNodeWithComments(lead + node.variable + ":", node.comments) +
-          node.type +
-          printDefaultValue(node.defaultValue) +
-          printDirectives(node.directives)
-        );
-      },
-    },
-    VariableDefinitionSet: {
-      enter() {
-        indent();
-      },
-      leave(node) {
-        return printWrappedListWithComments(
-          node.definitions,
-          "(",
-          ")",
-          node.commentsOpeningBracket,
-          node.commentsClosingBracket
-        );
-      },
-    },
+    ...(visitorMap as any),
   });
+
+  let printed = "";
+  let currentLine: LineItem[] = [];
+  let indentation = "";
+
+  function handleIndentation(i?: Indentation) {
+    if (i === "+") indentation += indentationStep;
+    if (i === "-") indentation = indentation.slice(indentationStep.length);
+  }
+
+  function printLine(list: LineItem[], breakLines: boolean) {
+    let printed = "";
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      if (typeof item === "string") {
+        printed += item;
+      } else if (item.type === "soft_line") {
+        if (breakLines) {
+          handleIndentation(item.indentation);
+          printed += "\n" + indentation + item.prefix;
+        } else {
+          printed += item.alt;
+        }
+      }
+    }
+    return printed;
+  }
+
+  function printCurrentLine() {
+    const printedLine = printLine(currentLine, false);
+    if (!pretty || printedLine.length <= maxLineLength) {
+      printed += printedLine;
+    } else {
+      printed += printLine(currentLine, true);
+    }
+
+    currentLine = [];
+  }
+
+  for (const item of list.flat()) {
+    if (typeof item === "object" && item.type === "hard_line") {
+      printCurrentLine();
+      handleIndentation(item.indentation);
+      printed += "\n" + indentation;
+    } else {
+      currentLine.push(item);
+    }
+  }
+  printCurrentLine();
+  return printed.replace(/^\n*/, "").replace(/\n*$/, pretty ? "\n" : "");
 }
 
 function isSingleNode(
   node: AstNode | ReadonlyArray<AstNode> | null
 ): node is AstNode {
   return node ? !Array.isArray(node) : false;
+}
+
+function join(list: Printed[] | Printed[][], delimiter: Printed[]) {
+  const joined: Printed[] = [];
+  for (let i = 0; i < list.length; i++) {
+    if (i > 0) joined.push(...delimiter);
+    const item = list[i];
+    joined.push(...(Array.isArray(item) ? item : [item]));
+  }
+  return joined;
+}
+
+function hasHardLine(list: Printed[][]) {
+  for (let i = 0; i < list.length; i++)
+    for (let j = 0; j < list[i].length; j++) {
+      const item = list[i][j];
+      if (typeof item === "object" && item.type === "hard_line") return true;
+    }
+  return false;
 }
