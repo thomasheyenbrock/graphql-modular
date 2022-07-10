@@ -217,7 +217,17 @@ export function print(
       leave: (node) => {
         const comments = printComments(node.comments);
         return [
-          ...join(node.definitions, [hardLine()]),
+          ...join(
+            node.definitions.map((definition) => {
+              while (
+                typeof definition[0] === "object" &&
+                definition[0].type === "hard_line"
+              )
+                definition.shift();
+              return definition;
+            }),
+            [hardLine(), pretty ? hardLine() : ""]
+          ),
           pretty && comments.length > 0 ? hardLine() : "",
           ...comments,
         ];

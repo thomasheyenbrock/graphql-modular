@@ -22,30 +22,10 @@ const KITCHEN_SINK = fs.readFileSync(
 );
 
 describe("kitchen sink", () => {
-  it("prints without comments", () => {
-    expect(print(parse(KITCHEN_SINK))).toMatchInlineSnapshot(`
-      "query queryName($foo:ComplexType,$site:Site=MOBILE)@onQuery{whoever123is:node(id:[123,456]){id,...on User@onInlineFragment{field2{id,alias:field1(first:10,after:$foo)@include(if:$foo){id,...frag@onFragmentSpread}}},...@skip(unless:$foo){id},...{id}}}
-      mutation likeStory@onMutation{like(story:123)@onField{story{id@onField}}}
-      subscription StoryLikeSubscription($input:StoryLikeSubscribeInput@onVariableDefinition)@onSubscription{storyLikeSubscribe(input:$input){story{likers{count},likeSentence{text}}}}
-      fragment frag on Friend@onFragmentDefinition{foo(size:$size,bar:$b,obj:{key:\\"value\\",block:\\"\\"\\"
-      block string uses \\\\\\"\\"\\"
-      \\"\\"\\"})}
-      {unnamed(truthy:true,falsy:false,nullish:null),query}
-      {__typename}"
-    `);
-  });
-  it("prints with comments", () => {
-    expect(print(parse(KITCHEN_SINK), { preserveComments: true }))
-      .toMatchInlineSnapshot(`
-        "query queryName($foo:ComplexType,$site:Site=MOBILE)@onQuery{whoever123is:node(id:[123,456]){
-        #field block comment
-        id,...on User@onInlineFragment{field2{
-        #field inline comment
-        id,alias:field1(first:10,after:$foo)@include(if:$foo){id,...frag@onFragmentSpread}}},...@skip(unless:$foo){id},...{id}}}
-        
-        #block comment
-        #with multiple lines
-        #this is a new comment
+  describe("standard printing", () => {
+    it("prints without comments", () => {
+      expect(print(parse(KITCHEN_SINK))).toMatchInlineSnapshot(`
+        "query queryName($foo:ComplexType,$site:Site=MOBILE)@onQuery{whoever123is:node(id:[123,456]){id,...on User@onInlineFragment{field2{id,alias:field1(first:10,after:$foo)@include(if:$foo){id,...frag@onFragmentSpread}}},...@skip(unless:$foo){id},...{id}}}
         mutation likeStory@onMutation{like(story:123)@onField{story{id@onField}}}
         subscription StoryLikeSubscription($input:StoryLikeSubscribeInput@onVariableDefinition)@onSubscription{storyLikeSubscribe(input:$input){story{likers{count},likeSentence{text}}}}
         fragment frag on Friend@onFragmentDefinition{foo(size:$size,bar:$b,obj:{key:\\"value\\",block:\\"\\"\\"
@@ -54,6 +34,179 @@ describe("kitchen sink", () => {
         {unnamed(truthy:true,falsy:false,nullish:null),query}
         {__typename}"
       `);
+    });
+    it("prints with comments", () => {
+      expect(print(parse(KITCHEN_SINK), { preserveComments: true }))
+        .toMatchInlineSnapshot(`
+          "query queryName($foo:ComplexType,$site:Site=MOBILE)@onQuery{whoever123is:node(id:[123,456]){
+          #field block comment
+          id,...on User@onInlineFragment{field2{
+          #field inline comment
+          id,alias:field1(first:10,after:$foo)@include(if:$foo){id,...frag@onFragmentSpread}}},...@skip(unless:$foo){id},...{id}}}
+          #block comment
+          #with multiple lines
+          #this is a new comment
+          mutation likeStory@onMutation{like(story:123)@onField{story{id@onField}}}
+          subscription StoryLikeSubscription($input:StoryLikeSubscribeInput@onVariableDefinition)@onSubscription{storyLikeSubscribe(input:$input){story{likers{count},likeSentence{text}}}}
+          fragment frag on Friend@onFragmentDefinition{foo(size:$size,bar:$b,obj:{key:\\"value\\",block:\\"\\"\\"
+          block string uses \\\\\\"\\"\\"
+          \\"\\"\\"})}
+          {unnamed(truthy:true,falsy:false,nullish:null),query}
+          {__typename}"
+        `);
+    });
+  });
+  describe("pretty printing", () => {
+    it("prints without comments", () => {
+      expect(print(parse(KITCHEN_SINK), { pretty: true }))
+        .toMatchInlineSnapshot(`
+        "query queryName($foo: ComplexType, $site: Site = MOBILE) @onQuery {
+          whoever123is: node(id: [123, 456]) {
+            id
+            ...on User @onInlineFragment {
+              field2 {
+                id
+                alias: field1(first: 10, after: $foo) @include(if: $foo) {
+                  id
+                  ...frag @onFragmentSpread
+                }
+              }
+            }
+            ... @skip(unless: $foo) {
+              id
+            }
+            ... {
+              id
+            }
+          }
+        }
+
+        mutation likeStory @onMutation {
+          like(story: 123) @onField {
+            story {
+              id @onField
+            }
+          }
+        }
+        
+        subscription StoryLikeSubscription(
+          $input: StoryLikeSubscribeInput @onVariableDefinition
+        ) @onSubscription {
+          storyLikeSubscribe(input: $input) {
+            story {
+              likers {
+                count
+              }
+              likeSentence {
+                text
+              }
+            }
+          }
+        }
+
+        fragment frag on Friend @onFragmentDefinition {
+          foo(
+            size: $size
+            bar: $b
+            obj: {
+              key: \\"value\\"
+              block: \\"\\"\\"
+              block string uses \\\\\\"\\"\\"
+              \\"\\"\\"
+            }
+          )
+        }
+
+        {
+          unnamed(truthy: true, falsy: false, nullish: null)
+          query
+        }
+
+        {
+          __typename
+        }
+        "
+      `);
+    });
+    it("prints with comments", () => {
+      expect(
+        print(parse(KITCHEN_SINK), { preserveComments: true, pretty: true })
+      ).toMatchInlineSnapshot(`
+        "query queryName($foo: ComplexType, $site: Site = MOBILE) @onQuery {
+          whoever123is: node(id: [123, 456]) {
+            
+            # field block comment
+            id
+            ...on User @onInlineFragment {
+              field2 {
+                
+                # field inline comment
+                id
+                alias: field1(first: 10, after: $foo) @include(if: $foo) {
+                  id
+                  ...frag @onFragmentSpread
+                }
+              }
+            }
+            ... @skip(unless: $foo) {
+              id
+            }
+            ... {
+              id
+            }
+          }
+        }
+
+        # block comment
+        # with multiple lines
+        # this is a new comment
+        mutation likeStory @onMutation {
+          like(story: 123) @onField {
+            story {
+              id @onField
+            }
+          }
+        }
+
+        subscription StoryLikeSubscription(
+          $input: StoryLikeSubscribeInput @onVariableDefinition
+        ) @onSubscription {
+          storyLikeSubscribe(input: $input) {
+            story {
+              likers {
+                count
+              }
+              likeSentence {
+                text
+              }
+            }
+          }
+        }
+
+        fragment frag on Friend @onFragmentDefinition {
+          foo(
+            size: $size
+            bar: $b
+            obj: {
+              key: \\"value\\"
+              block: \\"\\"\\"
+              block string uses \\\\\\"\\"\\"
+              \\"\\"\\"
+            }
+          )
+        }
+
+        {
+          unnamed(truthy: true, falsy: false, nullish: null)
+          query
+        }
+        
+        {
+          __typename
+        }
+        "
+      `);
+    });
   });
 });
 
