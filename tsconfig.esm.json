@@ -5,9 +5,13 @@
   },
   "extends": "./tsconfig.json",
   "references": [
+    { "path": "./packages/helper-serialize-object/tsconfig.esm.json" },
     { "path": "./packages/language/tsconfig.esm.json" },
     { "path": "./packages/parse/tsconfig.esm.json" },
     { "path": "./packages/print/tsconfig.esm.json" },
-    { "path": "./packages/traverse/tsconfig.esm.json" }
+    { "path": "./packages/scalar-int/tsconfig.esm.json" },
+    { "path": "./packages/scalar-string/tsconfig.esm.json" },
+    { "path": "./packages/traverse/tsconfig.esm.json" },
+    { "path": "./packages/type-system/tsconfig.esm.json" }
   ]
 }

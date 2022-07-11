@@ -1,3 +1,5 @@
+import type { DirectiveLocationNode } from "@graphql-modular/language";
+
 export type Schema = {
   description?: Maybe<string>;
   rootTypes: {
@@ -33,103 +35,127 @@ export type OutputType =
 
 type Wrapper = "NON_NULL" | "LIST";
 
-type ScalarType<Internal, External = any> = {
+export type ScalarType<Internal, External = any> = {
+  kind: "SCALAR";
   description?: Maybe<string>;
   name: string;
   directives?: Maybe<Directive[]>;
+  extensions?: Maybe<ScalarExtension[]>;
   parse(value: External): Internal;
   serialize(value: Internal): External;
 };
 
-type ObjectType = {
+export type ScalarExtension = {
+  directives: Directive[];
+};
+
+export type ObjectType = {
+  kind: "OBJECT";
   description?: Maybe<string>;
   name: string;
   implements?: Maybe<InterfaceType[]>;
   directives?: Maybe<Directive[]>;
   fields: { [name: string]: Field };
+  extensions?: Maybe<ObjectExtension[]>;
 };
 
-type Field = {
-  description?: Maybe<string>;
-  args?: Maybe<{ [name: string]: InputValue<any> }>;
-  type: OutputType;
+export type ObjectExtension = {
+  implements?: Maybe<InterfaceType[]>;
   directives?: Maybe<Directive[]>;
+  fields: { [name: string]: Field };
 };
 
-type InputValue<T extends InputType> = {
-  description?: Maybe<string>;
-  type: T;
-  defaultValue: InputTypeValue<T>;
-  directives?: Maybe<Directive[]>;
-};
-
-type InputTypeValue<T extends InputType> = T extends ScalarType<infer I>
-  ? I
-  : never;
-
-type InterfaceType = {
+export type InterfaceType = {
+  kind: "INTERFACE";
   description?: Maybe<string>;
   name: string;
   implements?: Maybe<InterfaceType[]>;
   directives?: Maybe<Directive[]>;
+  fields: { [name: string]: Field };
+  extensions?: Maybe<InterfaceExtension[]>;
 };
 
-type UnionType = {
+export type InterfaceExtension = {
+  implements?: Maybe<InterfaceType[]>;
+  directives?: Maybe<Directive[]>;
+  fields: { [name: string]: Field };
+};
+
+export type UnionType = {
+  kind: "UNION";
   description?: Maybe<string>;
   name: string;
   directives?: Maybe<Directive[]>;
   unionMemberTypes: ObjectType[];
+  extensions?: Maybe<UnionExtension[]>;
 };
 
-type EnumType = {
+export type UnionExtension = {
+  directives?: Maybe<Directive[]>;
+  unionMemberTypes: ObjectType[];
+};
+
+export type EnumType = {
+  kind: "ENUM";
   description?: Maybe<string>;
   name: string;
   directives?: Maybe<Directive[]>;
   values: { [name: string]: EnumValue };
+  extensions?: Maybe<EnumExtension[]>;
 };
 
-type EnumValue = {
-  description?: Maybe<string>;
+export type EnumExtension = {
   directives?: Maybe<Directive[]>;
+  values: { [name: string]: EnumValue };
 };
 
-type InputObjectType = {
+export type InputObjectType = {
+  kind: "INPUT_OBJECT";
   description?: Maybe<string>;
   name: string;
   directives?: Maybe<Directive[]>;
-  fields: { [name: string]: InputValue<any> };
+  fields: { [name: string]: InputValue };
+  extensions?: Maybe<InputObjectExtension[]>;
 };
 
-type Directive = {
+export type InputObjectExtension = {
+  directives?: Maybe<Directive[]>;
+  fields: { [name: string]: InputValue };
+};
+
+export type Directive = {
+  kind: "DIRECTIVE";
   description?: Maybe<string>;
   name: string;
-  args?: Maybe<{ [name: string]: InputValue<any> }>;
+  args?: Maybe<{ [name: string]: InputValue }>;
   isRepeatable?: Maybe<boolean>;
-  locations:
-    | "QUERY"
-    | "MUTATION"
-    | "SUBSCRIPTION"
-    | "FIELD"
-    | "FRAGMENT_DEFINITION"
-    | "FRAGMENT_SPREAD"
-    | "INLINE_FRAGMENT"
-    | "VARIABLE_DEFINITION"
-    | "SCHEMA"
-    | "SCALAR"
-    | "OBJECT"
-    | "FIELD_DEFINITION"
-    | "ARGUMENT_DEFINITION"
-    | "INTERFACE"
-    | "UNION"
-    | "ENUM"
-    | "ENUM_VALUE"
-    | "INPUT_OBJECT"
-    | "INPUT_FIELD_DEFINITION";
+  locations: DirectiveLocationNode["value"][];
+};
+
+export type Field = {
+  description?: Maybe<string>;
+  args?: Maybe<{ [name: string]: InputValue }>;
+  type: OutputType;
+  directives?: Maybe<Directive[]>;
+};
+
+export type InputValue = {
+  description?: Maybe<string>;
+  type: InputType;
+  defaultValue: unknown;
+  directives?: Maybe<Directive[]>;
+};
+
+export type EnumValue = {
+  description?: Maybe<string>;
+  directives?: Maybe<Directive[]>;
 };
 
 type Maybe<T> = T | null | undefined;
 
+// move this info packages
 export const Int: ScalarType<number, number> = {
+  kind: "SCALAR",
   name: "Int",
   description:
     "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
@@ -174,6 +200,7 @@ const GRAPHQL_MIN_INT = -2147483648;
 const GRAPHQL_MAX_INT = 2147483647;
 
 export const String: ScalarType<string, string> = {
+  kind: "SCALAR",
   name: "String",
   description:
     "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
