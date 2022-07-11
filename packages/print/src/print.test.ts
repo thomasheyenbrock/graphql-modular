@@ -4171,12 +4171,12 @@ describe.skip("max line length", () => {
     return {
       kind: "Argument",
       comments: [],
-      name: { kind: "Name", value: "argName" },
+      name: { kind: "Name", value: name },
       value: {
         kind: "StringValue",
         comments: [],
         block: false,
-        value: "arg value",
+        value,
       },
     };
   }
