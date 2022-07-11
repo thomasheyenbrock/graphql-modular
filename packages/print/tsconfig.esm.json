@@ -4,5 +4,9 @@
     "rootDir": "./src"
   },
   "extends": "../../tsconfig.esm.json",
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../language/tsconfig.esm.json" },
+    { "path": "../traverse/tsconfig.esm.json" }
+  ]
 }
