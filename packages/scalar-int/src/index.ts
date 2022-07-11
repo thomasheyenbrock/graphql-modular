@@ -25,7 +25,7 @@ export const Int: ScalarType<number, number> = {
     }
     if (num > GRAPHQL_MAX_INT || num < GRAPHQL_MIN_INT) {
       throw new Error(
-        "Int cannot represent non 32-bit signed integer value: " + coercedValue
+        `Int cannot represent non 32-bit signed integer value: ${coercedValue}`
       );
     }
     return num;

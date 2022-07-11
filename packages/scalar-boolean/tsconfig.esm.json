@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./esm",
+    "rootDir": "./src"
+  },
+  "extends": "../../tsconfig.esm.json",
+  "include": ["src"],
+  "references": [
+    { "path": "../helper-serialize-object/tsconfig.esm.json" },
+    { "path": "../type-system/tsconfig.esm.json" }
+  ]
+}
