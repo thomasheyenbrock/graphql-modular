@@ -7,8 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "tsc --build",
-    "build:watch": "yarn build --watch",
+    "build": "yarn build:clean && yarn build:tsc",
+    "build:clean": "yarn build:tsc --clean",
+    "build:watch": "yarn build:tsc --watch",
+    "build:tsc": "tsc --build",
     "format": "prettier --write .",
     "test": "vitest run",
     "typecheck": "yarn tsc -p ./tsconfig.check.json"
