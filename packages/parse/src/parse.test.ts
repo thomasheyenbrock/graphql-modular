@@ -4,7 +4,6 @@ import {
   EnumTypeDefinitionNode,
   EnumTypeExtensionNode,
   EnumValueNode,
-  EXECUTABLE_DIRECTIVE_LOCATION,
   FieldNode,
   FloatValueNode,
   FragmentDefinitionNode,
@@ -14,6 +13,7 @@ import {
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
   IntValueNode,
+  isExecutableDirectiveLocation,
   ListTypeNode,
   ListValueNode,
   NonNullTypeNode,
@@ -1834,9 +1834,7 @@ function parseGql(source: string): DocumentNode {
           locationSet: {
             kind: "DirectiveLocationSet",
             locations: locations.map((location) => ({
-              kind: EXECUTABLE_DIRECTIVE_LOCATION.includes(
-                location.value as any
-              )
+              kind: isExecutableDirectiveLocation(location.value)
                 ? "ExecutableDirectiveLocation"
                 : "TypeSystemDirectiveLocation",
               value: location.value,

@@ -7,12 +7,12 @@ import {
   DirectiveConstNode,
   DirectiveLocationNode,
   DirectiveNode,
-  EXECUTABLE_DIRECTIVE_LOCATION,
+  isExecutableDirectiveLocation,
+  isTypeSystemDirectiveLocation,
   OperationType,
   SelectionNode,
   TypeNode,
   TypeSystemExtensionNode,
-  TYPE_SYSTEM_DIRECTIVE_LOCATION,
   ValueConstNode,
   ValueNode,
 } from "@graphql-modular/language";
@@ -1106,9 +1106,9 @@ export function parse(source: string): AstNodes["Document"] {
             const name = takeToken("NAME");
             const value = name.token.value as any;
             const comments = [...delimiterComments, ...name.comments];
-            if (EXECUTABLE_DIRECTIVE_LOCATION.includes(value))
+            if (isExecutableDirectiveLocation(value))
               return { kind: "ExecutableDirectiveLocation", value, comments };
-            if (TYPE_SYSTEM_DIRECTIVE_LOCATION.includes(value))
+            if (isTypeSystemDirectiveLocation(value))
               return { kind: "TypeSystemDirectiveLocation", value, comments };
             throw new Error(`Unexpected token "${value}"`);
           }
