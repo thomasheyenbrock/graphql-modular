@@ -5,6 +5,10 @@
   },
   "extends": "./tsconfig.json",
   "references": [
+    { "path": "./packages/directive-deprecated/tsconfig.esm.json" },
+    { "path": "./packages/directive-include/tsconfig.esm.json" },
+    { "path": "./packages/directive-skip/tsconfig.esm.json" },
+    { "path": "./packages/directive-specified-by/tsconfig.esm.json" },
     { "path": "./packages/helper-serialize-object/tsconfig.esm.json" },
     { "path": "./packages/language/tsconfig.esm.json" },
     { "path": "./packages/parse/tsconfig.esm.json" },

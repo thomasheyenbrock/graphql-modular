@@ -1,0 +1,13 @@
+{
+  "name": "@graphql-modular/directive-skip",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
+  "dependencies": {
+    "@graphql-modular/language": "0.0.0",
+    "@graphql-modular/scalar-boolean": "0.0.0",
+    "@graphql-modular/type-system": "0.0.0"
+  }
+}

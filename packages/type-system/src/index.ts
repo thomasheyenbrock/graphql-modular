@@ -142,7 +142,7 @@ export type Field = {
 export type InputValue = {
   description?: Maybe<string>;
   type: InputType;
-  defaultValue: unknown;
+  defaultValue?: unknown;
   directives?: Maybe<Directive[]>;
 };
 

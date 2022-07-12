@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "./cjs",
+    "rootDir": "./src"
+  },
+  "extends": "../../tsconfig.cjs.json",
+  "include": ["src"],
+  "references": [
+    { "path": "../language/tsconfig.cjs.json" },
+    { "path": "../scalar-string/tsconfig.cjs.json" },
+    { "path": "../type-system/tsconfig.cjs.json" }
+  ]
+}

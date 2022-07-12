@@ -5,6 +5,10 @@
   },
   "extends": "./tsconfig.json",
   "references": [
+    { "path": "./packages/directive-deprecated/tsconfig.cjs.json" },
+    { "path": "./packages/directive-include/tsconfig.cjs.json" },
+    { "path": "./packages/directive-skip/tsconfig.cjs.json" },
+    { "path": "./packages/directive-specified-by/tsconfig.cjs.json" },
     { "path": "./packages/helper-serialize-object/tsconfig.cjs.json" },
     { "path": "./packages/language/tsconfig.cjs.json" },
     { "path": "./packages/parse/tsconfig.cjs.json" },
