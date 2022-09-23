@@ -537,6 +537,7 @@ export function print(
     },
     OperationDefinition: {
       leave: (node) =>
+        node.operation === "query" &&
         !node.name &&
         !node.variableDefinitionSet &&
         node.directives.length === 0

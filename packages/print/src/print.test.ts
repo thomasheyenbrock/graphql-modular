@@ -1301,6 +1301,29 @@ describe("standard printing for ast nodes", () => {
         );
       });
     });
+    describe("using an unnamed mutation", () => {
+      const node: Stringified<AstNodes["OperationDefinition"]> = {
+        kind: "OperationDefinition",
+        comments,
+        operation: "mutation",
+        name: null,
+        variableDefinitionSet: null,
+        directives: [],
+        selectionSet: ["{field1,field2(arg:42)}"],
+      };
+      it("prints without comments", () => {
+        expect(print(node)).toMatchInlineSnapshot(
+          '"mutation{field1,field2(arg:42)}"'
+        );
+      });
+      it("prints with comments", () => {
+        expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(`
+          "#block comment
+          #inline comment
+          mutation{field1,field2(arg:42)}"
+        `);
+      });
+    });
     describe("using elaborate form", () => {
       const node: Stringified<AstNodes["OperationDefinition"]> = {
         kind: "OperationDefinition",
@@ -3609,6 +3632,38 @@ describe("pretty printing for ast nodes", () => {
         expect(print(node, { preserveComments: true, pretty: true }))
           .toMatchInlineSnapshot(`
             "{
+              field1
+              field2(arg: 42)
+            }
+            "
+          `);
+      });
+    });
+    describe("using an unnamed mutation", () => {
+      const node: Stringified<AstNodes["OperationDefinition"]> = {
+        kind: "OperationDefinition",
+        comments,
+        operation: "mutation",
+        name: null,
+        variableDefinitionSet: null,
+        directives: [],
+        selectionSet: ["{\n  field1\n  field2(arg: 42)\n}"],
+      };
+      it("prints without comments", () => {
+        expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
+          "mutation {
+            field1
+            field2(arg: 42)
+          }
+          "
+        `);
+      });
+      it("prints with comments", () => {
+        expect(print(node, { preserveComments: true, pretty: true }))
+          .toMatchInlineSnapshot(`
+            "# block comment
+            # inline comment
+            mutation {
               field1
               field2(arg: 42)
             }
