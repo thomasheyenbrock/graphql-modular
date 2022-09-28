@@ -72,6 +72,7 @@ export type DefinitionNode =
   | TypeSystemDefinitionOrExtensionNode;
 
 export type ExecutableDefinitionNode =
+  | SelectionSetNode
   | OperationDefinitionNode
   | FragmentDefinitionNode;
 

@@ -536,20 +536,14 @@ export function print(
         ),
     },
     OperationDefinition: {
-      leave: (node) =>
-        node.operation === "query" &&
-        !node.name &&
-        !node.variableDefinitionSet &&
-        node.directives.length === 0
-          ? node.selectionSet
-          : [
-              ...printComments(node.comments),
-              node.operation,
-              ...(node.name ? [" ", ...node.name] : []),
-              ...(node.variableDefinitionSet || []),
-              ...withSpace(join(node.directives, [SPACE])),
-              ...withSpace(node.selectionSet),
-            ],
+      leave: (node) => [
+        ...printComments(node.comments),
+        node.operation,
+        ...(node.name ? [" ", ...node.name] : []),
+        ...(node.variableDefinitionSet || []),
+        ...withSpace(join(node.directives, [SPACE])),
+        ...withSpace(node.selectionSet),
+      ],
     },
     OperationTypeDefinition: {
       leave: (node) => [

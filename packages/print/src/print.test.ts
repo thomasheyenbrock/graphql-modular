@@ -32,7 +32,7 @@ describe("kitchen sink", () => {
         block string uses \\\\\\"\\"\\"
         \\"\\"\\"})}
         {unnamed(truthy:true,falsy:false,nullish:null),query}
-        {__typename}"
+        query{__typename}"
       `);
     });
     it("prints with comments", () => {
@@ -52,7 +52,7 @@ describe("kitchen sink", () => {
           block string uses \\\\\\"\\"\\"
           \\"\\"\\"})}
           {unnamed(truthy:true,falsy:false,nullish:null),query}
-          {__typename}"
+          query{__typename}"
         `);
     });
   });
@@ -122,7 +122,7 @@ describe("kitchen sink", () => {
           query
         }
 
-        {
+        query {
           __typename
         }
         "
@@ -201,7 +201,7 @@ describe("kitchen sink", () => {
           query
         }
         
-        {
+        query {
           __typename
         }
         "
@@ -1282,26 +1282,7 @@ describe("standard printing for ast nodes", () => {
   });
 
   describe("OperationDefinition", () => {
-    describe("using query shorthand", () => {
-      const node: Stringified<AstNodes["OperationDefinition"]> = {
-        kind: "OperationDefinition",
-        comments,
-        operation: "query",
-        name: null,
-        variableDefinitionSet: null,
-        directives: [],
-        selectionSet: ["{field1,field2(arg:42)}"],
-      };
-      it("prints without comments", () => {
-        expect(print(node)).toMatchInlineSnapshot('"{field1,field2(arg:42)}"');
-      });
-      it("prints with comments", () => {
-        expect(print(node, { preserveComments: true })).toMatchInlineSnapshot(
-          '"{field1,field2(arg:42)}"'
-        );
-      });
-    });
-    describe("using an unnamed mutation", () => {
+    describe("using an unnamed operation", () => {
       const node: Stringified<AstNodes["OperationDefinition"]> = {
         kind: "OperationDefinition",
         comments,
@@ -1324,7 +1305,7 @@ describe("standard printing for ast nodes", () => {
         `);
       });
     });
-    describe("using elaborate form", () => {
+    describe("using a named operation", () => {
       const node: Stringified<AstNodes["OperationDefinition"]> = {
         kind: "OperationDefinition",
         comments,
@@ -3609,37 +3590,7 @@ describe("pretty printing for ast nodes", () => {
   });
 
   describe("OperationDefinition", () => {
-    describe("using query shorthand", () => {
-      const node: Stringified<AstNodes["OperationDefinition"]> = {
-        kind: "OperationDefinition",
-        comments,
-        operation: "query",
-        name: null,
-        variableDefinitionSet: null,
-        directives: [],
-        selectionSet: ["{\n  field1\n  field2(arg: 42)\n}"],
-      };
-      it("prints without comments", () => {
-        expect(print(node, { pretty: true })).toMatchInlineSnapshot(`
-          "{
-            field1
-            field2(arg: 42)
-          }
-          "
-        `);
-      });
-      it("prints with comments", () => {
-        expect(print(node, { preserveComments: true, pretty: true }))
-          .toMatchInlineSnapshot(`
-            "{
-              field1
-              field2(arg: 42)
-            }
-            "
-          `);
-      });
-    });
-    describe("using an unnamed mutation", () => {
+    describe("using an unnamed operation", () => {
       const node: Stringified<AstNodes["OperationDefinition"]> = {
         kind: "OperationDefinition",
         comments,
@@ -3671,7 +3622,7 @@ describe("pretty printing for ast nodes", () => {
           `);
       });
     });
-    describe("using elaborate form", () => {
+    describe("using a named operation", () => {
       const node: Stringified<AstNodes["OperationDefinition"]> = {
         kind: "OperationDefinition",
         comments,

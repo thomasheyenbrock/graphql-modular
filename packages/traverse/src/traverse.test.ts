@@ -1007,87 +1007,79 @@ it("traverses with multiple layers of nesting", () => {
           },
         },
         {
-          "comments": [],
-          "directives": [],
-          "kind": "OperationDefinition",
-          "name": null,
-          "operation": "query",
-          "selectionSet": {
-            "commentsClosingBracket": [],
-            "commentsOpeningBracket": [],
-            "kind": "SelectionSet",
-            "selections": [
-              {
-                "alias": null,
-                "argumentSet": {
-                  "args": [
-                    {
-                      "comments": [],
-                      "kind": "Argument",
-                      "name": {
-                        "kind": "Name",
-                        "value": "ruthyruthy",
-                      },
-                      "value": {
-                        "comments": [],
-                        "kind": "BooleanValue",
-                        "value": true,
-                      },
+          "commentsClosingBracket": [],
+          "commentsOpeningBracket": [],
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "alias": null,
+              "argumentSet": {
+                "args": [
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "ruthyruthy",
                     },
-                    {
+                    "value": {
                       "comments": [],
-                      "kind": "Argument",
-                      "name": {
-                        "kind": "Name",
-                        "value": "alsyalsy",
-                      },
-                      "value": {
-                        "comments": [],
-                        "kind": "BooleanValue",
-                        "value": false,
-                      },
+                      "kind": "BooleanValue",
+                      "value": true,
                     },
-                    {
+                  },
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "alsyalsy",
+                    },
+                    "value": {
                       "comments": [],
-                      "kind": "Argument",
-                      "name": {
-                        "kind": "Name",
-                        "value": "ullishullish",
-                      },
-                      "value": {
-                        "comments": [],
-                        "kind": "NullValue",
-                      },
+                      "kind": "BooleanValue",
+                      "value": false,
                     },
-                  ],
-                  "commentsClosingBracket": [],
-                  "commentsOpeningBracket": [],
-                  "kind": "ArgumentSet",
-                },
-                "comments": [],
-                "directives": [],
-                "kind": "Field",
-                "name": {
-                  "kind": "Name",
-                  "value": "nnamednnamed",
-                },
-                "selectionSet": null,
+                  },
+                  {
+                    "comments": [],
+                    "kind": "Argument",
+                    "name": {
+                      "kind": "Name",
+                      "value": "ullishullish",
+                    },
+                    "value": {
+                      "comments": [],
+                      "kind": "NullValue",
+                    },
+                  },
+                ],
+                "commentsClosingBracket": [],
+                "commentsOpeningBracket": [],
+                "kind": "ArgumentSet",
               },
-              {
-                "alias": null,
-                "argumentSet": null,
-                "comments": [],
-                "directives": [],
-                "kind": "Field",
-                "name": {
-                  "kind": "Name",
-                  "value": "ueryuery",
-                },
-                "selectionSet": null,
+              "comments": [],
+              "directives": [],
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "nnamednnamed",
               },
-            ],
-          },
-          "variableDefinitionSet": null,
+              "selectionSet": null,
+            },
+            {
+              "alias": null,
+              "argumentSet": null,
+              "comments": [],
+              "directives": [],
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "ueryuery",
+              },
+              "selectionSet": null,
+            },
+          ],
         },
         {
           "comments": [],
@@ -3054,10 +3046,6 @@ it("leaves and enters in the right order", () => {
       ],
       [
         "enter",
-        "OperationDefinition",
-      ],
-      [
-        "enter",
         "SelectionSet",
       ],
       [
@@ -3189,10 +3177,6 @@ it("leaves and enters in the right order", () => {
       [
         "leave",
         "SelectionSet",
-      ],
-      [
-        "leave",
-        "OperationDefinition",
       ],
       [
         "enter",

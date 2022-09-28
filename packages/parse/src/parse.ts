@@ -986,15 +986,7 @@ export function parse(source: string): AstNodes["Document"] {
 
   function parseDefinition(): DefinitionNode {
     if (isNextPunctuator("{")) {
-      return {
-        kind: "OperationDefinition",
-        operation: "query",
-        name: null,
-        variableDefinitionSet: null,
-        directives: [],
-        selectionSet: parseSelectionSet(false),
-        comments: [],
-      };
+      return parseSelectionSet(false);
     }
 
     const description = parseDescription();

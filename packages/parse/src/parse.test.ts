@@ -26,13 +26,20 @@ import {
   ScalarTypeExtensionNode,
   SchemaDefinitionNode,
   SchemaExtensionNode,
+  SelectionSetNode,
   StringValueNode,
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
   VariableNode,
 } from "@graphql-modular/language";
 import fs from "fs";
-import { DocumentNode, parse as _parseGql, visit } from "graphql";
+import {
+  DocumentNode,
+  Kind,
+  parse as _parseGql,
+  TokenKind,
+  visit,
+} from "graphql";
 import path from "path";
 import { describe, expect, it } from "vitest";
 import { parse } from "./parse";
@@ -69,8 +76,8 @@ describe("parsing comments", () => {
         id
       }
     `);
-    const comments = (ast.definitions[0] as OperationDefinitionNode)
-      .selectionSet.commentsOpeningBracket;
+    const comments = (ast.definitions[0] as SelectionSetNode)
+      .commentsOpeningBracket;
     expect(comments).toHaveLength(1);
     expect(comments[0].value).toBe("Hello\n\n  world");
   });
@@ -91,10 +98,8 @@ describe("parsing comments", () => {
       `);
       expect(
         (
-          (
-            (ast.definitions[0] as OperationDefinitionNode).selectionSet
-              .selections[0] as FieldNode
-          ).argumentSet?.args[0].value as VariableNode
+          ((ast.definitions[0] as SelectionSetNode).selections[0] as FieldNode)
+            .argumentSet?.args[0].value as VariableNode
         ).comments
       ).toEqual([
         { kind: "BlockComment", value: "comment dollar before" },
@@ -664,10 +669,8 @@ describe("parsing comments", () => {
       }
     `);
     expect(
-      (
-        (ast.definitions[0] as OperationDefinitionNode).selectionSet
-          .selections[0] as FieldNode
-      ).argumentSet?.args[0].comments
+      ((ast.definitions[0] as SelectionSetNode).selections[0] as FieldNode)
+        .argumentSet?.args[0].comments
     ).toEqual([
       { kind: "BlockComment", value: "comment arg name before" },
       { kind: "InlineComment", value: "comment arg name after" },
@@ -688,8 +691,8 @@ describe("parsing comments", () => {
         ) # comment args close after
       }
     `);
-    const { argumentSet } = (ast.definitions[0] as OperationDefinitionNode)
-      .selectionSet.selections[0] as FieldNode;
+    const { argumentSet } = (ast.definitions[0] as SelectionSetNode)
+      .selections[0] as FieldNode;
     expect(argumentSet?.commentsOpeningBracket).toEqual([
       { kind: "BlockComment", value: "comment args open before" },
       { kind: "InlineComment", value: "comment args open after" },
@@ -712,8 +715,7 @@ describe("parsing comments", () => {
       }
     `);
     const directive = (
-      (ast.definitions[0] as OperationDefinitionNode).selectionSet
-        .selections[0] as FieldNode
+      (ast.definitions[0] as SelectionSetNode).selections[0] as FieldNode
     ).directives[0];
     expect(directive.comments).toEqual([
       { kind: "BlockComment", value: "comment at before" },
@@ -1504,8 +1506,8 @@ describe("parsing comments", () => {
           { id }
         }
       `);
-      const inlineFragment = (ast.definitions[0] as OperationDefinitionNode)
-        .selectionSet.selections[0] as InlineFragmentNode;
+      const inlineFragment = (ast.definitions[0] as SelectionSetNode)
+        .selections[0] as InlineFragmentNode;
       expect(inlineFragment.comments).toEqual([
         { kind: "BlockComment", value: "comment spread before" },
         { kind: "InlineComment", value: "comment spread after" },
@@ -1527,8 +1529,8 @@ describe("parsing comments", () => {
           { id }
         }
       `);
-      const inlineFragment = (ast.definitions[0] as OperationDefinitionNode)
-        .selectionSet.selections[0] as InlineFragmentNode;
+      const inlineFragment = (ast.definitions[0] as SelectionSetNode)
+        .selections[0] as InlineFragmentNode;
       expect(inlineFragment.comments).toEqual([
         { kind: "BlockComment", value: "comment spread before" },
         { kind: "InlineComment", value: "comment spread after" },
@@ -1552,7 +1554,7 @@ describe("parsing comments", () => {
     `);
     expect(
       (
-        (ast.definitions[0] as OperationDefinitionNode).selectionSet
+        (ast.definitions[0] as SelectionSetNode)
           .selections[0] as FragmentSpreadNode
       ).comments
     ).toEqual([
@@ -1574,7 +1576,7 @@ describe("parsing comments", () => {
           @foo # comment directive after
         }
       `);
-      const field = (ast.definitions[0] as OperationDefinitionNode).selectionSet
+      const field = (ast.definitions[0] as SelectionSetNode)
         .selections[0] as FieldNode;
       expect(field.comments).toEqual([
         { kind: "BlockComment", value: "comment name before" },
@@ -1596,7 +1598,7 @@ describe("parsing comments", () => {
           @foo # comment directive after
         }
       `);
-      const field = (ast.definitions[0] as OperationDefinitionNode).selectionSet
+      const field = (ast.definitions[0] as SelectionSetNode)
         .selections[0] as FieldNode;
       expect(field.comments).toEqual([
         { kind: "BlockComment", value: "comment alias before" },
@@ -1724,16 +1726,6 @@ describe("parsing comments", () => {
   });
 
   describe("in operation definitions", () => {
-    it("parses comments for query shorthand operation definitions", () => {
-      const ast = parse(/* GraphQL */ `
-        # prettier-ignore
-        # comment before
-        { id } # comment after
-      `);
-      const definition = ast.definitions[0] as OperationDefinitionNode;
-      expect(definition.comments).toEqual([]);
-    });
-
     it("parses comments for unnamed operation definitions", () => {
       const ast = parse(/* GraphQL */ `
         # prettier-ignore
@@ -1803,8 +1795,13 @@ it.skip("timing", () => {
 });
 
 function parseGql(source: string): DocumentNode {
-  const ast = _parseGql(source, { noLocation: true });
-  return visit(ast, {
+  const ast = _parseGql(source);
+  const noLocation = visit(ast, {
+    leave({ loc, ...node }) {
+      return node.kind === Kind.OPERATION_DEFINITION ? { ...node, loc } : node;
+    },
+  });
+  return visit(noLocation, {
     Directive: {
       leave({ arguments: args, ...restNode }) {
         return {
@@ -2027,7 +2024,9 @@ function parseGql(source: string): DocumentNode {
       },
     },
     OperationDefinition: {
-      leave({ variableDefinitions, ...restNode }) {
+      leave({ loc, variableDefinitions, ...restNode }) {
+        if (loc?.startToken.kind === TokenKind.BRACE_L)
+          return restNode.selectionSet;
         return {
           ...restNode,
           /** null instead of undefined */
